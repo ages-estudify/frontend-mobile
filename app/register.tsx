@@ -9,15 +9,15 @@ export default function RegisterScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-1 px-6 pt-16">
+      <View className="flex-1 px-6 pt-20">
         {/* Título */}
-        <Text className="text-2xl font-bold text-center text-[#3F2A66] mb-10">
+        <Text className="text-4xl font-bold text-center text-[#3F2A66] mb-16">
           Cadastro
         </Text>
 
         {/* Nome */}
-        <View className="mb-4">
-          <Text className="mb-1 text-neutral-700">Nome</Text>
+        <View className="mb-8">
+          <Text className="mb-1 font-bold text-[#3F2A66]">Nome</Text>
           <TextInput
             placeholder="Ex: Maria dos Santos"
             className="h-12 px-4 border border-neutral-300 rounded-lg"
@@ -25,8 +25,8 @@ export default function RegisterScreen() {
         </View>
 
         {/* Email */}
-        <View className="mb-4">
-          <Text className="mb-1 text-neutral-700">Email</Text>
+        <View className="mb-8">
+          <Text className="mb-1 font-bold text-[#3F2A66]">Email</Text>
           <TextInput
             placeholder="abc@abc.com"
             keyboardType="email-address"
@@ -35,9 +35,20 @@ export default function RegisterScreen() {
           />
         </View>
 
+        {/*  */}
+        <View className="mb-8">
+          <Text className="mb-1 font-bold text-[#3F2A66]">Número</Text>
+          <TextInput
+            placeholder="55 11 99999-9999"
+            keyboardType="phone-pad"
+            autoCapitalize="none"
+            className="h-12 px-4 border border-neutral-300 rounded-lg"
+          />
+        </View>
+
         {/* Senha */}
-        <View className="mb-4">
-          <Text className="mb-1 text-neutral-700">Senha</Text>
+        <View className="mb-8">
+          <Text className="mb-1 font-bold text-[#3F2A66]">Senha</Text>
           <View className="flex-row items-center border border-neutral-300 rounded-lg px-4 h-12">
             <TextInput
               placeholder="******"
@@ -51,8 +62,8 @@ export default function RegisterScreen() {
         </View>
 
         {/* Confirmar Senha */}
-        <View className="mb-8">
-          <Text className="mb-1 text-neutral-700">Confirmar Senha</Text>
+        <View className="mb-14">
+          <Text className="mb-1 font-bold text-[#3F2A66]">Confirmar Senha</Text>
           <View className="flex-row items-center border border-neutral-300 rounded-lg px-4 h-12">
             <TextInput
               placeholder="******"
@@ -71,7 +82,7 @@ export default function RegisterScreen() {
         </Pressable>
 
         {/* Voltar */}
-        <Pressable onPress={() => router.back()} className="mt-6 items-center">
+        <Pressable onPress={() => router.back()} className="mt-4 items-center">
           <Text className="text-[#3F2A66] font-medium">‹ Voltar</Text>
         </Pressable>
       </View>
