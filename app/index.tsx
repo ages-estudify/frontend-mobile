@@ -3,7 +3,7 @@ import { SubjectsGrid } from "@/components/SubjectsGrid";
 import { useAuth } from "@/hooks/useAuth";
 import { getSubjects } from "@/services/subject/subject.service";
 import { Subject } from "@/types/subject.types";
-import { RelativePathString, useRouter } from "expo-router";
+import { Link, RelativePathString, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 
@@ -57,6 +57,9 @@ export default function HomeScreen() {
         <Text className="font-poppins-semi text-[34px]">Treinar</Text>
         <StarBadgeContainer variant="treinar" />
         <StarBadgeContainer variant="treinar" />
+        <Link href="/register">
+          <Text className="mt-6 font-semibold text-blue-600 dark:text-blue-400">Criar conta</Text>
+        </Link>
         <SubjectsGrid subjects={subjects}></SubjectsGrid>
       </View>
     </SafeAreaView>
