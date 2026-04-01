@@ -128,7 +128,7 @@ export default function RegisterScreen() {
         <Pressable onPress={() => router.back()} className="mt-4 items-center">
           <Text className="font-medium text-[#3F2A66]">‹ Voltar</Text>
         </Pressable>
-      </View>
-    </SafeAreaView>
+      </View >
+    </SafeAreaView >
   );
 }
