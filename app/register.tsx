@@ -92,7 +92,6 @@ export default function RegisterScreen() {
               onChangeText={setPassword}
               className="flex-1"
             />
-
             <Pressable onPress={() => setShowPassword(!showPassword)}>
               <Ionicons name={showPassword ? "eye" : "eye-off"} size={18} color="#3F2A66" />
             </Pressable>
