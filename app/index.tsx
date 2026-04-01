@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -8,13 +9,12 @@ export default function HomeScreen() {
         <Text className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
           Welcome
         </Text>
-        <Text className="mt-3 text-center text-base text-neutral-600 dark:text-neutral-400">
-          Expo Router + NativeWind. Edit{" "}
-          <Text className="font-semibold text-blue-600 dark:text-blue-400">
-            app/index.tsx
-          </Text>{" "}
-          to get started.
-        </Text>
+
+        <Link href="/register">
+          <Text className="mt-6 text-blue-600 dark:text-blue-400 font-semibold">
+            Criar conta
+          </Text>
+        </Link>
       </View>
     </SafeAreaView>
   );
