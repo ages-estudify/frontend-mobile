@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
@@ -55,9 +56,13 @@ export default function RegisterScreen() {
               secureTextEntry={!showPassword}
               className="flex-1"
             />
-            <Pressable
-              onPress={() => setShowPassword(!showPassword)}
-            ></Pressable>
+            <Pressable onPress={() => setShowPassword(!showPassword)}>
+              <Ionicons
+                name={showPassword ? "eye" : "eye-off"}
+                size={18}
+                color="#3F2A66"
+              />
+            </Pressable>
           </View>
         </View>
 
@@ -72,7 +77,13 @@ export default function RegisterScreen() {
             />
             <Pressable
               onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            ></Pressable>
+            >
+              <Ionicons
+                name={showConfirmPassword ? "eye" : "eye-off"}
+                size={18}
+                color="#3F2A66"
+              />
+            </Pressable>
           </View>
         </View>
 
