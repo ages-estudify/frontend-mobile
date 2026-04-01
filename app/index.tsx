@@ -1,20 +1,22 @@
+import SubjectBox from "@/components/SubjectBox";
 import { useAuth } from "@/hooks/useAuth";
-import { router } from "expo-router";
+import { RelativePathString, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, View, Text, Button } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function HomePage() {
+export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const { isAuthenticated } = useAuth();
 
-  const { logout } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const checkAuth = async () => {
       const authenticated = await isAuthenticated();
 
       if (!authenticated) {
-        router.replace("/login");
+        router.replace("/login" as RelativePathString);
         return;
       }
 
@@ -33,16 +35,16 @@ export default function HomePage() {
   }
 
   return (
-    <View className="flex-1 justify-center items-center">
-      <Text>Home</Text>
-      <Button
-        title="Logout"
-        onPress={async () => {
-          await logout();
-          router.replace("/login");
-        }}
-        color="#007bff"
-      />
-    </View>
+    <SafeAreaView className="flex-1 bg-white dark:bg-white">
+      <View className="flex-1 items-center justify-center px-6">
+        <SubjectBox subject="Matemática" icon="https://www.svgrepo.com/show/532033/cloud.svg" />
+        <Text className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Welcome</Text>
+        <Text className="mt-3 text-center text-base text-neutral-600 dark:text-neutral-400">
+          Expo Router + NativeWind. Edit{" "}
+          <Text className="font-semibold text-blue-600 dark:text-blue-400">app/index.tsx</Text> to
+          get started.
+        </Text>
+      </View>
+    </SafeAreaView>
   );
 }
