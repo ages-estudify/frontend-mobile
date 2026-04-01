@@ -40,9 +40,7 @@ export default function RegisterScreen() {
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6 pt-20">
         {/* Título */}
-        <Text className="text-4xl font-bold text-center text-[#3F2A66] mb-16">
-          Cadastro
-        </Text>
+        <Text className="mb-16 text-center text-4xl font-bold text-[#3F2A66]">Cadastro</Text>
 
         {/* Nome */}
         <View className="mb-8">
@@ -51,7 +49,7 @@ export default function RegisterScreen() {
             placeholder="Ex: Maria dos Santos"
             value={fullName}
             onChangeText={setFullName}
-            className="h-12 px-4 border border-neutral-300 rounded-lg"
+            className="h-12 rounded-lg border border-neutral-300 px-4"
           />
         </View>
 
@@ -64,7 +62,7 @@ export default function RegisterScreen() {
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
-            className="h-12 px-4 border border-neutral-300 rounded-lg"
+            className="h-12 rounded-lg border border-neutral-300 px-4"
           />
         </View>
 
@@ -76,14 +74,14 @@ export default function RegisterScreen() {
             keyboardType="phone-pad"
             value={phone}
             onChangeText={setPhone}
-            className="h-12 px-4 border border-neutral-300 rounded-lg"
+            className="h-12 rounded-lg border border-neutral-300 px-4"
           />
         </View>
 
         {/* Senha */}
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Senha</Text>
-          <View className="flex-row items-center border border-neutral-300 rounded-lg px-4 h-12">
+          <View className="h-12 flex-row items-center rounded-lg border border-neutral-300 px-4">
             <TextInput
               placeholder="******"
               secureTextEntry={!showPassword}
@@ -92,11 +90,7 @@ export default function RegisterScreen() {
               className="flex-1"
             />
             <Pressable onPress={() => setShowPassword(!showPassword)}>
-              <Ionicons
-                name={showPassword ? "eye" : "eye-off"}
-                size={18}
-                color="#3F2A66"
-              />
+              <Ionicons name={showPassword ? "eye" : "eye-off"} size={18} color="#3F2A66" />
             </Pressable>
           </View>
         </View>
@@ -104,7 +98,7 @@ export default function RegisterScreen() {
         {/* Confirmar Senha */}
         <View className="mb-14">
           <Text className="mb-1 font-bold text-[#3F2A66]">Confirmar Senha</Text>
-          <View className="flex-row items-center border border-neutral-300 rounded-lg px-4 h-12">
+          <View className="h-12 flex-row items-center rounded-lg border border-neutral-300 px-4">
             <TextInput
               placeholder="******"
               secureTextEntry={!showConfirmPassword}
@@ -112,14 +106,8 @@ export default function RegisterScreen() {
               onChangeText={setConfirmPassword}
               className="flex-1"
             />
-            <Pressable
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              <Ionicons
-                name={showConfirmPassword ? "eye" : "eye-off"}
-                size={18}
-                color="#3F2A66"
-              />
+            <Pressable onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+              <Ionicons name={showConfirmPassword ? "eye" : "eye-off"} size={18} color="#3F2A66" />
             </Pressable>
           </View>
         </View>
@@ -127,14 +115,14 @@ export default function RegisterScreen() {
         {/* Botão */}
         <Pressable
           onPress={handleRegister}
-          className="h-12 bg-[#3F2A66] rounded-full justify-center items-center"
+          className="h-12 items-center justify-center rounded-full bg-[#3F2A66]"
         >
-          <Text className="text-white font-semibold text-base">Confirmar</Text>
+          <Text className="text-base font-semibold text-white">Confirmar</Text>
         </Pressable>
 
         {/* Voltar */}
         <Pressable onPress={() => router.back()} className="mt-4 items-center">
-          <Text className="text-[#3F2A66] font-medium">‹ Voltar</Text>
+          <Text className="font-medium text-[#3F2A66]">‹ Voltar</Text>
         </Pressable>
       </View>
     </SafeAreaView>
