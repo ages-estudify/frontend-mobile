@@ -92,11 +92,14 @@ export default function RegisterScreen() {
               onChangeText={setPassword}
               className="flex-1"
             />
-
             <Pressable onPress={() => setShowPassword(!showPassword)}>
               <Ionicons name={showPassword ? "eye" : "eye-off"} size={18} color="#3F2A66" />
             </Pressable>
           </View>
+
+          {passwordError ? (
+            <Text className="mt-0.5 text-sm text-red-500"> {passwordError}</Text>
+          ) : null}
         </View>
 
         {/* Confirmar Senha */}
@@ -128,7 +131,7 @@ export default function RegisterScreen() {
         <Pressable onPress={() => router.back()} className="mt-4 items-center">
           <Text className="font-medium text-[#3F2A66]">‹ Voltar</Text>
         </Pressable>
-      </View >
-    </SafeAreaView >
+      </View>
+    </SafeAreaView>
   );
 }
