@@ -230,7 +230,6 @@ export default function RegisterScreen() {
               }}
               className="flex-1"
             />
-
             <Pressable onPress={() => setShowPassword(!showPassword)}>
               <Ionicons
                 name={showPassword ? "eye" : "eye-off"}
@@ -238,12 +237,14 @@ export default function RegisterScreen() {
                 color="#3F2A66"
               />
             </Pressable>
-          </View>
+          </View >
 
-          {passwordError ? (
-            <Text className="text-red-500 text-sm mt-0.5">{passwordError}</Text>
-          ) : null}
-        </View>
+          {
+            passwordError ? (
+              <Text className="text-red-500 text-sm mt-0.5" > {passwordError}</Text>
+            ) : null
+          }
+        </View >
 
         <View className="mb-14">
           <Text className="mb-1 font-bold text-[#3F2A66]">Confirmar Senha</Text>
