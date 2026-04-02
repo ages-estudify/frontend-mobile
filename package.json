@@ -22,6 +22,8 @@
     ]
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.4.2",
+    "@expo-google-fonts/poppins": "^0.4.1",
     "@expo/vector-icons": "^15.0.3",
     "@gorhom/bottom-sheet": "^5.2.8",
     "@nestjs/passport": "^11.0.5",
@@ -76,6 +78,8 @@
     "jest-expo": "^55.0.11",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "react-native-svg-transformer": "^1.5.3",
     "react-test-renderer": "^19.1.0",
     "typescript": "~5.9.2"
   },

@@ -1,23 +1,20 @@
 import React from "react";
-import { Text, View } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import { Pressable, Text, View } from "react-native";
+import Placeholder from "../../assets/icons/placeholder_subject.svg";
 
 interface SubjectBoxProps {
   subject: string;
-  icon: string;
+  icon?: string;
+  href: string;
 }
 
-export default function SubjectBox({ subject, icon }: SubjectBoxProps) {
+export default function SubjectBox({ subject, icon, href }: SubjectBoxProps) {
   return (
-    <View className="rounded-3xl border border-purple84 p-[10px] align-items-center justify-center w-[110px] h-[110px]">
+    <Pressable className="align-items-center h-[110px] w-[110px] justify-center rounded-3xl border border-purple84 p-[10px]">
       <View className="flex-column items-center justify-center gap-[5px]">
-        <Svg width="30" height="30">
-          <Path d={icon} fill="purple100" />
-        </Svg>
-        <Text className="text-purple100 font-inter-regular text-[13px]">
-          {subject}
-        </Text>
+        <Placeholder width={32} height={32} />
+        <Text className="font-inter text-[13px] text-purple100">{subject}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }

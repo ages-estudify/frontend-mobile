@@ -7,7 +7,25 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import {
+  Poppins_400Regular,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  useFonts,
+} from "@expo-google-fonts/poppins";
+
+import { Inter_400Regular, Inter_600SemiBold } from "@expo-google-fonts/inter";
+
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    "Poppins-Regular": Poppins_400Regular,
+    "Poppins-Bold": Poppins_700Bold,
+    "Poppins-SemiBold": Poppins_600SemiBold,
+    "Inter-Regular": Inter_400Regular,
+    "Inter-SemiBold": Inter_600SemiBold,
+  });
+
+  if (!fontsLoaded) return null;
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
