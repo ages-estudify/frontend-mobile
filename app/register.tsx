@@ -1,13 +1,41 @@
+import { register } from "@/services/auth.service";
+import { RegisterRequest } from "@/types/auth.types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
+  function handleRegister() {
+    if (!fullName || !email || !phone || !password || !confirmPassword) {
+      alert("Preencha todos os campos");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert("As senhas não conferem");
+      return;
+    }
+
+    const registerRequest: RegisterRequest = {
+      fullName,
+      email,
+      password,
+      phone,
+      birthDate: new Date().toISOString(),
+    };
+    register(registerRequest);
+    console.log("RegisterRequest:", registerRequest);
+  }
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6 pt-20">
@@ -21,6 +49,8 @@ export default function RegisterScreen() {
           <Text className="mb-1 font-bold text-[#3F2A66]">Nome</Text>
           <TextInput
             placeholder="Ex: Maria dos Santos"
+            value={fullName}
+            onChangeText={setFullName}
             className="h-12 px-4 border border-neutral-300 rounded-lg"
           />
         </View>
@@ -32,17 +62,20 @@ export default function RegisterScreen() {
             placeholder="abc@abc.com"
             keyboardType="email-address"
             autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
             className="h-12 px-4 border border-neutral-300 rounded-lg"
           />
         </View>
 
-        {/*  */}
+        {/* Número */}
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Número</Text>
           <TextInput
             placeholder="55 11 99999-9999"
             keyboardType="phone-pad"
-            autoCapitalize="none"
+            value={phone}
+            onChangeText={setPhone}
             className="h-12 px-4 border border-neutral-300 rounded-lg"
           />
         </View>
@@ -54,6 +87,8 @@ export default function RegisterScreen() {
             <TextInput
               placeholder="******"
               secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
               className="flex-1"
             />
             <Pressable onPress={() => setShowPassword(!showPassword)}>
@@ -73,6 +108,8 @@ export default function RegisterScreen() {
             <TextInput
               placeholder="******"
               secureTextEntry={!showConfirmPassword}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
               className="flex-1"
             />
             <Pressable
@@ -88,7 +125,10 @@ export default function RegisterScreen() {
         </View>
 
         {/* Botão */}
-        <Pressable className="h-12 bg-[#3F2A66] rounded-full justify-center items-center">
+        <Pressable
+          onPress={handleRegister}
+          className="h-12 bg-[#3F2A66] rounded-full justify-center items-center"
+        >
           <Text className="text-white font-semibold text-base">Confirmar</Text>
         </Pressable>
 
