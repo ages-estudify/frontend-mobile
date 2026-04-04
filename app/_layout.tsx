@@ -14,7 +14,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/poppins";
 
-import { Inter_400Regular, Inter_600SemiBold } from "@expo-google-fonts/inter";
+import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from "@expo-google-fonts/inter";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -23,6 +23,7 @@ export default function RootLayout() {
     "Poppins-SemiBold": Poppins_600SemiBold,
     "Inter-Regular": Inter_400Regular,
     "Inter-SemiBold": Inter_600SemiBold,
+    "Inter-Medium": Inter_500Medium,
   });
 
   if (!fontsLoaded) return null;
@@ -37,6 +38,7 @@ export default function RootLayout() {
           <Stack.Screen name="index" options={{ title: "HomePage" }} />
           <Stack.Screen name="login" options={{ title: "LoginPage" }} />
           <Stack.Screen name="progress" options={{ title: "ProgressPage" }} />
+          <Stack.Screen name="subject" options={{ title: "Subject" }} />
         </Stack>
         <StatusBar style="auto" />
       </SafeAreaProvider>

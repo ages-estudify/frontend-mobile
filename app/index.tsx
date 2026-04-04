@@ -1,12 +1,23 @@
 import { SequenceStatus } from "@/components/SequenceStatus";
 import { SubjectsGrid } from "@/components/SubjectsGrid";
 import { useAuth } from "@/hooks/useAuth";
+import { getSubjects } from "@/services/subject.service";
+import { Subject } from "@/types/subject.types";
 import { RelativePathString, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
+  const [subjects, setSubjects] = React.useState<Subject[]>([]);
+
+  useEffect(() => {
+    const data = async () => {
+      const subjectsData = await getSubjects();
+      setSubjects(subjectsData);
+    };
+    data();
+  }, []);
   const [loading, setLoading] = useState(true);
   const { isAuthenticated } = useAuth();
 
@@ -46,7 +57,7 @@ export default function HomeScreen() {
         />
         <Text className="font-poppins-semi text-[34px]">Treinar</Text>
         <SequenceStatus></SequenceStatus>
-        <SubjectsGrid></SubjectsGrid>
+        <SubjectsGrid subjects={subjects}></SubjectsGrid>
       </View>
     </SafeAreaView>
   );

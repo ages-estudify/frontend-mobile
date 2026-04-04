@@ -1,5 +1,5 @@
-import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import React from "react";
 import { QuestionAnalysisBottomSheet } from "../QuestionAnalysisBottomSheet";
 
 jest.mock("@gorhom/bottom-sheet", () => {
@@ -26,12 +26,7 @@ jest.mock("@gorhom/bottom-sheet", () => {
 
   MockBottomSheet.displayName = "MockBottomSheet";
 
-  const MockBottomSheetScrollView = ({
-    children,
-    ...props
-  }: {
-    children: React.ReactNode;
-  }) => {
+  const MockBottomSheetScrollView = ({ children, ...props }: { children: React.ReactNode }) => {
     return <ScrollView {...props}>{children}</ScrollView>;
   };
 

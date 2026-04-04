@@ -11,12 +11,12 @@ export const api: AxiosInstance = axios.create({
 
 api.interceptors.response.use((response) => response.data);
 
-export const handleApiError = (error: unknown): never => {
+export const handleApiError = (error: unknown) => {
   if (axios.isAxiosError(error)) {
-    throw error.response?.data ?? error.message;
+    console.log(error.response?.data ?? error.message);
   }
 
-  throw error;
+  console.log(error);
 };
 
 export default api;
