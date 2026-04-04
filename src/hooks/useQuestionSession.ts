@@ -40,7 +40,11 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
                 return;
             }
 
-            setQueue(prev => [...prev, ...response.data.questions]);
+            setQueue(prev => {
+                const existingIds = new Set(prev.map(q => q.id));
+                const newQuestions = response.data.questions.filter(q => !existingIds.has(q.id));
+                return [...prev, ...newQuestions];
+            });
         } catch (error) {
             console.error("Erro ao buscar questões: ", error);
         } finally {
@@ -50,11 +54,18 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
     }
 
     useEffect(() => {
+        setQueue([]);
+        setCursor(0);
+        setSelected(null);
+        setHasMore(true);
+        setLoading(true);
+        setIsFetching(false);
+
         loadQuestions();
-    }, []);
+    }, [topicId, type]);
 
     useEffect(() => {
-        if (queue.length - cursor <= 2) {
+        if (hasMore && queue.length - cursor <= 2) {
             loadQuestions();
         }
     }, [cursor, queue]);
