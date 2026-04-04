@@ -1,46 +1,73 @@
-import { fetchQuestions, sendAnswer } from "@/services/questionService";
-import { useEffect, useState } from "react";
+import { fetchQuestions, sendAnswer } from '@/services/questionService';
+import { Question } from '@/types/Question';
+import { useEffect, useState } from 'react';
 
-export function useQuestionSession(topicId: string, type: string) {
-  const [queue, setQueue] = useState<any[]>([]);
-  const [cursor, setCursor] = useState(0);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+type QuestionType = "ORIGINAL" | "SIMPLIFIED";
 
-  async function loadQuestions() {
-    const res = await fetchQuestions();
+export function useQuestionSession(topicId: string, type: QuestionType) {
+    const [queue, setQueue] = useState<Question[]>([]);
+    const [cursor, setCursor] = useState(0);
+    const [selected, setSelected] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [hasMore, setHasMore] = useState(true);
+    const [isFetching, setIsFetching] = useState(false);
 
-    if (!res || !res.data) return;
+    async function loadQuestions() {
 
-    setQueue((prev) => [...prev, ...res.data.questions]);
-    setLoading(false);
-  }
+        if (!isFetching || !hasMore) return;
 
-  useEffect(() => {
-    loadQuestions();
-  }, []);
+        setIsFetching(true);
 
-  useEffect(() => {
-    if (queue.length - cursor <= 2) {
-      loadQuestions();
+        try {
+            const response = await fetchQuestions({
+                topicId,
+                type,
+                limit: 10,
+                excludeAnswered: true,
+            });
+
+            if (response.data === null) {
+                setHasMore(false);
+                return;
+            }
+
+            setQueue(prev => [...prev, ...response.data.questions]);
+        } catch (error) {
+            console.error("Erro ao buscar questões: ", error);
+        } finally {
+            setLoading(false);
+            setIsFetching(false);
+        }
     }
-  }, [cursor]);
 
-  function confirmAnswer() {
-    const current = queue[cursor];
-    if (!current || !selected) return;
+    useEffect(() => {
+        loadQuestions();
+    }, []);
 
-    sendAnswer(current.id, selected);
+    useEffect(() => {
+        if (queue.length - cursor <= 2) {
+            loadQuestions();
+        }
+    }, [cursor]);
 
-    setSelected(null);
-    setCursor((prev) => prev + 1);
-  }
+    function confirmAnswer() {
+        const current = queue[cursor];
+        if (!current || !selected) return;
 
-  return {
-    question: queue[cursor],
-    selected,
-    setSelected,
-    confirmAnswer,
-    loading,
-  };
+        sendAnswer(current.id, selected);
+
+        setSelected(null);
+        setCursor(prev => prev + 1)
+    }
+
+    const question = queue[cursor];
+
+    return {
+        question,
+        selected,
+        setSelected,
+        confirmAnswer,
+        loading,
+        isFinished: !hasMore && cursor >= queue.length,
+    };
 }
