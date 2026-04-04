@@ -11,10 +11,15 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
     const [loading, setLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
     const [isFetching, setIsFetching] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [progress, setProgress] = useState({
+        current: 0,
+        total: 0,
+    });
 
     async function loadQuestions() {
 
-        if (!isFetching || !hasMore) return;
+        if (isFetching || !hasMore) return;
 
         setIsFetching(true);
 
@@ -25,6 +30,10 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
                 limit: 10,
                 excludeAnswered: true,
             });
+
+            if (response.data) {
+                setProgress(response.data.sessionProgress);
+            }
 
             if (response.data === null) {
                 setHasMore(false);
@@ -48,16 +57,38 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
         if (queue.length - cursor <= 2) {
             loadQuestions();
         }
-    }, [cursor]);
+    }, [cursor, queue]);
+
+    function saveFailedAnswer(questionId: string, answer: string){
+        try {
+        const failed = JSON.parse(localStorage.getItem("failedAnswers") || "[]");
+
+        failed.push({ questionId, answer });
+
+        localStorage.setItem("failedAnswers", JSON.stringify(failed))
+        } catch (e) {
+            console.error("Erro ao salvar retry: ", e)
+        }
+    }
 
     function confirmAnswer() {
+        if (isSubmitting) return;
+
         const current = queue[cursor];
         if (!current || !selected) return;
 
-        sendAnswer(current.id, selected);
+        const answer = selected
+
+        setIsSubmitting(true);
+
+        sendAnswer(current.id, answer).catch(() => {
+            saveFailedAnswer(current.id, answer);
+        }).finally(() => {
+            setIsSubmitting(false);
+        });
 
         setSelected(null);
-        setCursor(prev => prev + 1)
+        setCursor(prev => prev + 1);
     }
 
     const question = queue[cursor];
@@ -68,6 +99,8 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
         setSelected,
         confirmAnswer,
         loading,
+        progress,
+        isSubmitting,
         isFinished: !hasMore && cursor >= queue.length,
     };
 }

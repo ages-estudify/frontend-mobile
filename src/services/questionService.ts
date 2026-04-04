@@ -32,20 +32,19 @@ export async function fetchQuestions({
     return data;
 }
 
-export function sendAnswer(questionId: string, answer: string) {
-    fetch(`${BASE_URL}/api/questions/${questionId}/answer`, {
+export async function sendAnswer(questionId: string, answer: string) {
+    const response = await fetch(`${BASE_URL}/api/questions/${questionId}/answer`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            answer,
-        }),
-    }).catch((error) => {
-        console.error("Erro ao enviar resposta: ", error);
-    })
-}
+        body: JSON.stringify({ answer }),
+    });
 
+    if (!response.ok) {
+        throw new Error("Erro ao enviar resposta")
+    }
+}
 
 /* MOCK
 return {
