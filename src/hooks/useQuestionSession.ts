@@ -79,7 +79,7 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
 
       failed.push({ questionId, answer });
 
-      await AsyncStorage.setItem("failedAnwers", JSON.stringify(failed));
+      await AsyncStorage.setItem("failedAnswers", JSON.stringify(failed));
 
       console.log("Resposta salva offline para retry futuro:", questionId);
     } catch (e) {
@@ -103,19 +103,19 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
       })
       .finally(() => {
         setIsSubmitting(false);
-
-        setProgress((prev) => ({
-          ...prev,
-          current: prev.current + 1,
-        }));
-
-        if (onSuccess) {
-          onSuccess();
-        }
       });
 
     setSelected(null);
     setCursor((prev) => prev + 1);
+
+    setProgress((prev) => ({
+      ...prev,
+      current: prev.current + 1,
+    }));
+
+    if (onSuccess) {
+      onSuccess();
+    }
   }
 
   const question = queue[cursor];
