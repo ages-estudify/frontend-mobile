@@ -47,8 +47,8 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-white">
-      <View className="w-[95%] flex-1 gap-[10px] self-center">
+    <SafeAreaView className="flex-1 bg-whitebg dark:bg-whitebg">
+      <View className="flex-1 gap-[10px] self-center px-[16px]">
         <Image
           source={require("../assets/images/placeholder_user.png")}
           style={{ width: 40, height: 40 }}

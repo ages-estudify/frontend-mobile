@@ -1,7 +1,7 @@
 export interface Subject {
   id: string;
   name: string;
-  icon: string;
+  icon_url: string;
   totalQuestions: number;
   answeredQuestions: number;
 }
@@ -9,8 +9,8 @@ export interface Subject {
 export interface Topic {
   id: string;
   name: string;
-  icon: string;
-  description: string;
+  icon_url: string;
+  text: string;
   availableByType: {
     ORIGINAL: number;
     SIMPLIFIED: number;

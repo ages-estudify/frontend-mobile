@@ -1,6 +1,6 @@
 import { Subject } from "@/types/subject.types";
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import SubjectBox from "./SubjectBox";
 
 export interface SubjectsGridProps {
@@ -9,18 +9,19 @@ export interface SubjectsGridProps {
 
 export function SubjectsGrid({ subjects }: SubjectsGridProps) {
   return (
-    <ScrollView className="gap-[8px]">
+    <View className="mt-[8px] gap-[8px]">
       <Text className="font-inter-semi text-[15px]">Categorias</Text>
-      <View className="grid grid-cols-3">
+      <View className="flex flex-row flex-wrap justify-between">
         {subjects.map((subject) => (
-          <SubjectBox
-            key={subject.id}
-            subject={subject.name}
-            icon={subject.icon}
-            href={`/subject?id=${subject.id}&name=${subject.name}`}
-          />
+          <View key={subject.id} className="mb-[16px]">
+            <SubjectBox
+              subject={subject.name}
+              icon={subject.icon_url}
+              href={`/subject?id=${subject.id}&name=${subject.name}`}
+            />
+          </View>
         ))}
       </View>
-    </ScrollView>
+    </View>
   );
 }

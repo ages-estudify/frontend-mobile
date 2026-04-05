@@ -1,7 +1,6 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { Pressable, Text, View } from "react-native";
-import Placeholder from "../../assets/icons/placeholder_subject.svg";
+import { Image, Pressable, Text, View } from "react-native";
 
 interface SubjectBoxProps {
   subject: string;
@@ -17,7 +16,7 @@ export default function SubjectBox({ subject, icon, href }: SubjectBoxProps) {
       onPress={() => router.navigate(href)}
     >
       <View className="flex-column items-center justify-center gap-[5px]">
-        <Placeholder width={32} height={32} />
+        <Image source={{ uri: icon }} className="h-[32px] w-[32px]" />
         <Text className="font-inter text-[13px] text-purple100">{subject}</Text>
       </View>
     </Pressable>

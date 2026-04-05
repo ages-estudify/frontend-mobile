@@ -7,7 +7,7 @@ export function BackButton() {
   const router = useRouter();
   return (
     <Pressable
-      className="h-[50px] w-[50px] items-center justify-center rounded-full bg-white"
+      className="mt-[8px] h-[50px] w-[50px] items-center justify-center rounded-full bg-white"
       onPress={() => router.back()}
     >
       <BackArrowIcon width={16} height={16} />

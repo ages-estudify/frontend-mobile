@@ -55,7 +55,7 @@ export function TopicStep({
   return (
     <Pressable className="w-[370px] flex-row items-center gap-[16px]" onPress={onPress}>
       <View className="h-[63px] w-[63px] items-center justify-center rounded-full bg-purple84">
-        <Image />
+        <Image source={{ uri: icon }} className="h-[32px] w-[32px]" />
       </View>
       <View className="flex-column flex-1 gap-[2px] text-start">
         <Text className={`font-inter-medium ${textColorMap[textColor]} text-[13px]`}>
