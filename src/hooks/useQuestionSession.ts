@@ -5,6 +5,21 @@ import { useEffect, useState } from "react";
 
 type QuestionType = "ORIGINAL" | "SIMPLIFIED";
 
+async function saveFailedAnswer(questionId: string, answer: string) {
+  try {
+    const storedData = await AsyncStorage.getItem("failedAnswers");
+    const failed = storedData ? JSON.parse(storedData) : [];
+
+    failed.push({ questionId, answer });
+
+    await AsyncStorage.setItem("failedAnswers", JSON.stringify(failed));
+
+    console.log("Resposta salva offline para retry futuro:", questionId);
+  } catch (e) {
+    console.error("Erro ao salvar retry no AsyncStorage:", e);
+  }
+}
+
 export function useQuestionSession(topicId: string, type: QuestionType) {
   const [queue, setQueue] = useState<Question[]>([]);
   const [cursor, setCursor] = useState(0);
@@ -71,21 +86,6 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
       loadQuestions();
     }
   }, [cursor, queue]);
-
-  async function saveFailedAnswer(questionId: string, answer: string) {
-    try {
-      const storedData = await AsyncStorage.getItem("failedAnswers");
-      const failed = storedData ? JSON.parse(storedData) : [];
-
-      failed.push({ questionId, answer });
-
-      await AsyncStorage.setItem("failedAnswers", JSON.stringify(failed));
-
-      console.log("Resposta salva offline para retry futuro:", questionId);
-    } catch (e) {
-      console.error("Erro ao salvar retry no AsyncStorage:", e);
-    }
-  }
 
   function confirmAnswer(onSuccess?: () => void) {
     if (isSubmitting) return;
