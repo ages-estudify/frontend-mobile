@@ -1,4 +1,5 @@
 import { useQuestionSession } from "@/hooks/useQuestionSession";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -7,6 +8,14 @@ export default function QuestionScreen() {
     useQuestionSession("1", "ORIGINAL");
 
   const [expanded, setExpanded] = useState(false);
+  const router = useRouter();
+
+  const handleConfirm = () => {
+    confirmAnswer(() => {
+      console.log("Navegando para gabarito da questão de ID ", question.id);
+      //router.push(`/gabarito/${question.id}`)
+    })
+  }
 
   if (loading) {
     return (
@@ -44,7 +53,7 @@ export default function QuestionScreen() {
         </Text>
         <View className="h-1.5 bg-gray-300 rounded-full overflow-hidden">
           <View className="h-1.5 bg-greenGrid"
-            style={{ width: `${((progress.current - 1) / progress.total) * 100}%` }}
+            style={{ width: `${(progress.current / progress.total) * 100}%` }}
           />
         </View>
       </View>
@@ -93,7 +102,7 @@ export default function QuestionScreen() {
             <TouchableOpacity
               onPress={() => setExpanded(false)}
               className="w-10 h-10 rounded-full bg-purpleCalm items-center justify-center absolute top-6 right-6">
-              <Text className="text-lg">X</Text>
+              <Text className="text-lg text-white">X</Text>
             </TouchableOpacity>
 
             {/* Scroll */}
@@ -146,9 +155,9 @@ export default function QuestionScreen() {
 
       {/* Button */}
       <TouchableOpacity
-        onPress={confirmAnswer}
+        onPress={handleConfirm}
         disabled={!selected}
-        className={`p-4 rounded-xl ${selected ? "bg-purpleCalm" : "bg-gray-400"
+        className={`p-4 rounded-xl mt-auto mb-4 ${selected ? "bg-purpleCalm" : "bg-gray-400"
           }`}
       >
         <Text className="text-white text-center font-bold">Enviar</Text>

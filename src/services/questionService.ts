@@ -2,7 +2,8 @@ import { FetchQuestionsResponse } from "@/types/Question";
 
 const BASE_URL = "http://localhost:3000";
 const USE_MOCK = true;
-let mockCounter = 1;
+let mockNextId = 1;
+let mockAnsweredCount = 0;
 
 type FetchParams = {
   topicId: string;
@@ -18,16 +19,21 @@ export async function fetchQuestions({
   excludeAnswered = true,
 }: FetchParams): Promise<FetchQuestionsResponse> {
   if (USE_MOCK) {
-    await new Promise((r) => setTimeout(r, 500)); // Loading
+    await new Promise((r) => setTimeout(r, 500)); // Simulando loading
 
-    if (mockCounter > 20) {
+    if (mockNextId > 20) {
       return {
         data: null,
       };
     }
 
-    const questions = Array.from({ length: 1 }).map(() => {
-      const id = String(mockCounter++);
+    // Calcula questões que o mock deve gerar
+    // Se pedir o limit (10), e ainda faltar 20, gera 10
+    // Se faltar só 2, gera só 2.
+    const questionsToGenerate = Math.min(limit, 20 - mockNextId + 1);
+
+    const questions = Array.from({ length: questionsToGenerate }).map(() => {
+      const id = String(mockNextId++);
 
       return {
         id,
@@ -49,7 +55,7 @@ export async function fetchQuestions({
       data: {
         questions,
         sessionProgress: {
-          current: Math.min(mockCounter - 1, 20),
+          current: mockAnsweredCount,
           total: 20,
         },
       },
@@ -76,6 +82,7 @@ export async function fetchQuestions({
 export async function sendAnswer(questionId: string, answer: string) {
   if (USE_MOCK) {
     console.log("Mock enviado: ", questionId, "-", answer);
+    mockAnsweredCount++;
     return;
   }
 

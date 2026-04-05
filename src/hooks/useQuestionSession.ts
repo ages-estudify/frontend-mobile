@@ -87,7 +87,7 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
     }
   }
 
-  function confirmAnswer() {
+  function confirmAnswer(onSuccess?: () => void) {
     if (isSubmitting) return;
 
     const current = queue[cursor];
@@ -103,6 +103,15 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
       })
       .finally(() => {
         setIsSubmitting(false);
+
+        setProgress((prev) => ({
+          ...prev,
+          current: prev.current + 1,
+        }));
+
+        if (onSuccess) {
+          onSuccess();
+        }
       });
 
     setSelected(null);
