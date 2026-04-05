@@ -1,5 +1,6 @@
 import { fetchQuestions, sendAnswer } from "@/services/questionService";
 import { Question } from "@/types/Question";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 
 type QuestionType = "ORIGINAL" | "SIMPLIFIED";
@@ -71,15 +72,18 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
     }
   }, [cursor, queue]);
 
-  function saveFailedAnswer(questionId: string, answer: string) {
+  async function saveFailedAnswer(questionId: string, answer: string) {
     try {
-      const failed = JSON.parse(localStorage.getItem("failedAnswers") || "[]");
+      const storedData = await AsyncStorage.getItem("failedAnswers");
+      const failed = storedData ? JSON.parse(storedData) : [];
 
       failed.push({ questionId, answer });
 
-      localStorage.setItem("failedAnswers", JSON.stringify(failed));
+      await AsyncStorage.setItem("failedAnwers", JSON.stringify(failed));
+
+      console.log("Resposta salva offline para retry futuro:", questionId);
     } catch (e) {
-      console.error("Erro ao salvar retry: ", e);
+      console.error("Erro ao salvar retry no AsyncStorage:", e);
     }
   }
 
