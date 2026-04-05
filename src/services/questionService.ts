@@ -20,19 +20,21 @@ export async function fetchQuestions({
   if (USE_MOCK) {
     await new Promise((r) => setTimeout(r, 500)); // Loading
 
-    if (mockCounter > 12) {
+    if (mockCounter > 20) {
       return {
         data: null,
-        message: "Todas as questões foram respondidas",
       };
     }
 
-    const questions = Array.from({ length: 3 }).map(() => {
+    const questions = Array.from({ length: 1 }).map(() => {
       const id = String(mockCounter++);
 
       return {
         id,
-        text: `Pergunta mock ${id}`,
+        text: `Mock ${id} - Leia o texto abaixo:
+        A Revolução Industrial foi um período de grandes transformações econômicas e sociais, que teve início na Inglaterra no século XVIII. Esse processo marcou a transição de uma economia agrária para uma economia industrializada, baseada na mecanização da produção e no uso intensivo de energia.
+        Com o avanço das tecnologias, houve um aumento significativo na produção de bens, o que contribuiu para o crescimento das cidades e a formação de uma nova classe trabalhadora urbana. No entanto, também surgiram diversos problemas sociais, como jornadas de trabalho exaustivas, baixos salários e condições precárias nas fábricas.
+        Considerando o contexto apresentado, assinale a alternativa correta sobre os impactos da Revolução Industrial:`,
         type,
         alternatives: [
           { label: "A", text: "Opção A" },
@@ -47,8 +49,8 @@ export async function fetchQuestions({
       data: {
         questions,
         sessionProgress: {
-          current: Math.min(mockCounter - 1, 12),
-          total: 12,
+          current: Math.min(mockCounter - 1, 20),
+          total: 20,
         },
       },
     };
@@ -73,7 +75,7 @@ export async function fetchQuestions({
 
 export async function sendAnswer(questionId: string, answer: string) {
   if (USE_MOCK) {
-    console.log("Mock enviado: ", questionId, answer);
+    console.log("Mock enviado: ", questionId, "-", answer);
     return;
   }
 

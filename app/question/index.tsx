@@ -1,11 +1,14 @@
 import { useQuestionSession } from "@/hooks/useQuestionSession";
-import { Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function QuestionScreen() {
-  const { question, selected, setSelected, confirmAnswer, loading } =
+  const { question, selected, setSelected, confirmAnswer, loading, progress } =
     useQuestionSession("1", "ORIGINAL");
 
-  if (loading || !question) {
+  const [expanded, setExpanded] = useState(false);
+
+  if (loading) {
     return (
       <View className="flex-1 items-center justify-center">
         <Text>Carregando...</Text>
@@ -13,21 +16,102 @@ export default function QuestionScreen() {
     );
   }
 
+  if (!question) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text>Todas as questões foram respondidas</Text>
+      </View>
+    )
+  }
+
   return (
-    <View className="flex-1 p-4 bg-gray-100 justify-between">
-      {/* Progresso */}
-      <View className="h-2 bg-gray-300 rounded-full overflow-hidden">
-        <View className="h2- bg-purple-600 w-1/3" />
+    <View className="flex-1 p-4 bg-gray-50 justify-normal">
+
+      {/* Top Buttons */}
+      <View className="flex-row justify-between items-center mb-4">
+        <TouchableOpacity className="w-12 h-12 rounded-full bg-white shadow-sm items-center justify-center">
+          <Text className="text-3xl text-black">←</Text>
+        </TouchableOpacity>
+        <TouchableOpacity className="w-12 h-12 rounded-full bg-white shadow-sm items-center justify-center">
+          <Text className="text-3xl text-black">▦</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Card da questão */}
-      <View className="bg-white rounded-2x1 p-5 shadow-md mt-6">
-        <Text className="text-lg font-semibold text-gray-800">
+      {/* Progress Bar*/}
+      <View className="mb-1">
+        <Text className="text-right text-sm text-gray-400 font-medium mt-1">
+          {progress.current} / {progress.total}
+        </Text>
+        <View className="h-1.5 bg-gray-300 rounded-full overflow-hidden">
+          <View className="h-1.5 bg-greenGrid"
+            style={{ width: `${((progress.current - 1) / progress.total) * 100}%` }}
+          />
+        </View>
+      </View>
+
+      {/* Question Card */}
+      <View className="bg-white rounded-2xl p-3 border border-gray-300 mt-4">
+
+        {/* Tags */}
+        <View className="flex-row flex-wrap gap-2 mb-4">
+          <View className="border border-gray-400 bg-gray-100 rounded-md px-2 py-1 bg-white">
+            <Text className="text-[10px] text-gray-400 font-medium">Questão Estudify</Text>
+          </View>
+          <View className="border border-green-400 bg-green-100 rounded-md px-2 py-1 bg-white">
+            <Text className="text-[10px] text-green-500 font-medium">Matéria</Text>
+          </View>
+          <View className="border border-blue-400 bg-blue-100 rounded-md px-2 py-1 bg-white">
+            <Text className="text-[10px] text-blue-500 font-medium">Submatéria</Text>
+          </View>
+        </View>
+        <Text className="text-lg font-bold text-gray-800 mb-1">
+          Questão {question.id}
+        </Text>
+        <Text className="text-base font-normal text-gray-600 leading-6" numberOfLines={6}>
           {question.text}
         </Text>
+        <TouchableOpacity
+          activeOpacity={0.6}
+          onPress={() => setExpanded(true)}
+          className="items-end">
+          <Text className="text-3xl text-gray-500 rotate-90">⤢</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Alternativas */}
+      {/* Modal */}
+      <Modal visible={expanded} transparent animationType="fade">
+        <View className="flex-1 bg-black/20 justify-center items-center">
+          <TouchableOpacity
+            className="absolute inset-0 bg-black/50"
+            onPress={() => setExpanded(false)}
+          />
+
+          {/* Content */}
+          <View className="bg-white w-[90%] h-[85%] rounded-xl p-6">
+
+            {/* Close Button */}
+            <TouchableOpacity
+              onPress={() => setExpanded(false)}
+              className="w-10 h-10 rounded-full bg-purpleCalm items-center justify-center absolute top-6 right-6">
+              <Text className="text-lg">X</Text>
+            </TouchableOpacity>
+
+            {/* Scroll */}
+            <ScrollView className="mt-6"
+              showsVerticalScrollIndicator={true}>
+              <Text className="text-xl font-bold text-gray-800 mb-2">
+                Questão {question.id}
+              </Text>
+              <Text className="text-sm font-normal text-gray-800">
+                {question.text}
+              </Text>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+
+      {/* Alternatives */}
       <View className="mt-6">
         {question.alternatives.map((alt) => {
           const isSelected = selected === alt.label;
@@ -35,17 +119,15 @@ export default function QuestionScreen() {
             <TouchableOpacity
               key={alt.label}
               onPress={() => setSelected(alt.label)}
-              className={`p-4 mb-3 rounded-xl border ${
-                isSelected
-                  ? "bg-purple-100 border-purple-600"
-                  : "bg-white border-gray-300"
-              }`}
+              className={`p-2 mb-3 rounded-xl border ${isSelected
+                ? "bg-white border-purpleCalm"
+                : "bg-white border-gray-300"
+                }`}
             >
               <View className="flex-row items-center space-x-3">
                 <View
-                  className={`w-8 h-8 rounded-full items-center justify-center ${
-                    isSelected ? "bg-[#5E4980]" : "bg-gray-400"
-                  }`}
+                  className={`w-8 h-8 rounded-full items-center justify-center ${isSelected ? "bg-purpleCalm" : "bg-gray-400"
+                    }`}
                 >
                   <Text
                     className={`font-bold ${isSelected ? "text-white" : "text-gray-700"}`}
@@ -53,7 +135,7 @@ export default function QuestionScreen() {
                     {alt.label}
                   </Text>
                 </View>
-                <Text className="text-black flex items-center justify-center">
+                <Text className="text-black flex-1 items-center justify-center">
                   {alt.text}
                 </Text>
               </View>
@@ -62,53 +144,15 @@ export default function QuestionScreen() {
         })}
       </View>
 
-      {/* Botão */}
+      {/* Button */}
       <TouchableOpacity
         onPress={confirmAnswer}
         disabled={!selected}
-        className={`p-4 rounded-xl ${
-          selected ? "bg-purple-600" : "bg-gray-400"
-        }`}
+        className={`p-4 rounded-xl ${selected ? "bg-purpleCalm" : "bg-gray-400"
+          }`}
       >
         <Text className="text-white text-center font-bold">Enviar</Text>
       </TouchableOpacity>
-    </View>
+    </View >
   );
-}
-
-{
-  /*
-            <Text className="text-align mb-4 ">{question.text}</Text>
-            {question.alternatives.map((alt) => (
-                <TouchableOpacity
-                    key={alt.label}
-                    onPress={() => setSelected(alt.label)}
-                    className={`p-4 mb-2 rounded-xl ${selected === alt.label ? 'border-2 border-[#5E4980] bg-white' : 'border-2 border-gray-200 bg-white'
-                        }`
-                    }
-                >
-                    <View className='space-x-2 flex flex-row'>
-                        <Text className='bg-[#5E4980] rounded-full w-8 h-8 flex items-center justify-center'>
-                            {alt.label}
-                        </Text>
-                        <Text className='text-black flex items-center justify-center'>
-                            {alt.text}
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-            ))}
-
-            <TouchableOpacity
-                onPress={confirmAnswer}
-                disabled={!selected}
-                className={`mt-4 p-4 rounded-xl ${selected ? 'bg-[#5E4980]' : 'bg-gray-400'
-                    }`}
-            >
-                <Text className="text-center">
-                    Enviar
-                </Text>
-            </TouchableOpacity>
-        </View>
-    )
-        */
 }
