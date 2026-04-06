@@ -1,7 +1,7 @@
 import { useQuestionSession } from "@/hooks/useQuestionSession";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
-import QuestionScreen from "./index";
+import QuestionScreen from "../index";
 
 jest.mock("expo-router", () => ({
     useRouter: () => ({
@@ -11,8 +11,8 @@ jest.mock("expo-router", () => ({
 }));
 
 
-jest.mock("../../assets/icons/back-arrow.svg", () => () => null);
-jest.mock("../../assets/icons/expand.svg", () => () => null);
+jest.mock("../../../assets/icons/back-arrow.svg", () => () => null);
+jest.mock("../../../assets/icons/expand.svg", () => () => null);
 
 jest.mock("@/hooks/useQuestionSession");
 
@@ -21,7 +21,7 @@ const mockQuestion = {
     text: "Qual é o objetivo da fotossíntese?",
     imageUrl: null,
     type: "ORIGINAL",
-    foreing: false,
+    foreign: false,
     subjectName: "Biologia",
     topicName: "Botânica",
     alternatives: [

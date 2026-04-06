@@ -48,4 +48,5 @@ app-example
 .envcoverage/
 
 
+# Tests
 coverage/

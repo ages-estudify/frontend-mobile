@@ -1,4 +1,4 @@
-import { fetchQuestions, sendAnswer } from "./questionService";
+import { fetchQuestions, sendAnswer } from "../questionService";
 
 global.fetch = jest.fn();
 

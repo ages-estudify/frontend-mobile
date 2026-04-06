@@ -11,8 +11,8 @@ interface QuestionCardProps {
 export default function QuestionCard({ question }: QuestionCardProps) {
     const [expanded, setExpanded] = useState(false);
 
-    const originTag = question.foreing ? "Questão Vestibular" : "Questão Estudify";
-
+    const originTag = question.origin === "ORIGINAL" ? "Questão Estudify" : "Questão Vestibular";
+    
     return (
         <>
             {/* Question Card */}

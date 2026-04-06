@@ -7,8 +7,7 @@ export type Question = {
   id: string;
   text: string;
   imageUrl?: string | null;
-  type: "ORIGINAL" | "SIMPLIFIED";
-  foreing: boolean;
+  origin: "ORIGINAL" | "SIMPLIFIED";
   subjectName: string;
   topicName: string;
   alternatives: Alternative[];
@@ -23,4 +22,4 @@ export type FetchQuestionsResponse = {
     };
   } | null;
   message?: string;
-}
+};

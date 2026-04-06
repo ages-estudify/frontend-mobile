@@ -11,8 +11,7 @@ const mockQuestion: Question = {
     id: "uuid-123",
     text: "Qual a fórmula da água?",
     imageUrl: null,
-    type: "ORIGINAL",
-    foreing: false,
+    origin: "ORIGINAL",
     subjectName: "Química",
     topicName: "Inorgânica",
     alternatives: [
@@ -34,8 +33,8 @@ describe("QuestionCard Component", () => {
         expect(screen.getByText("Qual a fórmula da água?")).toBeTruthy();
     });
 
-    it("deve renderizar a tag 'Questão Vestibular' quando foreing for true", () => {
-        const mockVestibular = { ...mockQuestion, foreing: true };
+    it("deve renderizar a tag 'Questão Vestibular' quando origin for 'SIMPLIFIED'", () => {
+        const mockVestibular = { ...mockQuestion, origin: 'SIMPLIFIED' as const };
 
         render(<QuestionCard question={mockVestibular} />);
 
