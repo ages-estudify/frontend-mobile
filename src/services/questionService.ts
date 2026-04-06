@@ -8,6 +8,9 @@ let mockAnsweredCount = 0;
 type FetchParams = {
   topicId: string;
   type: "ORIGINAL" | "SIMPLIFIED";
+  foreing: boolean;
+  subjectName: string;
+  topicName: string;
   limit?: number;
   excludeAnswered?: boolean;
 };
@@ -42,12 +45,30 @@ export async function fetchQuestions({
         Com o avanço das tecnologias, houve um aumento significativo na produção de bens, o que contribuiu para o crescimento das cidades e a formação de uma nova classe trabalhadora urbana. No entanto, também surgiram diversos problemas sociais, como jornadas de trabalho exaustivas, baixos salários e condições precárias nas fábricas.
         Considerando o contexto apresentado, assinale a alternativa correta sobre os impactos da Revolução Industrial:`,
         type,
+        foreing: true,
+        subjectName: "História",
+        topicName: "Contemporânea",
         alternatives: [
-          { label: "A", text: "Opção A" },
-          { label: "B", text: "Opção B" },
-          { label: "C", text: "Opção C" },
-          { label: "D", text: "Opção D" },
-          { label: "E", text: "Opção E" },
+          {
+            label: "A",
+            text: "Opção A - Texto grande para visualização de resposta grande",
+          },
+          {
+            label: "B",
+            text: "Opção B - Texto grande para visualização de resposta grande",
+          },
+          {
+            label: "C",
+            text: "Opção C - Texto grande para visualização de resposta grande",
+          },
+          {
+            label: "D",
+            text: "Opção D - Texto grande para visualização de resposta grande",
+          },
+          {
+            label: "E",
+            text: "Opção E - Texto grande para visualização de resposta grande",
+          },
         ],
       };
     });

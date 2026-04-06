@@ -11,6 +11,8 @@ interface QuestionCardProps {
 export default function QuestionCard({ question }: QuestionCardProps) {
     const [expanded, setExpanded] = useState(false);
 
+    const originTag = question.foreing ? "Questão Vestibular" : "Questão Estudify";
+
     return (
         <>
             {/* Question Card */}
@@ -18,13 +20,13 @@ export default function QuestionCard({ question }: QuestionCardProps) {
                 {/* Tags */}
                 <View className="flex-row flex-wrap gap-2 mb-4">
                     <View className="border border-gray-400 bg-gray-100 rounded-md px-2 py-1 bg-white">
-                        <Text className="text-[10px] text-gray-400 font-medium">Questão Estudify</Text>
+                        <Text className="text-[10px] text-gray-400 font-medium">{originTag}</Text>
                     </View>
                     <View className="border border-green-400 bg-green-100 rounded-md px-2 py-1 bg-white">
-                        <Text className="text-[10px] text-green-500 font-medium">Matéria</Text>
+                        <Text className="text-[10px] text-green-500 font-medium">{question.subjectName}</Text>
                     </View>
                     <View className="border border-blue-400 bg-blue-100 rounded-md px-2 py-1 bg-white">
-                        <Text className="text-[10px] text-blue-500 font-medium">Submatéria</Text>
+                        <Text className="text-[10px] text-blue-500 font-medium">{question.topicName}</Text>
                     </View>
                 </View>
 

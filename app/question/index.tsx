@@ -5,7 +5,6 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 import BackArrowIcon from "../../assets/icons/back-arrow.svg";
-import GridMenuIcon from "../../assets/icons/grid-menu.svg";
 
 export default function QuestionScreen() {
   const { question, selected, setSelected, confirmAnswer, loading, progress } =
@@ -43,9 +42,6 @@ export default function QuestionScreen() {
       <View className="flex-row justify-between items-center mb-4">
         <TouchableOpacity className="w-12 h-12 rounded-full bg-white shadow-sm items-center justify-center">
           <BackArrowIcon width={24} height={24} />
-        </TouchableOpacity>
-        <TouchableOpacity className="w-12 h-12 rounded-full bg-white shadow-sm items-center justify-center">
-          <GridMenuIcon width={22} height={22} />
         </TouchableOpacity>
       </View>
 

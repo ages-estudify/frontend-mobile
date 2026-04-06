@@ -8,6 +8,9 @@ export type Question = {
   text: string;
   imageUrl?: string | null;
   type: "ORIGINAL" | "SIMPLIFIED";
+  foreing: boolean;
+  subjectName: string;
+  topicName: string;
   alternatives: Alternative[];
 };
 
