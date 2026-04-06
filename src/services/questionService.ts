@@ -8,9 +8,6 @@ let mockAnsweredCount = 0;
 type FetchParams = {
   topicId: string;
   type: "ORIGINAL" | "SIMPLIFIED";
-  foreing: boolean;
-  subjectName: string;
-  topicName: string;
   limit?: number;
   excludeAnswered?: boolean;
 };

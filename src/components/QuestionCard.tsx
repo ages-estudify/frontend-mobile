@@ -39,6 +39,7 @@ export default function QuestionCard({ question }: QuestionCardProps) {
                 </Text>
 
                 <TouchableOpacity
+                    testID="botao-expandir"
                     activeOpacity={0.6}
                     onPress={() => setExpanded(true)}
                     className="items-end">

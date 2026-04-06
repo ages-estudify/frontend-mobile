@@ -30,7 +30,7 @@ export default function QuestionScreen() {
   if (!question) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text>Todas as questões foram respondidas</Text>
+        <Text>Todas as questões deste tipo foram respondidas neste tópico</Text>
       </View>
     )
   }
