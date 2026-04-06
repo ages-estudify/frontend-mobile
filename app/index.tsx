@@ -1,4 +1,4 @@
-import { SequenceStatus } from "@/components/SequenceStatus";
+import { StarBadgeContainer } from "@/components/StarBadgeContainer";
 import { SubjectsGrid } from "@/components/SubjectsGrid";
 import { useAuth } from "@/hooks/useAuth";
 import { getSubjects } from "@/services/subject/subject.service";
@@ -6,7 +6,6 @@ import { Subject } from "@/types/subject.types";
 import { RelativePathString, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const [subjects, setSubjects] = React.useState<Subject[]>([]);
@@ -56,7 +55,8 @@ export default function HomeScreen() {
           resizeMode="contain"
         />
         <Text className="font-poppins-semi text-[34px]">Treinar</Text>
-        <SequenceStatus></SequenceStatus>
+        <StarBadgeContainer variant="treinar" />
+        <StarBadgeContainer variant="treinar" />
         <SubjectsGrid subjects={subjects}></SubjectsGrid>
       </View>
     </SafeAreaView>

@@ -19,10 +19,10 @@ module.exports = {
         purple100: "#3E2B5C",
         lightOrange: "#FFE6C580",
         orange: "#FFD195",
-        lightYellow: "#FFFAC180",
-        yellow: "#FFDE59",
         purple50: "#3E2B5C80",
         whitebg: "#F6F6F6",
+        yellowStarCard: "#FFFAC1",
+        yellowStarCardBorder: "#FFDE59",
       },
       fontFamily: {
         poppins: ["Poppins-Regular"],
