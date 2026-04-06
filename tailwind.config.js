@@ -14,6 +14,7 @@ module.exports = {
         purpleCalm: "#5E4980",
         white: "#FFFFFF",
         primaryGray: "#646464",
+        purple100: "#3E2B5C",
       },
     },
   },
