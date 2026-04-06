@@ -9,15 +9,66 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [birthDateText, setBirthDateText] = useState("");
+
+  // 👉 Formata enquanto digita: DD/MM/AAAA
+  function formatDate(text: string) {
+    const cleaned = text.replace(/\D/g, "");
+
+    if (cleaned.length <= 2) return cleaned;
+    if (cleaned.length <= 4)
+      return `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
+
+    return `${cleaned.slice(0, 2)}/${cleaned.slice(
+      2,
+      4
+    )}/${cleaned.slice(4, 8)}`;
+  }
+
+  // 👉 Converte para AAAA-MM-DD
+  function parseBirthDate(date: string): string | null {
+    const [day, month, year] = date.split("/").map(Number);
+
+    if (!day || !month || !year) return null;
+
+    const parsed = new Date(year, month - 1, day);
+
+    if (
+      parsed.getFullYear() !== year ||
+      parsed.getMonth() !== month - 1 ||
+      parsed.getDate() !== day
+    ) {
+      return null;
+    }
+
+    const yyyy = parsed.getFullYear();
+    const mm = String(parsed.getMonth() + 1).padStart(2, "0");
+    const dd = String(parsed.getDate()).padStart(2, "0");
+
+    return `${yyyy}-${mm}-${dd}`;
+  }
 
   function handleRegister() {
-    if (!fullName || !email || !phone || !password || !confirmPassword) {
+    if (
+      !fullName ||
+      !email ||
+      !phone ||
+      !password ||
+      !confirmPassword ||
+      !birthDateText
+    ) {
       alert("Preencha todos os campos");
+      return;
+    }
+
+    if (password.length < 8) {
+      alert("A senha deve ter no mínimo 8 caracteres");
       return;
     }
 
@@ -26,25 +77,32 @@ export default function RegisterScreen() {
       return;
     }
 
+    const parsedBirthDate = parseBirthDate(birthDateText);
+
+    if (!parsedBirthDate) {
+      alert("Data de nascimento inválida");
+      return;
+    }
+
     const registerRequest: RegisterRequest = {
       fullName,
       email,
       password,
       phone,
-      birthDate: new Date().toISOString(),
+      birthDate: parsedBirthDate, // ✅ AAAA-MM-DD
     };
+
     register(registerRequest);
     console.log("RegisterRequest:", registerRequest);
   }
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6 pt-20">
-        {/* Título */}
         <Text className="text-4xl font-bold text-center text-[#3F2A66] mb-16">
           Cadastro
         </Text>
 
-        {/* Nome */}
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Nome</Text>
           <TextInput
@@ -55,7 +113,6 @@ export default function RegisterScreen() {
           />
         </View>
 
-        {/* Email */}
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Email</Text>
           <TextInput
@@ -68,7 +125,20 @@ export default function RegisterScreen() {
           />
         </View>
 
-        {/* Número */}
+        <View className="mb-8">
+          <Text className="mb-1 font-bold text-[#3F2A66]">
+            Data de Nascimento
+          </Text>
+          <TextInput
+            placeholder="DD/MM/AAAA"
+            keyboardType="numeric"
+            maxLength={10}
+            value={birthDateText}
+            onChangeText={(text) => setBirthDateText(formatDate(text))}
+            className="h-12 px-4 border border-neutral-300 rounded-lg"
+          />
+        </View>
+
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Número</Text>
           <TextInput
@@ -80,7 +150,6 @@ export default function RegisterScreen() {
           />
         </View>
 
-        {/* Senha */}
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Senha</Text>
           <View className="flex-row items-center border border-neutral-300 rounded-lg px-4 h-12">
@@ -101,7 +170,6 @@ export default function RegisterScreen() {
           </View>
         </View>
 
-        {/* Confirmar Senha */}
         <View className="mb-14">
           <Text className="mb-1 font-bold text-[#3F2A66]">Confirmar Senha</Text>
           <View className="flex-row items-center border border-neutral-300 rounded-lg px-4 h-12">
@@ -124,7 +192,6 @@ export default function RegisterScreen() {
           </View>
         </View>
 
-        {/* Botão */}
         <Pressable
           onPress={handleRegister}
           className="h-12 bg-[#3F2A66] rounded-full justify-center items-center"
@@ -132,7 +199,6 @@ export default function RegisterScreen() {
           <Text className="text-white font-semibold text-base">Confirmar</Text>
         </Pressable>
 
-        {/* Voltar */}
         <Pressable onPress={() => router.back()} className="mt-4 items-center">
           <Text className="text-[#3F2A66] font-medium">‹ Voltar</Text>
         </Pressable>
