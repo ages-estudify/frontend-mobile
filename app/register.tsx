@@ -78,31 +78,6 @@ export default function RegisterScreen() {
           />
         </View>
 
-        {/*  */}
-        <View className="mb-8">
-          <Text className="mb-1 font-bold text-[#3F2A66]">Número</Text>
-          <TextInput
-            placeholder="55 11 99999-9999"
-            keyboardType="phone-pad"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-            className="h-12 rounded-lg border border-neutral-300 px-4"
-          />
-        </View>
-
-        {/* Número */}
-        <View className="mb-8">
-          <Text className="mb-1 font-bold text-[#3F2A66]">Número</Text>
-          <TextInput
-            placeholder="55 11 99999-9999"
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={setPhone}
-            className="h-12 rounded-lg border border-neutral-300 px-4"
-          />
-        </View>
-
         {/* Senha */}
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Senha</Text>
