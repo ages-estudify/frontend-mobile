@@ -16,7 +16,8 @@ export default function RootLayout() {
             headerShown: false,
           }}
         >
-          <Stack.Screen name="login" options={{ title: "LoginPage" }} />
+          <Stack.Screen name="index" options={{ title: "LoginPage" }} />
+          <Stack.Screen name="progress" options={{ title: "ProgressPage" }} />
         </Stack>
         <StatusBar style="auto" />
       </SafeAreaProvider>

@@ -6,14 +6,17 @@ interface TextInputWithTitleProps {
   title: string;
   placeholder: string;
   isPassword?: boolean;
+  text: string;
+  onValueChange: (text: string) => void;
 }
 
 export function TextInputWithTitle({
   title,
   placeholder,
   isPassword = false,
+  text,
+  onValueChange,
 }: TextInputWithTitleProps) {
-  const [text, setText] = useState("");
   const [showPassword, setShowPassword] = useState(true);
 
   return (
@@ -32,9 +35,9 @@ export function TextInputWithTitle({
       <View className="relative">
         <TextInput
           value={text}
-          onChangeText={setText}
+          onChangeText={onValueChange}
           placeholder={placeholder}
-          secureTextEntry={isPassword && !showPassword}
+          secureTextEntry={isPassword && showPassword}
           className="border rounded-2xl border-gray-300 py-3 px-4"
         />
         {isPassword && (
