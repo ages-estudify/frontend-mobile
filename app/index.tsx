@@ -1,5 +1,5 @@
 import { ActionButton } from "@/components/ActionButton";
-import { TextInputWithTitle } from "@/components/TextInputWithTitle";
+import { TextInputWithTitle } from "@/components/TextInputWithTitle/TextInputWithTitle";
 import { authService } from "@/services/auth.service";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -29,7 +29,10 @@ export default function LoginPage() {
 
       router.replace("/progress");
     } catch (error) {
-      Alert.alert("Falha no Login", String(error));
+      Alert.alert(
+        "Falha no Login",
+        "E-mail ou senha incorretos. Por favor, tente novamente."
+      );
     } finally {
       setIsLoading(false);
     }
