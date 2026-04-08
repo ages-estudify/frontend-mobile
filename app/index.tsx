@@ -50,7 +50,7 @@ export default function HomeScreen() {
     <SafeAreaView className="flex-1 bg-whitebg dark:bg-whitebg">
       <View className="flex-1 gap-[10px] self-center px-[16px]">
         <Image
-          source={require("../assets/images/placeholder_user.png")}
+          source={require("../assets/placeholder_user.png")}
           style={{ width: 40, height: 40 }}
           className="h-10 w-10 self-end rounded-full"
           resizeMode="contain"
