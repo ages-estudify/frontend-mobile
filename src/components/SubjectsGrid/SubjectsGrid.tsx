@@ -1,7 +1,7 @@
 import { Subject } from "@/types/subject.types";
 import React from "react";
 import { Text, View } from "react-native";
-import SubjectBox from "./SubjectBox";
+import SubjectBox from "../SubjectBox";
 
 export interface SubjectsGridProps {
   subjects: Subject[];

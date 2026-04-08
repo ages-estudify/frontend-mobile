@@ -1,7 +1,7 @@
 import { SequenceStatus } from "@/components/SequenceStatus";
 import { SubjectsGrid } from "@/components/SubjectsGrid";
 import { useAuth } from "@/hooks/useAuth";
-import { getSubjects } from "@/services/subject.service";
+import { getSubjects } from "@/services/subject/subject.service";
 import { Subject } from "@/types/subject.types";
 import { RelativePathString, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";

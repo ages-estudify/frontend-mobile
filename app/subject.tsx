@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/BackButton";
 import { QuestionTypeBottomSheet } from "@/components/QuestionTypeBottomSheet";
 import { TopicStep } from "@/components/TopicStep";
-import { getTopicsBySubject } from "@/services/subject.service";
+import { getTopicsBySubject } from "@/services/subject/subject.service";
 import { Topic } from "@/types/subject.types";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -40,7 +40,7 @@ export default function SubjectScreen() {
 
   return (
     <SafeAreaView className="h-full">
-      <ScrollView className="gap[8px] h-full bg-whitebg px-[16px]">
+      <ScrollView testID="subject-topics-scroll" className="gap[8px] h-full bg-whitebg px-[16px]">
         <BackButton></BackButton>
         <Text className="mt-[24px] font-inter text-[13px] text-purple50">TRILHA SUGERIDA</Text>
         <Text className="mb-[8px] font-poppins-semi text-[40px]">{name}</Text>

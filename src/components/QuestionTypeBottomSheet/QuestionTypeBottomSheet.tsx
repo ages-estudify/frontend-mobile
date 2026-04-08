@@ -6,7 +6,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import React from "react";
 import { Text, View } from "react-native";
-import { QuestionTypeBox } from "./QuestionTypeBox";
+import { QuestionTypeBox } from "../QuestionTypeBox";
 
 export interface QuestionTypeBottomSheetProps {
   modalRef: React.RefObject<BottomSheetModal | null>;

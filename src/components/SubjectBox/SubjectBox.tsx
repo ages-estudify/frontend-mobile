@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 
-interface SubjectBoxProps {
+export interface SubjectBoxProps {
   subject: string;
   icon?: string;
   href: `/subject?id=${string}`;

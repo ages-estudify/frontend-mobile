@@ -1,5 +1,5 @@
 import { Subject, Topic } from "@/types/subject.types";
-import api from "./api";
+import api from "../api";
 
 export const getSubjects = async (): Promise<Subject[]> => {
   const response = await api.get("/subjects");

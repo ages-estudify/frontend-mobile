@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable } from "react-native";
-import BackArrowIcon from "../../assets/icons/back_arrow.svg";
+import BackArrowIcon from "../../../assets/icons/back_arrow.svg";
 
 export function BackButton() {
   const router = useRouter();

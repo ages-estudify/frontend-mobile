@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View } from "react-native";
-import { SequenceBox } from "./SequenceBox";
+import { SequenceBox } from "../SequenceBox";
 
 export function SequenceStatus() {
   return (

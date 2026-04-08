@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
-import OriginalQuestionsIcon from "../../assets/icons/original.questions.svg";
-import SimplifiedQuestionsIcon from "../../assets/icons/simplified_questions.svg";
+import OriginalQuestionsIcon from "../../../assets/icons/original.questions.svg";
+import SimplifiedQuestionsIcon from "../../../assets/icons/simplified_questions.svg";
 
 export interface QuestionTypeBoxProps {
   title: string;

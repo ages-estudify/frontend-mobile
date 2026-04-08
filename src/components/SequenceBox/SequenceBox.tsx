@@ -1,10 +1,10 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-import FireIcon from "../../assets/icons/fire.svg";
-import StarIcon from "../../assets/icons/star.svg";
+import FireIcon from "../../../assets/icons/fire.svg";
+import StarIcon from "../../../assets/icons/star.svg";
 
-interface SequenceBoxProps {
+export interface SequenceBoxProps {
   title: string;
   value: number;
   description: string;
