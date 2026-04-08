@@ -1,21 +1,19 @@
 import QuestionCard from "@/components/QuestionCard";
 import { useQuestionSession } from "@/hooks/useQuestionSession";
-import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 import BackArrowIcon from "../../assets/icons/back-arrow.svg";
 
 export default function QuestionScreen() {
-  const { question, selected, setSelected, confirmAnswer, loading, progress } =
+  const { question, selected, setSelected, confirmAnswer, loading, progress
+  } =
     useQuestionSession("1", "ORIGINAL");
 
-  const router = useRouter();
 
   const handleConfirm = () => {
     confirmAnswer(() => {
-      console.log("Navegando para gabarito da questão de ID: ", question.id);
-      //router.push(`/gabarito/${question.id}`)
+
     })
   }
 

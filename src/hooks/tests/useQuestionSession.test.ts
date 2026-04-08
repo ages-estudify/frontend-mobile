@@ -1,4 +1,4 @@
-import { fetchQuestions, sendAnswer } from "@/services/questionService";
+import { fetchQuestions, sendAnswer } from "@/services/question.service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { useQuestionSession } from "../../hooks/useQuestionSession";

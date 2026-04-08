@@ -1,7 +1,7 @@
 import { useQuestionSession } from "@/hooks/useQuestionSession";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
-import QuestionScreen from "../index";
+import QuestionScreen from "../question";
 
 jest.mock("expo-router", () => ({
     useRouter: () => ({

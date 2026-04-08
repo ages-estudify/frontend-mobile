@@ -1,4 +1,4 @@
-import { fetchQuestions, sendAnswer } from "../questionService";
+import { getQuestions, postAnswer } from "../question.service";
 
 global.fetch = jest.fn();
 
@@ -18,7 +18,7 @@ describe("questionService", () => {
       }),
     });
 
-    const response = await fetchQuestions({ topicId: "1", type: "ORIGINAL" });
+    const response = await getQuestions({ topicId: "1", type: "ORIGINAL" });
 
     expect(global.fetch).toHaveBeenCalled();
     expect(response.data).toBeTruthy();
@@ -27,7 +27,7 @@ describe("questionService", () => {
   it("deve enviar a resposta corretamente pela API usando fetch", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({ ok: true });
 
-    await expect(sendAnswer("1", "A")).resolves.toBeUndefined();
+    await expect(postAnswer("1", "A")).resolves.toBeUndefined();
     expect(global.fetch).toHaveBeenCalled();
   });
 });

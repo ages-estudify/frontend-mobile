@@ -1,4 +1,4 @@
-import { fetchQuestions, sendAnswer } from "@/services/questionService";
+import { getQuestions, postAnswer } from "@/services/question.service";
 import { Question } from "@/types/Question";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
@@ -39,7 +39,7 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
     setIsFetching(true);
 
     try {
-      const response = await fetchQuestions({
+      const response = await getQuestions({
         topicId,
         type,
         limit: 10,
@@ -97,7 +97,7 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
 
     setIsSubmitting(true);
 
-    sendAnswer(current.id, answer)
+    postAnswer(current.id, answer)
       .catch(() => {
         saveFailedAnswer(current.id, answer);
       })
