@@ -69,13 +69,16 @@ export default function RegisterScreen() {
         {/* Número */}
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Número</Text>
+
           <TextInput
-            placeholder="55 11 99999-9999"
+            placeholder="(11) 99999-9999"
             keyboardType="phone-pad"
             value={phone}
             onChangeText={setPhone}
             className="h-12 rounded-lg border border-neutral-300 px-4"
           />
+
+          {phoneError ? <Text className="mt-0.5 text-sm text-red-500">{phoneError}</Text> : null}
         </View>
 
         {/* Senha */}
