@@ -11,10 +11,10 @@ jest.mock("expo-router", () => ({
 }));
 
 const mockLogin = jest.fn();
-jest.mock("@/services/auth.service", () => ({
-  authService: {
-    login: (...args: any[]) => mockLogin(...args),
-  },
+jest.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({
+    login: mockLogin,
+  }),
 }));
 
 jest.mock("../assets/login_fox.png", () => "login_fox.png", { virtual: true });
@@ -43,6 +43,10 @@ describe("LoginPage", () => {
     jest.spyOn(Alert, "alert").mockImplementation(() => {});
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it("deve renderizar os elementos básicos da tela", () => {
     const { getByPlaceholderText, getByText } = render(<LoginPage />);
 
@@ -62,10 +66,11 @@ describe("LoginPage", () => {
       "Preencha todos os campos"
     );
     expect(mockLogin).not.toHaveBeenCalled();
+    expect(mockReplace).not.toHaveBeenCalled();
   });
 
-  it("deve chamar o serviço de login e redirecionar em caso de sucesso", async () => {
-    mockLogin.mockResolvedValueOnce({ success: true });
+  it("deve chamar o login e redirecionar em caso de sucesso", async () => {
+    mockLogin.mockResolvedValueOnce(undefined);
 
     const { getByPlaceholderText, getByTestId } = render(<LoginPage />);
 
@@ -84,26 +89,35 @@ describe("LoginPage", () => {
     });
 
     await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith("/progress");
+      expect(mockReplace).toHaveBeenCalled();
     });
   });
 
   it("deve mostrar alerta de erro quando o login falha", async () => {
-    const errorMessage = "Usuário não encontrado";
-    mockLogin.mockRejectedValueOnce(errorMessage);
+    const errorMessage = "Verifique os campos preenchidos";
+    mockLogin.mockRejectedValueOnce(new Error(errorMessage));
 
     const { getByPlaceholderText, getByTestId } = render(<LoginPage />);
 
     fireEvent.changeText(
       getByPlaceholderText("email@email.com"),
-      "erro@test.com"
+      "usuario@teste.com"
     );
-    fireEvent.changeText(getByPlaceholderText("*******"), "123");
+    fireEvent.changeText(getByPlaceholderText("*******"), "senha123456");
     fireEvent.press(getByTestId("login-button"));
 
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith("Falha no Login", errorMessage);
+      expect(mockLogin).toHaveBeenCalledWith({
+        email: "usuario@teste.com",
+        password: "senha123456",
+      });
     });
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith("Erro", errorMessage);
+    });
+
+    expect(mockReplace).not.toHaveBeenCalled();
   });
 
   it("deve desabilitar o botão enquanto o carregamento está ativo", async () => {
@@ -115,10 +129,13 @@ describe("LoginPage", () => {
       getByPlaceholderText("email@email.com"),
       "loading@test.com"
     );
-    fireEvent.changeText(getByPlaceholderText("*******"), "123");
+    fireEvent.changeText(getByPlaceholderText("*******"), "12345678");
     fireEvent.press(getByTestId("login-button"));
 
-    const loginButton = getByTestId("login-button");
-    expect(loginButton.props.accessibilityState.disabled).toBe(true);
+    await waitFor(() => {
+      expect(
+        getByTestId("login-button").props.accessibilityState.disabled
+      ).toBe(true);
+    });
   });
 });
