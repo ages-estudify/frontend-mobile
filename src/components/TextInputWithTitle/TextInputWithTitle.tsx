@@ -22,7 +22,9 @@ export function TextInputWithTitle({
   return (
     <View className="w-full gap-2">
       <View className="flex-row justify-between items-center">
-        <Text className="font-semibold text-base text-purple100">{title}</Text>
+        <Text className="font-semibold text-base text-greenPrimary">
+          {title}
+        </Text>
         {isPassword && (
           <Pressable onPress={() => {}}>
             <Text className="font-regular text-xs text-greenPrimary">

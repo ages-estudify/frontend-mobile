@@ -29,7 +29,7 @@ jest.mock("@/components/ActionButton", () => {
         testID="login-button"
         onPress={action}
         disabled={disabled}
-        accessibilityState={{ disabled: !!disabled }} // Isso garante que o teste ache a prop
+        accessibilityState={{ disabled: !!disabled }}
       >
         <Text>{text}</Text>
       </Pressable>

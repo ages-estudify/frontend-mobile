@@ -3,7 +3,7 @@ import { TextInputWithTitle } from "@/components/TextInputWithTitle/TextInputWit
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { View, Image, Text, Alert } from "react-native";
+import { View, Image, Text, Alert, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginPage() {
@@ -68,12 +68,15 @@ export default function LoginPage() {
             action={handleLogin}
             disabled={isLoading}
           />
-          <View className="flex-row gap-2">
-            <Text className="text-primaryGray font-regular">
-              Não possui conta?
-            </Text>
-            <Text>Registrar</Text>
-          </View>
+
+          <Pressable onPress={() => {}} className="flex-row gap-2">
+            <View className="flex-row gap-2">
+              <Text className="text-primaryGray font-regular">
+                Não possui conta?
+              </Text>
+              <Text>Registrar</Text>
+            </View>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>
