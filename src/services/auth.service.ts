@@ -1,7 +1,6 @@
 import { endPoints } from "@/routes/endpoints";
 import type {
   LoginRequest,
-  LoginResponse,
   RegisterRequest,
   RegisterResponse,
 } from "@/types/auth.types";

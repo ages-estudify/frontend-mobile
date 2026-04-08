@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios, { type AxiosInstance } from "axios";
+import axios, { type AxiosInstance, isAxiosError } from "axios";
 import { RelativePathString, router } from "expo-router";
 
 export const API_BASE_URL = `${process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000"}/api/v1`;
@@ -49,9 +49,9 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-export const handleApiError = (error: unknown) => {
-  if (axios.isAxiosError(error)) {
-    console.log(error.response?.data ?? error.message);
+export const handleApiError = (error: unknown): never => {
+  if (isAxiosError(error)) {
+    throw error.response?.data ?? error.message;
   }
 
   console.log(error);

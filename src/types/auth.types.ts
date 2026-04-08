@@ -31,3 +31,10 @@ export type LoginResponse = {
     planExpirationDate: string | null;
   };
 };
+
+/** Sessão persistida após login (JWT + metadados usados na UI). */
+export interface UserSession {
+  token: string;
+  role: string;
+  planActive: boolean;
+}
