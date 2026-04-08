@@ -16,8 +16,8 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [birthDateText, setBirthDateText] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
-  // 👉 Formata enquanto digita: DD/MM/AAAA
   function formatDate(text: string) {
     const cleaned = text.replace(/\D/g, "");
 
@@ -31,7 +31,6 @@ export default function RegisterScreen() {
     )}/${cleaned.slice(4, 8)}`;
   }
 
-  // 👉 Converte para AAAA-MM-DD
   function parseBirthDate(date: string): string | null {
     const [day, month, year] = date.split("/").map(Number);
 
@@ -54,6 +53,10 @@ export default function RegisterScreen() {
     return `${yyyy}-${mm}-${dd}`;
   }
 
+  function isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
   function handleRegister() {
     if (
       !fullName ||
@@ -64,6 +67,11 @@ export default function RegisterScreen() {
       !birthDateText
     ) {
       alert("Preencha todos os campos");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      alert("Email inválido");
       return;
     }
 
@@ -85,11 +93,11 @@ export default function RegisterScreen() {
     }
 
     const registerRequest: RegisterRequest = {
-      fullName,
-      email,
-      password,
-      phone,
-      birthDate: parsedBirthDate, // ✅ AAAA-MM-DD
+      fullName: fullName,
+      email: email,
+      password: password,
+      phone: phone,
+      birthDate: parsedBirthDate,
     };
 
     register(registerRequest);
@@ -152,14 +160,23 @@ export default function RegisterScreen() {
 
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Senha</Text>
+
           <View className="flex-row items-center border border-neutral-300 rounded-lg px-4 h-12">
             <TextInput
               placeholder="******"
               secureTextEntry={!showPassword}
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) => {
+                setPassword(text);
+                if (text.length > 0 && text.length < 8) {
+                  setPasswordError("A senha deve ter no mínimo 8 caracteres");
+                } else {
+                  setPasswordError("");
+                }
+              }}
               className="flex-1"
             />
+
             <Pressable onPress={() => setShowPassword(!showPassword)}>
               <Ionicons
                 name={showPassword ? "eye" : "eye-off"}
@@ -168,6 +185,10 @@ export default function RegisterScreen() {
               />
             </Pressable>
           </View>
+
+          {passwordError ? (
+            <Text className="text-red-500 text-sm mt-0.5">{passwordError}</Text>
+          ) : null}
         </View>
 
         <View className="mb-14">
