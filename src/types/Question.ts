@@ -13,7 +13,15 @@ export type Question = {
   alternatives: Alternative[];
 };
 
-export type FetchQuestionsResponse = {
+export type GetQuestionParams = {
+  topicId: string;
+  type: "ORIGINAL" | "SIMPLIFIED";
+  limit?: number;
+  excludeAnswered?: boolean;
+  retrieveWrong?: boolean;
+};
+
+export type GetQuestionsResponse = {
   data: {
     questions: Question[];
     sessionProgress: {
@@ -21,5 +29,5 @@ export type FetchQuestionsResponse = {
       total: number;
     };
   } | null;
-  message?: string;
+  message: string;
 };
