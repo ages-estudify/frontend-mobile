@@ -18,6 +18,7 @@ import {
 
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from "@expo-google-fonts/inter";
 
+
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     "Poppins-Regular": Poppins_400Regular,
@@ -34,7 +35,6 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <StarsProvider>
           <StarsInitializer />
-
           <Stack
             screenOptions={{
               headerShown: false,
@@ -44,6 +44,7 @@ export default function RootLayout() {
             <Stack.Screen name="login" options={{ title: "LoginPage" }} />
             <Stack.Screen name="progress" options={{ title: "ProgressPage" }} />
             <Stack.Screen name="subject" options={{ title: "Subject" }} />
+            <Stack.Screen name="(tabs)" />
             <Stack.Screen name="question" options={{ title: "Question" }} />
           </Stack>
 
