@@ -1,21 +1,48 @@
-import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "@/hooks/useAuth";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, View, Text, Button } from "react-native";
 
-export default function HomeScreen() {
-  return (
-    <SafeAreaView className="flex-1 bg-neutral-50 dark:bg-neutral-950">
-      <View className="flex-1 items-center justify-center px-6">
-        <Text className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-          Welcome
-        </Text>
-        <Text className="mt-3 text-center text-base text-neutral-600 dark:text-neutral-400">
-          Expo Router + NativeWind. Edit{" "}
-          <Text className="font-semibold text-blue-600 dark:text-blue-400">
-            app/index.tsx
-          </Text>{" "}
-          to get started.
-        </Text>
+export default function HomePage() {
+  const [loading, setLoading] = useState(true);
+  const { isAuthenticated } = useAuth();
+
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authenticated = await isAuthenticated();
+
+      if (!authenticated) {
+        router.replace("/login");
+        return;
+      }
+
+      setLoading(false);
+    };
+
+    checkAuth();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator />
       </View>
-    </SafeAreaView>
+    );
+  }
+
+  return (
+    <View className="flex-1 justify-center items-center">
+      <Text>Home</Text>
+      <Button
+        title="Logout"
+        onPress={async () => {
+          await logout();
+          router.replace("/login");
+        }}
+        color="#007bff"
+      />
+    </View>
   );
 }

@@ -22,9 +22,12 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
-  token: string;
-  refreshToken: string;
-  role: string;
-  planExpirationDate: Date;
-}
+export type LoginResponse = {
+  success: boolean;
+  data: {
+    token: string;
+    refreshToken: string;
+    role: string;
+    planExpirationDate: string | null;
+  };
+};
