@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert } from "react-native";
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
-import LoginPage from "../app/index";
+import LoginPage from "../app/login";
 
 const mockReplace = jest.fn();
 jest.mock("expo-router", () => ({
