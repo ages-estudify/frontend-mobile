@@ -17,6 +17,7 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [birthDateText, setBirthDateText] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   function formatDate(text: string) {
     const cleaned = text.replace(/\D/g, "");
@@ -29,6 +30,38 @@ export default function RegisterScreen() {
       2,
       4
     )}/${cleaned.slice(4, 8)}`;
+  }
+
+  function isValidPhone(phone: string): boolean {
+    const cleaned = phone.replace(/\D/g, "");
+
+    return cleaned.length === 10 || cleaned.length === 11;
+  }
+
+  function formatPhone(text: string) {
+    const cleaned = text.replace(/\D/g, "");
+
+    if (cleaned.length === 0) return "";
+
+    if (cleaned.length <= 2) {
+      return `(${cleaned}`;
+    }
+
+    if (cleaned.length <= 6) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+    }
+
+    if (cleaned.length <= 10) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(
+        2,
+        6
+      )}-${cleaned.slice(6)}`;
+    }
+
+    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(
+      2,
+      7
+    )}-${cleaned.slice(7, 11)}`;
   }
 
   function parseBirthDate(date: string): string | null {
@@ -92,11 +125,18 @@ export default function RegisterScreen() {
       return;
     }
 
+    const cleanedPhone = phone.replace(/\D/g, "");
+
+    if (!isValidPhone(phone)) {
+      alert("Número de telefone inválido");
+      return;
+    }
+
     const registerRequest: RegisterRequest = {
       fullName: fullName,
       email: email,
       password: password,
-      phone: phone,
+      phone: cleanedPhone,
       birthDate: parsedBirthDate,
     };
 
@@ -149,13 +189,27 @@ export default function RegisterScreen() {
 
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Número</Text>
+
           <TextInput
-            placeholder="55 11 99999-9999"
+            placeholder="(11) 99999-9999"
             keyboardType="phone-pad"
             value={phone}
-            onChangeText={setPhone}
+            onChangeText={(text) => {
+              const formatted = formatPhone(text);
+              setPhone(formatted);
+
+              if (!isValidPhone(formatted)) {
+                setPhoneError("Número inválido");
+              } else {
+                setPhoneError("");
+              }
+            }}
             className="h-12 px-4 border border-neutral-300 rounded-lg"
           />
+
+          {phoneError ? (
+            <Text className="text-red-500 text-sm mt-0.5">{phoneError}</Text>
+          ) : null}
         </View>
 
         <View className="mb-8">
