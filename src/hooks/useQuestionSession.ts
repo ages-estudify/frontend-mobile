@@ -14,9 +14,7 @@ async function saveFailedAnswer(questionId: string, answer: string) {
 
     await AsyncStorage.setItem("failedAnswers", JSON.stringify(failed));
 
-    console.log("Resposta salva offline para retry futuro:", questionId);
   } catch (e) {
-    console.error("Erro ao salvar retry no AsyncStorage:", e);
   }
 }
 
