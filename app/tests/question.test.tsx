@@ -111,7 +111,7 @@ describe("QuestionScreen Component", () => {
 
         render(<QuestionScreen />);
 
-        const modal = screen.UNSAFE_getByType("MockQuestionAnalysisBottomSheet");
+        const modal = screen.UNSAFE_getByType("MockQuestionAnalysisBottomSheet" as any);
         modal.props.onNext();
 
         expect(mockConfirmAnswer).toHaveBeenCalledTimes(1);

@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { useQuestionSession } from "../../hooks/useQuestionSession";
 
-jest.mock("@/services/questionService", () => ({
+jest.mock("@/services/question.service", () => ({
   getQuestions: jest.fn(),
   postAnswer: jest.fn(),
 }));
