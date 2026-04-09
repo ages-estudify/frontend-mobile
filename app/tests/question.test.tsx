@@ -3,6 +3,18 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
 import QuestionScreen from "../question";
 
+jest.mock("axios", () => ({
+    create: jest.fn(() => ({
+        get: jest.fn(),
+        post: jest.fn(),
+        interceptors: {
+            request: { use: jest.fn() },
+            response: { use: jest.fn() },
+        },
+    })),
+    isAxiosError: jest.fn(),
+}));
+
 jest.mock("expo-router", () => ({
     useRouter: () => ({
         back: jest.fn(),
@@ -11,10 +23,16 @@ jest.mock("expo-router", () => ({
 }));
 
 
-jest.mock("../../../assets/icons/back-arrow.svg", () => () => null);
-jest.mock("../../../assets/icons/expand.svg", () => () => null);
+jest.mock("../../assets/icons/back-arrow.svg", () => () => null);
+jest.mock("../../assets/icons/expand.svg", () => () => null);
 
 jest.mock("@/hooks/useQuestionSession");
+
+jest.mock("@gorhom/bottom-sheet", () => "MockBottomSheet");
+
+jest.mock("@/components/QuestionAnalysisBottomSheet", () => ({
+    QuestionAnalysisBottomSheet: "MockQuestionAnalysisBottomSheet"
+}));
 
 const mockQuestion = {
     id: "uuid-123",
@@ -59,7 +77,7 @@ describe("QuestionScreen Component", () => {
         expect(screen.getByText("Todas as questões deste tipo foram respondidas neste tópico")).toBeTruthy();
     });
 
-    it("deve chamar a função confirmAnswer ao clicar em enviar", () => {
+    it("NÃO deve chamar confirmAnswer diretamente ao clicar em enviar", () => {
         const mockConfirmAnswer = jest.fn();
 
         (useQuestionSession as jest.Mock).mockReturnValue({
@@ -74,9 +92,28 @@ describe("QuestionScreen Component", () => {
         render(<QuestionScreen />);
 
         const botaoEnviar = screen.getByText("Enviar");
-
         fireEvent.press(botaoEnviar);
 
-        expect(mockConfirmAnswer).toHaveBeenCalledTimes(1)
+        expect(mockConfirmAnswer).not.toHaveBeenCalled();
+    });
+
+    it("deve chamar confirmAnswer ao clicar em avançar dentro da modal", () => {
+        const mockConfirmAnswer = jest.fn();
+
+        (useQuestionSession as jest.Mock).mockReturnValue({
+            loading: false,
+            question: mockQuestion,
+            selected: "A",
+            setSelected: jest.fn(),
+            confirmAnswer: mockConfirmAnswer,
+            progress: { current: 1, total: 20 }
+        });
+
+        render(<QuestionScreen />);
+
+        const modal = screen.UNSAFE_getByType("MockQuestionAnalysisBottomSheet");
+        modal.props.onNext();
+
+        expect(mockConfirmAnswer).toHaveBeenCalledTimes(1);
     });
 })

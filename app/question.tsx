@@ -1,21 +1,28 @@
+import { QuestionAnalysisBottomSheet } from "@/components/QuestionAnalysisBottomSheet";
 import QuestionCard from "@/components/QuestionCard";
 import { useQuestionSession } from "@/hooks/useQuestionSession";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-import BackArrowIcon from "../../assets/icons/back-arrow.svg";
+import BottomSheet from "@gorhom/bottom-sheet";
+import BackArrowIcon from "../assets/icons/back-arrow.svg";
 
 export default function QuestionScreen() {
   const { question, selected, setSelected, confirmAnswer, loading, progress
   } =
     useQuestionSession("1", "ORIGINAL");
 
+  const bottomSheetRef = React.useRef<BottomSheet>(null);
 
   const handleConfirm = () => {
-    confirmAnswer(() => {
-
-    })
+    bottomSheetRef.current?.expand();
   }
+
+  const handleNextQuestion = () => {
+    bottomSheetRef.current?.close();
+    confirmAnswer(() => { });
+  }
+
 
   if (loading) {
     return (
@@ -35,15 +42,11 @@ export default function QuestionScreen() {
 
   return (
     <View className="flex-1 p-4 bg-gray-50 justify-normal">
-
-      {/* Top Buttons */}
       <View className="flex-row justify-between items-center mb-4">
         <TouchableOpacity className="w-12 h-12 rounded-full bg-white shadow-sm items-center justify-center">
           <BackArrowIcon width={24} height={24} />
         </TouchableOpacity>
       </View>
-
-      {/* Progress Bar*/}
       <View className="mb-1">
         <Text className="text-right text-sm text-gray-400 font-medium mt-1">
           {progress.current} / {progress.total}
@@ -56,8 +59,6 @@ export default function QuestionScreen() {
       </View>
 
       <QuestionCard question={question} />
-
-      {/* Alternatives */}
       <View className="mt-6">
         {question.alternatives.map((alt) => {
           const isSelected = selected === alt.label;
@@ -89,8 +90,6 @@ export default function QuestionScreen() {
           );
         })}
       </View>
-
-      {/* Button */}
       <TouchableOpacity
         onPress={handleConfirm}
         disabled={!selected}
@@ -99,6 +98,15 @@ export default function QuestionScreen() {
       >
         <Text className="text-white text-center font-bold">Enviar</Text>
       </TouchableOpacity>
+      <QuestionAnalysisBottomSheet
+        ref={bottomSheetRef}
+        {...({
+          questionId: question.id,
+          selectedAnswer: selected,
+          onNext: handleNextQuestion,
+          onFinish: handleNextQuestion
+        } as any)}
+      />
     </View >
   );
 }

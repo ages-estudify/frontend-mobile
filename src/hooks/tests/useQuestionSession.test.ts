@@ -1,11 +1,11 @@
-import { fetchQuestions, sendAnswer } from "@/services/question.service";
+import { getQuestions, postAnswer } from "@/services/question.service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { useQuestionSession } from "../../hooks/useQuestionSession";
 
 jest.mock("@/services/questionService", () => ({
-  fetchQuestions: jest.fn(),
-  sendAnswer: jest.fn(),
+  getQuestions: jest.fn(),
+  postAnswer: jest.fn(),
 }));
 
 jest.mock("@react-native-async-storage/async-storage", () =>
@@ -48,7 +48,7 @@ describe("useQuestionSession Hook", () => {
   });
 
   it("deve carregar as questões iniciais e atualizar progresso", async () => {
-    (fetchQuestions as jest.Mock)
+    (getQuestions as jest.Mock)
       .mockResolvedValueOnce({
         data: {
           questions: mockQuestions,
@@ -71,8 +71,8 @@ describe("useQuestionSession Hook", () => {
     expect(result.current.progress.total).toBe(20);
   });
 
-  it("deve chamar sendAnswer e avançar o cursor ao confirmar", async () => {
-    (fetchQuestions as jest.Mock)
+  it("deve chamar postAnswer e avançar o cursor ao confirmar", async () => {
+    (getQuestions as jest.Mock)
       .mockResolvedValueOnce({
         data: {
           questions: mockQuestions,
@@ -80,7 +80,7 @@ describe("useQuestionSession Hook", () => {
         },
       })
       .mockResolvedValue({ data: null });
-    (sendAnswer as jest.Mock).mockResolvedValue(undefined);
+    (postAnswer as jest.Mock).mockResolvedValue(undefined);
 
     const { result } = renderHook(() =>
       useQuestionSession("topic-1", "ORIGINAL")
@@ -98,15 +98,15 @@ describe("useQuestionSession Hook", () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
-    expect(sendAnswer).toHaveBeenCalledWith("1", "A");
+    expect(postAnswer).toHaveBeenCalledWith("1", "A");
     expect(result.current.question?.id).toBe("2");
     expect(result.current.selected).toBeNull();
     expect(result.current.progress.current).toBe(1);
     expect(onSuccessMock).toHaveBeenCalledTimes(1);
   });
 
-  it("deve salvar no AsyncStorage (Retry Offline) se sendAnswer falhar", async () => {
-    (fetchQuestions as jest.Mock)
+  it("deve salvar no AsyncStorage (Retry Offline) se postAnswer falhar", async () => {
+    (getQuestions as jest.Mock)
       .mockResolvedValueOnce({
         data: {
           questions: mockQuestions,
@@ -115,7 +115,7 @@ describe("useQuestionSession Hook", () => {
       })
       .mockResolvedValue({ data: null });
 
-    (sendAnswer as jest.Mock).mockRejectedValue(new Error("Sem internet"));
+    (postAnswer as jest.Mock).mockRejectedValue(new Error("Sem internet"));
 
     const { result } = renderHook(() =>
       useQuestionSession("topic-1", "ORIGINAL")
@@ -140,7 +140,7 @@ describe("useQuestionSession Hook", () => {
   });
 
   it("deve sinalizar isFinished quando não houver mais questões no backend", async () => {
-    (fetchQuestions as jest.Mock).mockResolvedValue({ data: null });
+    (getQuestions as jest.Mock).mockResolvedValue({ data: null });
 
     const { result } = renderHook(() =>
       useQuestionSession("topic-1", "ORIGINAL")
