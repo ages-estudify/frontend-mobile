@@ -1,4 +1,4 @@
-import { Question } from "@/types/Question";
+import { Question } from "@/types/questions.types";
 import React, { useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -12,7 +12,7 @@ export default function QuestionCard({ question }: QuestionCardProps) {
     const [expanded, setExpanded] = useState(false);
 
     const originTag = question.origin === "ORIGINAL" ? "Questão Estudify" : "Questão Vestibular";
-    
+
     return (
         <>
             {/* Question Card */}

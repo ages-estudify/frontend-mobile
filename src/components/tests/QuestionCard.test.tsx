@@ -1,4 +1,4 @@
-import { Question } from "@/types/Question";
+import { Question } from "@/types/questions.types";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
 import QuestionCard from "../QuestionCard";

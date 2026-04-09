@@ -1,5 +1,5 @@
 import { getQuestions, postAnswer } from "@/services/question.service";
-import { Question } from "@/types/Question";
+import { Question } from "@/types/questions.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 

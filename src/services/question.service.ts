@@ -1,5 +1,8 @@
 import api, { handleApiError } from "@/services/api";
-import { GetQuestionParams, GetQuestionsResponse } from "@/types/Question";
+import {
+  GetQuestionParams,
+  GetQuestionsResponse,
+} from "@/types/questions.types";
 
 export async function getQuestions({
   topicId,
