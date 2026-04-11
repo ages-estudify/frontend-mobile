@@ -1,8 +1,8 @@
+import IntroSlider from "@/components/IntroSlider";
+import { useFirstLaunch } from "@/hooks/useFirstLaunch";
+import { Stack, useRouter } from "expo-router";
 import React from "react";
 import { View } from "react-native";
-import { useRouter, Stack } from "expo-router";
-import { useFirstLaunch } from "@/hooks/useFirstLaunch";
-import IntroSlider from "@/components/IntroSlider";
 
 export default function IntroScreen() {
   const router = useRouter();
@@ -10,7 +10,7 @@ export default function IntroScreen() {
 
   const handleFinishIntro = async () => {
     await completeIntro();
-    // router.replace('/login');
+    router.replace("/login");
   };
 
   return (

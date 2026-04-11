@@ -1,12 +1,12 @@
-import React, { useRef, useState, useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  FlatList,
   Dimensions,
-  TouchableOpacity,
+  FlatList,
   Image,
   ListRenderItem,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -16,7 +16,7 @@ const SLIDES = [
     id: "1",
     title: "Treine\nSempre",
     description: (
-      <Text className="text-[18px] leading-[28px] tracking-[-0.43px] text-black font-normal">
+      <Text className="text-[18px] font-normal leading-[28px] tracking-[-0.43px] text-black">
         <Text className="font-bold">Pratique</Text> com questões,{" "}
         <Text className="font-bold">revise</Text>
         {"\n"}
@@ -25,13 +25,13 @@ const SLIDES = [
       </Text>
     ),
     bgColor: "bg-[#B49ED6]",
-    image: require("../../assets/images/intro-1.png"),
+    image: require("../../assets/intro-1.png"),
   },
   {
     id: "2",
     title: "Estude\nDirecionado",
     description: (
-      <Text className="text-[18px] leading-[28px] tracking-[-0.43px] text-black font-normal">
+      <Text className="text-[18px] font-normal leading-[28px] tracking-[-0.43px] text-black">
         Receba um cronograma gerado pelo{"\n"}
         app e <Text className="font-bold">organize sua rotina</Text> com mais
         {"\n"}
@@ -39,13 +39,13 @@ const SLIDES = [
       </Text>
     ),
     bgColor: "bg-[#B7D7A9]",
-    image: require("../../assets/images/intro-2.png"),
+    image: require("../../assets/intro-2.png"),
   },
   {
     id: "3",
     title: "Acompanhe\na Evolução",
     description: (
-      <Text className="text-[18px] leading-[28px] tracking-[-0.43px] text-black font-normal">
+      <Text className="text-[18px] font-normal leading-[28px] tracking-[-0.43px] text-black">
         Faça simulados, <Text className="font-bold">veja seu</Text>
         {"\n"}
         <Text className="font-bold">desempenho e entenda como você</Text>
@@ -55,7 +55,7 @@ const SLIDES = [
       </Text>
     ),
     bgColor: "bg-[#D2EFFD]",
-    image: require("../../assets/images/intro-3.png"),
+    image: require("../../assets/intro-3.png"),
   },
 ];
 
@@ -111,11 +111,11 @@ export default function IntroSlider({ onFinish }: IntroSliderProps) {
   const renderItem: ListRenderItem<(typeof SLIDES)[0]> = useCallback(
     ({ item }) => (
       <View className={`flex-1 px-8 pt-24 ${item.bgColor}`} style={{ width }}>
-        <View className="flex-row justify-center mb-10">
+        <View className="mb-10 flex-row justify-center">
           {SLIDES.map((_, dotIndex) => (
             <View
               key={dotIndex}
-              className={`h-[3px] w-[85px] mx-[5px] rounded-full ${
+              className={`mx-[5px] h-[3px] w-[85px] rounded-full ${
                 currentIndex === dotIndex ? "bg-black" : "bg-black/15"
               }`}
             />
@@ -123,7 +123,7 @@ export default function IntroSlider({ onFinish }: IntroSliderProps) {
         </View>
 
         <Text
-          className="text-[50px] leading-[58px] font-bold text-black mb-2"
+          className="mb-2 text-[50px] font-bold leading-[58px] text-black"
           numberOfLines={2}
           adjustsFontSizeToFit={true}
           minimumFontScale={0.9}
@@ -131,12 +131,8 @@ export default function IntroSlider({ onFinish }: IntroSliderProps) {
           {item.title}
         </Text>
 
-        <View className="flex-1 items-center justify-center mb-4">
-          <Image
-            source={item.image}
-            className="w-full h-full"
-            resizeMode="contain"
-          />
+        <View className="mb-4 flex-1 items-center justify-center">
+          <Image source={item.image} className="h-full w-full" resizeMode="contain" />
         </View>
 
         <View className="mb-[130px]">{item.description}</View>
@@ -160,18 +156,18 @@ export default function IntroSlider({ onFinish }: IntroSliderProps) {
         viewabilityConfig={viewabilityConfig}
       />
 
-      <View className="absolute bottom-16 left-0 right-0 px-8 flex-row justify-between items-center">
+      <View className="absolute bottom-16 left-0 right-0 flex-row items-center justify-between px-8">
         <TouchableOpacity onPress={currentIndex === 2 ? prevSlide : onFinish}>
-          <Text className="text-black font-medium text-[18px]">
+          <Text className="text-[18px] font-medium text-black">
             {currentIndex === 2 ? "← Voltar" : "→ Pular"}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={currentIndex === 2 ? onFinish : nextSlide}
-          className="bg-black py-4 px-8 rounded-full"
+          className="rounded-full bg-black px-8 py-4"
         >
-          <Text className="text-white font-bold text-[18px]">
+          <Text className="text-[18px] font-bold text-white">
             {currentIndex === 2 ? "Log in" : "Próximo"}
           </Text>
         </TouchableOpacity>
