@@ -9,15 +9,90 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [birthDateText, setBirthDateText] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
+  function formatDate(text: string) {
+    const cleaned = text.replace(/\D/g, "");
+
+    if (cleaned.length <= 2) return cleaned;
+    if (cleaned.length <= 4) return `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
+
+    return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4, 8)}`;
+  }
+
+  function isValidPhone(phone: string): boolean {
+    const cleaned = phone.replace(/\D/g, "");
+
+    return cleaned.length === 10 || cleaned.length === 11;
+  }
+
+  function formatPhone(text: string) {
+    const cleaned = text.replace(/\D/g, "");
+
+    if (cleaned.length === 0) return "";
+
+    if (cleaned.length <= 2) {
+      return `(${cleaned}`;
+    }
+
+    if (cleaned.length <= 6) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+    }
+
+    if (cleaned.length <= 10) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
+    }
+
+    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7, 11)}`;
+  }
+
+  function parseBirthDate(date: string): string | null {
+    const [day, month, year] = date.split("/").map(Number);
+
+    if (!day || !month || !year) return null;
+
+    const parsed = new Date(year, month - 1, day);
+
+    if (
+      parsed.getFullYear() !== year ||
+      parsed.getMonth() !== month - 1 ||
+      parsed.getDate() !== day
+    ) {
+      return null;
+    }
+
+    const yyyy = parsed.getFullYear();
+    const mm = String(parsed.getMonth() + 1).padStart(2, "0");
+    const dd = String(parsed.getDate()).padStart(2, "0");
+
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
   function handleRegister() {
-    if (!fullName || !email || !phone || !password || !confirmPassword) {
+    if (!fullName || !email || !phone || !password || !confirmPassword || !birthDateText) {
       alert("Preencha todos os campos");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      alert("Email inválido");
+      return;
+    }
+
+    if (password.length < 8) {
+      alert("A senha deve ter no mínimo 8 caracteres");
       return;
     }
 
@@ -26,23 +101,37 @@ export default function RegisterScreen() {
       return;
     }
 
+    const parsedBirthDate = parseBirthDate(birthDateText);
+
+    if (!parsedBirthDate) {
+      alert("Data de nascimento inválida");
+      return;
+    }
+
+    const cleanedPhone = phone.replace(/\D/g, "");
+
+    if (!isValidPhone(phone)) {
+      alert("Número de telefone inválido");
+      return;
+    }
+
     const registerRequest: RegisterRequest = {
-      fullName,
-      email,
-      password,
-      phone,
-      birthDate: new Date().toISOString(),
+      fullName: fullName,
+      email: email,
+      password: password,
+      phone: cleanedPhone,
+      birthDate: parsedBirthDate,
     };
+
     register(registerRequest);
     console.log("RegisterRequest:", registerRequest);
   }
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6 pt-20">
-        {/* Título */}
         <Text className="mb-16 text-center text-4xl font-bold text-[#3F2A66]">Cadastro</Text>
 
-        {/* Nome */}
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Nome</Text>
           <TextInput
@@ -53,7 +142,6 @@ export default function RegisterScreen() {
           />
         </View>
 
-        {/* Email */}
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Email</Text>
           <TextInput
@@ -66,7 +154,18 @@ export default function RegisterScreen() {
           />
         </View>
 
-        {/* Número */}
+        <View className="mb-8">
+          <Text className="mb-1 font-bold text-[#3F2A66]">Data de Nascimento</Text>
+          <TextInput
+            placeholder="DD/MM/AAAA"
+            keyboardType="numeric"
+            maxLength={10}
+            value={birthDateText}
+            onChangeText={(text) => setBirthDateText(formatDate(text))}
+            className="h-12 rounded-lg border border-neutral-300 px-4"
+          />
+        </View>
+
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Número</Text>
 
@@ -74,22 +173,38 @@ export default function RegisterScreen() {
             placeholder="(11) 99999-9999"
             keyboardType="phone-pad"
             value={phone}
-            onChangeText={setPhone}
+            onChangeText={(text) => {
+              const formatted = formatPhone(text);
+              setPhone(formatted);
+
+              if (!isValidPhone(formatted)) {
+                setPhoneError("Número inválido");
+              } else {
+                setPhoneError("");
+              }
+            }}
             className="h-12 rounded-lg border border-neutral-300 px-4"
           />
 
           {phoneError ? <Text className="mt-0.5 text-sm text-red-500">{phoneError}</Text> : null}
         </View>
 
-        {/* Senha */}
         <View className="mb-8">
           <Text className="mb-1 font-bold text-[#3F2A66]">Senha</Text>
+
           <View className="h-12 flex-row items-center rounded-lg border border-neutral-300 px-4">
             <TextInput
               placeholder="******"
               secureTextEntry={!showPassword}
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) => {
+                setPassword(text);
+                if (text.length > 0 && text.length < 8) {
+                  setPasswordError("A senha deve ter no mínimo 8 caracteres");
+                } else {
+                  setPasswordError("");
+                }
+              }}
               className="flex-1"
             />
 
@@ -103,7 +218,6 @@ export default function RegisterScreen() {
           ) : null}
         </View>
 
-        {/* Confirmar Senha */}
         <View className="mb-14">
           <Text className="mb-1 font-bold text-[#3F2A66]">Confirmar Senha</Text>
           <View className="h-12 flex-row items-center rounded-lg border border-neutral-300 px-4">
@@ -120,7 +234,6 @@ export default function RegisterScreen() {
           </View>
         </View>
 
-        {/* Botão */}
         <Pressable
           onPress={handleRegister}
           className="h-12 items-center justify-center rounded-full bg-[#3F2A66]"
@@ -128,7 +241,6 @@ export default function RegisterScreen() {
           <Text className="text-base font-semibold text-white">Confirmar</Text>
         </Pressable>
 
-        {/* Voltar */}
         <Pressable onPress={() => router.back()} className="mt-4 items-center">
           <Text className="font-medium text-[#3F2A66]">‹ Voltar</Text>
         </Pressable>
