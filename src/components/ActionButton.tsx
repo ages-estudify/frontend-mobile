@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Pressable } from "react-native";
+import { Pressable, Text } from "react-native";
 
 interface ActionButtonProps {
   text: string;

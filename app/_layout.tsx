@@ -7,7 +7,26 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import {
+  Poppins_400Regular,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  useFonts,
+} from "@expo-google-fonts/poppins";
+
+import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from "@expo-google-fonts/inter";
+
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    "Poppins-Regular": Poppins_400Regular,
+    "Poppins-Bold": Poppins_700Bold,
+    "Poppins-SemiBold": Poppins_600SemiBold,
+    "Inter-Regular": Inter_400Regular,
+    "Inter-SemiBold": Inter_600SemiBold,
+    "Inter-Medium": Inter_500Medium,
+  });
+
+  if (!fontsLoaded) return null;
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
@@ -19,6 +38,7 @@ export default function RootLayout() {
           <Stack.Screen name="index" options={{ title: "HomePage" }} />
           <Stack.Screen name="login" options={{ title: "LoginPage" }} />
           <Stack.Screen name="progress" options={{ title: "ProgressPage" }} />
+          <Stack.Screen name="subject" options={{ title: "Subject" }} />
         </Stack>
         <StatusBar style="auto" />
       </SafeAreaProvider>
