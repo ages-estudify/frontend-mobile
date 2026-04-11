@@ -1,6 +1,7 @@
 import { useQuestionSession } from "@/hooks/useQuestionSession";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
+import { ActivityIndicator } from "react-native";
 import QuestionScreen from "../app/question";
 
 jest.mock("axios", () => ({
@@ -22,8 +23,17 @@ jest.mock("expo-router", () => ({
   }),
 }));
 
-jest.mock("../../assets/icons/back-arrow.svg", () => () => null);
-jest.mock("../../assets/icons/expand.svg", () => () => null);
+jest.mock("../assets/icons/back_arrow.svg", () => ({
+  __esModule: true,
+  default: () => null,
+  ReactComponent: () => null,
+}));
+
+jest.mock("../assets/icons/expand.svg", () => ({
+  __esModule: true,
+  default: () => null,
+  ReactComponent: () => null,
+}));
 
 jest.mock("@/hooks/useQuestionSession");
 
@@ -52,7 +62,7 @@ describe("QuestionScreen Component", () => {
     jest.clearAllMocks();
   });
 
-  it("deve mostrar 'Carregando' quando loading for true", () => {
+  it("deve mostrar o loading quando loading for true", () => {
     (useQuestionSession as jest.Mock).mockReturnValue({
       loading: true,
       question: null,
@@ -61,7 +71,7 @@ describe("QuestionScreen Component", () => {
 
     render(<QuestionScreen />);
 
-    expect(screen.getByText("Carregando...")).toBeTruthy();
+    expect(screen.UNSAFE_getByType(ActivityIndicator)).toBeTruthy();
   });
 
   it("deve mostrar a mensagem de fim quando não houver mais questões", () => {

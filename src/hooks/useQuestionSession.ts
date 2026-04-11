@@ -1,6 +1,7 @@
 import { getQuestions, postAnswer } from "@/services/question.service";
 import { Question } from "@/types/questions.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 
 type QuestionType = "ORIGINAL" | "SIMPLIFIED";
@@ -13,12 +14,11 @@ async function saveFailedAnswer(questionId: string, answer: string) {
     failed.push({ questionId, answer });
 
     await AsyncStorage.setItem("failedAnswers", JSON.stringify(failed));
-
-  } catch (e) {
-  }
+  } catch (e) {}
 }
 
-export function useQuestionSession(topicId: string, type: QuestionType) {
+export function useQuestionSession() {
+  const { topicId, type } = useLocalSearchParams<{ topicId: string; type: QuestionType }>();
   const [queue, setQueue] = useState<Question[]>([]);
   const [cursor, setCursor] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
@@ -55,13 +55,10 @@ export function useQuestionSession(topicId: string, type: QuestionType) {
 
       setQueue((prev) => {
         const existingIds = new Set(prev.map((q) => q.id));
-        const newQuestions = response.data.questions.filter(
-          (q) => !existingIds.has(q.id)
-        );
+        const newQuestions = response.data.questions.filter((q) => !existingIds.has(q.id));
         return [...prev, ...newQuestions];
       });
     } catch (error) {
-      console.error("Erro ao buscar questões: ", error);
     } finally {
       setLoading(false);
       setIsFetching(false);

@@ -3,6 +3,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { useQuestionSession } from "../../hooks/useQuestionSession";
 
+jest.mock("expo-router", () => ({
+  useLocalSearchParams: () => ({
+    topicId: "topic-1",
+    type: "ORIGINAL",
+  }),
+}));
+
 jest.mock("@/services/question.service", () => ({
   getQuestions: jest.fn(),
   postAnswer: jest.fn(),
@@ -57,9 +64,7 @@ describe("useQuestionSession Hook", () => {
       })
       .mockResolvedValue({ data: null });
 
-    const { result } = renderHook(() =>
-      useQuestionSession("topic-1", "ORIGINAL")
-    );
+    const { result } = renderHook(() => useQuestionSession());
 
     expect(result.current.loading).toBe(true);
 
@@ -82,9 +87,7 @@ describe("useQuestionSession Hook", () => {
       .mockResolvedValue({ data: null });
     (postAnswer as jest.Mock).mockResolvedValue(undefined);
 
-    const { result } = renderHook(() =>
-      useQuestionSession("topic-1", "ORIGINAL")
-    );
+    const { result } = renderHook(() => useQuestionSession());
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     act(() => {
@@ -117,9 +120,7 @@ describe("useQuestionSession Hook", () => {
 
     (postAnswer as jest.Mock).mockRejectedValue(new Error("Sem internet"));
 
-    const { result } = renderHook(() =>
-      useQuestionSession("topic-1", "ORIGINAL")
-    );
+    const { result } = renderHook(() => useQuestionSession());
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     act(() => {
@@ -142,9 +143,7 @@ describe("useQuestionSession Hook", () => {
   it("deve sinalizar isFinished quando não houver mais questões no backend", async () => {
     (getQuestions as jest.Mock).mockResolvedValue({ data: null });
 
-    const { result } = renderHook(() =>
-      useQuestionSession("topic-1", "ORIGINAL")
-    );
+    const { result } = renderHook(() => useQuestionSession());
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
