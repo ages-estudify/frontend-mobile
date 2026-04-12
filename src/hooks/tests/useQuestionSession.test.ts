@@ -76,7 +76,7 @@ describe("useQuestionSession Hook", () => {
     expect(result.current.progress.total).toBe(20);
   });
 
-  it("deve chamar postAnswer e avançar o cursor ao confirmar", async () => {
+  it("deve chamar postAnswer e salvar feedback sem avançar o cursor", async () => {
     (getQuestions as jest.Mock)
       .mockResolvedValueOnce({
         data: {
@@ -85,7 +85,10 @@ describe("useQuestionSession Hook", () => {
         },
       })
       .mockResolvedValue({ data: null });
-    (postAnswer as jest.Mock).mockResolvedValue(undefined);
+
+    const mockFeedback = { data: { isCorrect: true, comment: "Well done!" } };
+
+    (postAnswer as jest.Mock).mockResolvedValue(mockFeedback);
 
     const { result } = renderHook(() => useQuestionSession());
     await waitFor(() => expect(result.current.loading).toBe(false));
@@ -94,18 +97,23 @@ describe("useQuestionSession Hook", () => {
       result.current.setSelected("A");
     });
 
-    const onSuccessMock = jest.fn();
-
     await act(async () => {
-      result.current.confirmAnswer(onSuccessMock);
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await result.current.confirmAnswer();
     });
 
     expect(postAnswer).toHaveBeenCalledWith("1", "A");
+
+    expect(result.current.question?.id).toBe("1");
+    expect(result.current.feedback).toEqual(mockFeedback.data);
+    expect(result.current.progress.current).toBe(0);
+
+    act(() => {
+      result.current.nextQuestion();
+    });
+
     expect(result.current.question?.id).toBe("2");
-    expect(result.current.selected).toBeNull();
     expect(result.current.progress.current).toBe(1);
-    expect(onSuccessMock).toHaveBeenCalledTimes(1);
+    expect(result.current.selected).toBeNull();
   });
 
   it("deve salvar no AsyncStorage (Retry Offline) se postAnswer falhar", async () => {
@@ -128,8 +136,7 @@ describe("useQuestionSession Hook", () => {
     });
 
     await act(async () => {
-      result.current.confirmAnswer();
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await result.current.confirmAnswer();
     });
 
     await waitFor(() => {

@@ -1,18 +1,6 @@
 import api from "../api";
 import { getQuestions, postAnswer } from "../question.service";
 
-jest.mock("axios", () => ({
-  create: jest.fn(() => ({
-    get: jest.fn(),
-    post: jest.fn(),
-    interceptors: {
-      request: { use: jest.fn() },
-      response: { use: jest.fn() },
-    },
-  })),
-  isAxiosError: jest.fn(),
-}));
-
 jest.mock("../api", () => ({
   __esModule: true,
   default: {
@@ -29,7 +17,7 @@ describe("questionService", () => {
     jest.clearAllMocks();
   });
 
-  it("deve buscar questões da API corretamente usando axios", async () => {
+  it("deve buscar questões da API corretamente", async () => {
     const mockData = {
       data: {
         questions: [{ id: "1", text: "Q1", type: "ORIGINAL", imageUrl: null }],
@@ -52,12 +40,32 @@ describe("questionService", () => {
     expect(response).toEqual(mockData);
   });
 
-  it("deve enviar a resposta corretamente pela API usando axios", async () => {
-    (api.post as jest.Mock).mockResolvedValueOnce({});
+  it("deve enviar a resposta e retornar gabarito corretamente", async () => {
+    const mockFeedback = {
+      data: {
+        isCorrect: true,
+        correctAnswer: "A",
+        explanation: "Explicação técnica da resposta",
+        coinsEarned: 10,
+        totalCoins: 100,
+      },
+    };
 
-    await expect(postAnswer("1", "A")).resolves.toBeUndefined();
+    (api.post as jest.Mock).mockResolvedValueOnce(mockFeedback);
+
+    const response = await postAnswer("1", "A");
+
     expect(api.post).toHaveBeenCalledWith("/questions/1/answer", {
-      answer: "A",
+      selectedAnswer: "A",
     });
+
+    expect(response).toEqual(mockFeedback);
+  });
+
+  it("deve lançar erro se a postagem da resposta falhar", async () => {
+    const error = new Error("Erro ao enviar resposta");
+    (api.post as jest.Mock).mockRejectedValueOnce(error);
+
+    await expect(postAnswer("1", "A")).rejects.toThrow("Erro ao enviar resposta");
   });
 });

@@ -6,6 +6,12 @@ import { useEffect, useState } from "react";
 
 type QuestionType = "ORIGINAL" | "SIMPLIFIED";
 
+type Feedback = {
+  isCorrect: boolean;
+  correctAnswer: string;
+  explanation: string;
+};
+
 async function saveFailedAnswer(questionId: string, answer: string) {
   try {
     const storedData = await AsyncStorage.getItem("failedAnswers");
@@ -26,6 +32,8 @@ export function useQuestionSession() {
   const [hasMore, setHasMore] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const question = queue[cursor];
   const [progress, setProgress] = useState({
     current: 0,
     total: 20,
@@ -82,24 +90,27 @@ export function useQuestionSession() {
     }
   }, [cursor, queue]);
 
-  function confirmAnswer(onSuccess?: () => void) {
-    if (isSubmitting) return;
-
-    const current = queue[cursor];
-    if (!current || !selected) return;
-
-    const answer = selected;
+  async function confirmAnswer() {
+    if (isSubmitting || !selected || !question) return;
 
     setIsSubmitting(true);
 
-    postAnswer(current.id, answer)
-      .catch(() => {
-        saveFailedAnswer(current.id, answer);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+    try {
+      const response = await postAnswer(question.id, selected);
+      const feedbackData = response.data;
+      setFeedback(feedbackData);
 
+      return feedbackData;
+    } catch (error) {
+      saveFailedAnswer(question.id, selected);
+      return null;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  function nextQuestion() {
+    setFeedback(null);
     setSelected(null);
     setCursor((prev) => prev + 1);
 
@@ -107,19 +118,14 @@ export function useQuestionSession() {
       ...prev,
       current: prev.current + 1,
     }));
-
-    if (onSuccess) {
-      onSuccess();
-    }
   }
-
-  const question = queue[cursor];
-
   return {
     question,
     selected,
     setSelected,
     confirmAnswer,
+    nextQuestion,
+    feedback,
     loading,
     progress,
     isSubmitting,

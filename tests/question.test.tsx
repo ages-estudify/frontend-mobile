@@ -88,8 +88,8 @@ describe("QuestionScreen Component", () => {
     ).toBeTruthy();
   });
 
-  it("NÃO deve chamar confirmAnswer diretamente ao clicar em enviar", () => {
-    const mockConfirmAnswer = jest.fn();
+  it("deve chamar confirmAnswer ao clicar em enviar", async () => {
+    const mockConfirmAnswer = jest.fn().mockResolvedValue({ isCorrect: true });
 
     (useQuestionSession as jest.Mock).mockReturnValue({
       loading: false,
@@ -97,6 +97,8 @@ describe("QuestionScreen Component", () => {
       selected: "A",
       setSelected: jest.fn(),
       confirmAnswer: mockConfirmAnswer,
+      nextQuestion: jest.fn(),
+      feedback: null,
       progress: { current: 1, total: 20 },
     });
 
@@ -105,18 +107,20 @@ describe("QuestionScreen Component", () => {
     const botaoEnviar = screen.getByText("Enviar");
     fireEvent.press(botaoEnviar);
 
-    expect(mockConfirmAnswer).not.toHaveBeenCalled();
+    expect(mockConfirmAnswer).toHaveBeenCalled();
   });
 
-  it("deve chamar confirmAnswer ao clicar em avançar dentro da modal", () => {
-    const mockConfirmAnswer = jest.fn();
+  it("deve chamar nextQuestion ao clicar em avançar dentro da modal", () => {
+    const mockNextQuestion = jest.fn();
 
     (useQuestionSession as jest.Mock).mockReturnValue({
       loading: false,
       question: mockQuestion,
       selected: "A",
       setSelected: jest.fn(),
-      confirmAnswer: mockConfirmAnswer,
+      confirmAnswer: jest.fn(),
+      nextQuestion: mockNextQuestion,
+      feedback: { isCorrect: true },
       progress: { current: 1, total: 20 },
     });
 
@@ -125,6 +129,6 @@ describe("QuestionScreen Component", () => {
     const modal = screen.UNSAFE_getByType("MockQuestionAnalysisBottomSheet" as any);
     modal.props.onNext();
 
-    expect(mockConfirmAnswer).toHaveBeenCalledTimes(1);
+    expect(mockNextQuestion).toHaveBeenCalledTimes(1);
   });
 });

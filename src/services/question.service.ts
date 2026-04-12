@@ -1,5 +1,6 @@
 import api, { handleApiError } from "@/services/api";
 import {
+  AnswerQuestionResponse,
   GetQuestionParams,
   GetQuestionsResponse,
 } from "@/types/questions.types";
@@ -12,30 +13,31 @@ export async function getQuestions({
   retrieveWrong = true,
 }: GetQuestionParams): Promise<GetQuestionsResponse> {
   try {
-    const response = await api.get<never, GetQuestionsResponse>(
-      `/questions/${topicId}`,
-      {
-        params: {
-          type,
-          limit,
-          excludeAnswered,
-          retrieveWrong,
-        },
-      }
-    );
+    const response = await api.get<never, GetQuestionsResponse>(`/questions/${topicId}`, {
+      params: {
+        type,
+        limit,
+        excludeAnswered,
+        retrieveWrong,
+      },
+    });
     return response;
   } catch (error) {
-    return handleApiError(error);
+    throw handleApiError(error);
   }
 }
 
 export async function postAnswer(
   questionId: string,
   answer: string
-): Promise<void> {
+): Promise<AnswerQuestionResponse> {
   try {
-    await api.post(`/questions/${questionId}/answer`, { answer });
+    const response = await api.post<never, AnswerQuestionResponse>(
+      `/questions/${questionId}/answer`,
+      { selectedAnswer: answer }
+    );
+    return response;
   } catch (error) {
-    handleApiError(error);
+    throw handleApiError(error);
   }
 }

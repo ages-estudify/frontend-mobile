@@ -8,18 +8,29 @@ import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 
 export default function QuestionScreen() {
-  const { question, selected, setSelected, confirmAnswer, loading, progress } =
-    useQuestionSession();
+  const {
+    question,
+    selected,
+    setSelected,
+    confirmAnswer,
+    nextQuestion,
+    feedback,
+    loading,
+    progress,
+  } = useQuestionSession();
 
   const bottomSheetRef = React.useRef<BottomSheet>(null);
 
-  const handleConfirm = () => {
-    bottomSheetRef.current?.expand();
+  const handleConfirm = async () => {
+    const result = await confirmAnswer();
+    if (result) {
+      bottomSheetRef.current?.expand();
+    }
   };
 
   const handleNextQuestion = () => {
     bottomSheetRef.current?.close();
-    confirmAnswer(() => {});
+    nextQuestion();
   };
 
   if (loading) {
@@ -92,12 +103,18 @@ export default function QuestionScreen() {
       </TouchableOpacity>
       <QuestionAnalysisBottomSheet
         ref={bottomSheetRef}
-        {...({
-          questionId: question.id,
-          selectedAnswer: selected,
-          onNext: handleNextQuestion,
-          onFinish: handleNextQuestion,
-        } as any)}
+        isCorrect={feedback?.isCorrect ?? false}
+        comment={feedback?.explanation ?? ""}
+        correctAlternative={{
+          letter: feedback?.correctAnswer ?? "",
+          text: question.alternatives.find((a) => a.label === feedback?.correctAnswer)?.text ?? "",
+        }}
+        markedAlternative={{
+          letter: selected ?? "",
+          text: question.alternatives.find((a) => a.label === selected)?.text ?? "",
+        }}
+        onNext={handleNextQuestion}
+        onFinish={handleNextQuestion}
       />
     </View>
   );
