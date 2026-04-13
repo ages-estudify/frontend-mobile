@@ -2,7 +2,7 @@ import { MAIN_TAB_DEFINITIONS } from "./main-tabs";
 
 export const PLAN_GATED_TAB_NAMES = MAIN_TAB_DEFINITIONS.filter((d) => d.planGated).map(
   (d) => d.name
-) as readonly ("treinar" | "simulados" | "cronograma" | "progresso")[];
+) as readonly ("treinar" | "simulado" | "cronograma" | "progresso")[];
 
 export type PlanGatedTabName = (typeof PLAN_GATED_TAB_NAMES)[number];
 

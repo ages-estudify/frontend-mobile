@@ -33,7 +33,7 @@ export function PlanGuard({ children }: PlanGuardProps) {
   }
 
   if (!planIsActive) {
-    return <Redirect href="/planos" />;
+    return <Redirect href="/paywall" />;
   }
 
   return <>{children}</>;

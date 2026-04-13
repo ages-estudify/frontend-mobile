@@ -4,13 +4,13 @@ import React from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function ProgressoRoute() {
+export default function SimuladosRoute() {
   return (
     <PlanGuard>
       <SafeAreaView className="flex-1 bg-whitebg" edges={["top", "left", "right"]}>
         <TabScreenScrollView>
           <View className="px-4 pt-4">
-            <Text>Progresso</Text>
+            <Text>Simulado</Text>
           </View>
         </TabScreenScrollView>
       </SafeAreaView>

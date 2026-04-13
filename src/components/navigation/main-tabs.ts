@@ -6,7 +6,7 @@ export type MainTabIonIcon =
   | "stats-chart-outline";
 
 export type MainTabDefinition = {
-  name: "treinar" | "simulados" | "cronograma" | "progresso";
+  name: "treinar" | "simulado" | "cronograma" | "progresso";
   title: string;
   tabBarAccessibilityLabel: string;
   icon: MainTabIonIcon;
@@ -23,17 +23,10 @@ export const MAIN_TAB_DEFINITIONS: MainTabDefinition[] = [
     planGated: true,
   },
   {
-    name: "simulados",
-    title: "Simulados",
-    tabBarAccessibilityLabel: "Aba Simulados",
+    name: "simulado",
+    title: "Simulado",
+    tabBarAccessibilityLabel: "Aba Simulado",
     icon: "document-text-outline",
-    planGated: true,
-  },
-  {
-    name: "cronograma",
-    title: "Cronograma",
-    tabBarAccessibilityLabel: "Aba Cronograma",
-    icon: "calendar-outline",
     planGated: true,
   },
   {
@@ -41,6 +34,13 @@ export const MAIN_TAB_DEFINITIONS: MainTabDefinition[] = [
     title: "Progresso",
     tabBarAccessibilityLabel: "Aba Progresso",
     icon: "stats-chart-outline",
+    planGated: true,
+  },
+  {
+    name: "cronograma",
+    title: "Cronograma",
+    tabBarAccessibilityLabel: "Aba Cronograma",
+    icon: "calendar-outline",
     planGated: true,
   },
 ];

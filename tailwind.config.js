@@ -11,6 +11,7 @@ module.exports = {
         greenGrid: "#519B2F",
         greenPrimary: "#333E40",
         black: "#000000",
+        tabActive: "#9500FF",
         purpleCalm: "#5E4980",
         white: "#FFFFFF",
         primaryGray: "#646464",
@@ -22,7 +23,7 @@ module.exports = {
         purple50: "#3E2B5C80",
         whitebg: "#F6F6F6",
         yellowStarCard: "#FFFAC1",
-        yellowStarCardBorder: "#FFDE59",
+        greenSecondary: "#84D55D",
       },
       fontFamily: {
         poppins: ["Poppins-Regular"],

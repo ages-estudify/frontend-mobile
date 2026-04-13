@@ -42,7 +42,6 @@ export default function RootLayout() {
           >
             <Stack.Screen name="index" options={{ title: "HomePage" }} />
             <Stack.Screen name="login" options={{ title: "LoginPage" }} />
-            <Stack.Screen name="progress" options={{ title: "ProgressPage" }} />
             <Stack.Screen name="subject" options={{ title: "Subject" }} />
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="question" options={{ title: "Question" }} />
