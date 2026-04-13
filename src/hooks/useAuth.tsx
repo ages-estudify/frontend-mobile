@@ -18,10 +18,11 @@ export function useAuth() {
   const login = async ({ email, password }: LoginParams) => {
     const response = await authService.login({ email, password });
 
-    const { token, refreshToken } = response.data;
+    const { token, refreshToken, planExpirationDate } = response.data;
 
     await AsyncStorage.setItem("token", token);
     await AsyncStorage.setItem("refreshToken", refreshToken);
+    await AsyncStorage.setItem("planExpirationDate", planExpirationDate || "");
 
     return response;
   };
@@ -29,6 +30,7 @@ export function useAuth() {
   const logout = async () => {
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("refreshToken");
+    await AsyncStorage.removeItem("planExpirationDate");
   };
 
   const getToken = async () => {
@@ -48,14 +50,27 @@ export function useAuth() {
     const response = await authService.register(body);
 
     // se o backend DEVOLVE token no register
-    const { token, refreshToken } = response;
+    const { token, refreshToken, planExpirationDate } = response.data;
 
     if (token && refreshToken) {
       await AsyncStorage.setItem("token", token);
       await AsyncStorage.setItem("refreshToken", refreshToken);
+      await AsyncStorage.setItem("planExpirationDate", planExpirationDate || "");
     }
 
     return response;
+  };
+
+  const getPlanExpirationDate = async () => {
+    const dateStr = await AsyncStorage.getItem("planExpirationDate");
+    return dateStr ? new Date(dateStr) : null;
+  };
+
+  const isPlanActive = async () => {
+    const expirationDate = await getPlanExpirationDate();
+    if (!expirationDate) return false;
+
+    return new Date() < expirationDate;
   };
 
   return {
@@ -65,5 +80,7 @@ export function useAuth() {
     getToken,
     getRefreshToken,
     isAuthenticated,
+    getPlanExpirationDate,
+    isPlanActive,
   };
 }

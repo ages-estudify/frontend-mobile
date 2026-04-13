@@ -20,40 +20,23 @@ interface QuestionAnalysisBottomSheetProps {
 export const QuestionAnalysisBottomSheet = forwardRef<
   BottomSheet,
   QuestionAnalysisBottomSheetProps
->(
-  (
-    {
-      isCorrect,
-      comment,
-      onNext,
-      onFinish,
-      correctAlternative,
-      markedAlternative,
-    },
-    ref
-  ) => {
-    const snapPoints = useMemo(() => ["20%", "90%"], []);
+>(({ isCorrect, comment, onNext, onFinish, correctAlternative, markedAlternative }, ref) => {
+  const snapPoints = useMemo(() => ["20%", "90%"], []);
 
-    return (
-      <BottomSheet
-        ref={ref}
-        index={-1}
-        snapPoints={snapPoints}
-        enablePanDownToClose={false}
-      >
-        <BottomSheetScrollView style={{ flex: 1, padding: 24 }}>
-          <QuestionAnalysisSheet
-            isCorrect={isCorrect}
-            correctAlternative={correctAlternative}
-            markedAlternative={markedAlternative}
-            comment={comment}
-            onNext={onNext}
-            onFinish={onFinish}
-          />
-        </BottomSheetScrollView>
-      </BottomSheet>
-    );
-  }
-);
+  return (
+    <BottomSheet ref={ref} index={-1} snapPoints={snapPoints} enablePanDownToClose={false}>
+      <BottomSheetScrollView style={{ flex: 1, padding: 24 }}>
+        <QuestionAnalysisSheet
+          isCorrect={isCorrect}
+          correctAlternative={correctAlternative}
+          markedAlternative={markedAlternative}
+          comment={comment}
+          onNext={onNext}
+          onFinish={onFinish}
+        />
+      </BottomSheetScrollView>
+    </BottomSheet>
+  );
+});
 
 QuestionAnalysisBottomSheet.displayName = "QuestionAnalysisBottomSheet";

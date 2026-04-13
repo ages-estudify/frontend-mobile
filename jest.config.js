@@ -5,4 +5,20 @@ module.exports = {
     "**/__tests__/**/*.(test|spec).(js|jsx|ts|tsx)",
     "**/*.(test|spec).(js|jsx|ts|tsx)",
   ],
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1",
+  },
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "app/**/*.{ts,tsx}",
+    "!**/*.test.{ts,tsx}",
+    "!**/*.spec.{ts,tsx}",
+    "!**/node_modules/**",
+  ],
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "\\.config\\.(js|ts)$",
+    "/\\.expo/",
+    "/app/_layout\\.tsx$",
+  ],
 };

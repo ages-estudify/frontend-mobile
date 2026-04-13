@@ -1,5 +1,6 @@
 import { StarBadge } from "@/components/StarBadge";
 import { useStars } from "@/hooks/useStars";
+import React from "react";
 
 type StarBadgeVariant = "treinar" | "progresso";
 
