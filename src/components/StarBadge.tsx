@@ -20,8 +20,7 @@ export function StarBadge({
 
   const resolvedDescription = hasError
     ? (errorDescription ?? "Não foi possível carregar suas estrelas.")
-    : (description ??
-      "Representa o número total de questões que você já respondeu.");
+    : (description ?? "Representa o número total de questões que você já respondeu.");
 
   return (
     <View className="w-full flex-row items-center rounded-[20px] border border-yellowStarCardBorder bg-yellowStarCard/50 px-5 py-4">

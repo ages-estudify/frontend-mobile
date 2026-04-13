@@ -52,9 +52,7 @@ describe("StarBadgeContainer", () => {
     expect(screen.getByText("stars:12")).toBeTruthy();
     expect(screen.getByText("loading:false")).toBeTruthy();
     expect(screen.getByText("error:false")).toBeTruthy();
-    expect(
-      screen.getByText("description:Responda questões e ganhe mais")
-    ).toBeTruthy();
+    expect(screen.getByText("description:Responda questões e ganhe mais")).toBeTruthy();
   });
 
   it('passa a descrição correta para a variant "progresso"', () => {
@@ -68,9 +66,7 @@ describe("StarBadgeContainer", () => {
 
     expect(screen.getByText("stars:30")).toBeTruthy();
     expect(
-      screen.getByText(
-        "description:Representa o número total de questões que você já respondeu."
-      )
+      screen.getByText("description:Representa o número total de questões que você já respondeu.")
     ).toBeTruthy();
   });
 
@@ -86,8 +82,6 @@ describe("StarBadgeContainer", () => {
     expect(screen.getByText("stars:null")).toBeTruthy();
     expect(screen.getByText("loading:true")).toBeTruthy();
     expect(screen.getByText("error:true")).toBeTruthy();
-    expect(
-      screen.getByText("description:Responda questões e ganhe mais")
-    ).toBeTruthy();
+    expect(screen.getByText("description:Responda questões e ganhe mais")).toBeTruthy();
   });
 });

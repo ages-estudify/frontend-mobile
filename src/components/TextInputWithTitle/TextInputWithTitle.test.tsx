@@ -35,10 +35,7 @@ describe("TextInputWithTitle", () => {
       />
     );
 
-    fireEvent.changeText(
-      getByPlaceholderText("email@email.com"),
-      "novo@email.com"
-    );
+    fireEvent.changeText(getByPlaceholderText("email@email.com"), "novo@email.com");
 
     expect(onValueChange).toHaveBeenCalledWith("novo@email.com");
   });

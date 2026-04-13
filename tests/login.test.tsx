@@ -61,10 +61,7 @@ describe("LoginPage", () => {
 
     fireEvent.press(getByTestId("login-button"));
 
-    expect(Alert.alert).toHaveBeenCalledWith(
-      "Erro",
-      "Preencha todos os campos"
-    );
+    expect(Alert.alert).toHaveBeenCalledWith("Erro", "Preencha todos os campos");
     expect(mockLogin).not.toHaveBeenCalled();
     expect(mockReplace).not.toHaveBeenCalled();
   });
@@ -74,10 +71,7 @@ describe("LoginPage", () => {
 
     const { getByPlaceholderText, getByTestId } = render(<LoginPage />);
 
-    fireEvent.changeText(
-      getByPlaceholderText("email@email.com"),
-      "user@test.com"
-    );
+    fireEvent.changeText(getByPlaceholderText("email@email.com"), "user@test.com");
     fireEvent.changeText(getByPlaceholderText("*******"), "password123");
     fireEvent.press(getByTestId("login-button"));
 
@@ -99,10 +93,7 @@ describe("LoginPage", () => {
 
     const { getByPlaceholderText, getByTestId } = render(<LoginPage />);
 
-    fireEvent.changeText(
-      getByPlaceholderText("email@email.com"),
-      "usuario@teste.com"
-    );
+    fireEvent.changeText(getByPlaceholderText("email@email.com"), "usuario@teste.com");
     fireEvent.changeText(getByPlaceholderText("*******"), "senha123456");
     fireEvent.press(getByTestId("login-button"));
 
@@ -125,17 +116,12 @@ describe("LoginPage", () => {
 
     const { getByPlaceholderText, getByTestId } = render(<LoginPage />);
 
-    fireEvent.changeText(
-      getByPlaceholderText("email@email.com"),
-      "loading@test.com"
-    );
+    fireEvent.changeText(getByPlaceholderText("email@email.com"), "loading@test.com");
     fireEvent.changeText(getByPlaceholderText("*******"), "12345678");
     fireEvent.press(getByTestId("login-button"));
 
     await waitFor(() => {
-      expect(
-        getByTestId("login-button").props.accessibilityState.disabled
-      ).toBe(true);
+      expect(getByTestId("login-button").props.accessibilityState.disabled).toBe(true);
     });
   });
 });

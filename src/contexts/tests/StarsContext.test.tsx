@@ -9,8 +9,7 @@ jest.mock("@/services/stars.service", () => ({
 }));
 
 function TestComponent() {
-  const { stars, isLoading, hasError, loadStars, updateStars } =
-    useStarsContext();
+  const { stars, isLoading, hasError, loadStars, updateStars } = useStarsContext();
 
   return (
     <>

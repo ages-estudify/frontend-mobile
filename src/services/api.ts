@@ -43,7 +43,9 @@ api.interceptors.request.use(async (config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
+  if (!config.url?.includes("/login") && !config.url?.includes("/register") && !token) {
+    router.replace("/login" as RelativePathString);
+  }
   return config;
 });
 

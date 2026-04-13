@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { getUserStars } from "@/services/stars.service";
 
 interface StarsContextType {
@@ -59,9 +52,7 @@ export function StarsProvider({ children }: StarsProviderProps) {
     [stars, isLoading, hasError, loadStars, updateStars]
   );
 
-  return (
-    <StarsContext.Provider value={value}>{children}</StarsContext.Provider>
-  );
+  return <StarsContext.Provider value={value}>{children}</StarsContext.Provider>;
 }
 
 export function useStarsContext() {

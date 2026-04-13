@@ -12,9 +12,9 @@ export function ActionButton({ text, action, disabled }: ActionButtonProps) {
     <Pressable
       onPress={action}
       disabled={disabled}
-      className="items-center rounded-2xl bg-purpleCalm  w-full py-[10px]"
+      className="w-full items-center rounded-2xl bg-purpleCalm py-[10px]"
     >
-      <Text className="font-medium text-white text-[16px]">{text}</Text>
+      <Text className="text-[16px] font-medium text-white">{text}</Text>
     </Pressable>
   );
 }

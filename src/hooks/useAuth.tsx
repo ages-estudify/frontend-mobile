@@ -1,8 +1,16 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authService } from "@/services/auth.service";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type LoginParams = {
   email: string;
+  password: string;
+};
+
+type RegisterParams = {
+  fullName: string;
+  email: string;
+  birthDate: string;
+  phone: string;
   password: string;
 };
 
@@ -36,8 +44,23 @@ export function useAuth() {
     return !!token;
   };
 
+  const register = async (body: RegisterParams) => {
+    const response = await authService.register(body);
+
+    // se o backend DEVOLVE token no register
+    const { token, refreshToken } = response;
+
+    if (token && refreshToken) {
+      await AsyncStorage.setItem("token", token);
+      await AsyncStorage.setItem("refreshToken", refreshToken);
+    }
+
+    return response;
+  };
+
   return {
     login,
+    register,
     logout,
     getToken,
     getRefreshToken,

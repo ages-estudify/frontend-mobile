@@ -3,7 +3,7 @@ import { TextInputWithTitle } from "@/components/TextInputWithTitle/TextInputWit
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { View, Image, Text, Alert, Pressable } from "react-native";
+import { Alert, Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginPage() {
@@ -34,16 +34,14 @@ export default function LoginPage() {
 
   return (
     <SafeAreaView className="flex-1">
-      <View className="flex-1 justify-center items-center px-4">
+      <View className="flex-1 items-center justify-center px-4">
         <View className="pb-9">
           <Image
             source={require("../assets/login_fox.png")}
-            className="w-[159px] h-[132.68px]"
+            className="h-[132.68px] w-[159px]"
             resizeMode="contain"
           />
-          <Text className="text-4xl font-semibold text-purple100">
-            Bem Vindo!
-          </Text>
+          <Text className="text-4xl font-semibold text-purple100">Bem Vindo!</Text>
         </View>
 
         <View className="w-full gap-4">
@@ -57,24 +55,19 @@ export default function LoginPage() {
             title={"Senha"}
             placeholder={"*******"}
             isPassword={true}
+            isLogin={true}
             onValueChange={setPassword}
             text={password}
           />
         </View>
 
         <View className="w-full items-center gap-4 pt-16">
-          <ActionButton
-            text={"Login"}
-            action={handleLogin}
-            disabled={isLoading}
-          />
+          <ActionButton text={"Login"} action={handleLogin} disabled={isLoading} />
 
-          <Pressable onPress={() => {}} className="flex-row gap-2">
+          <Pressable onPress={() => router.push("/register")} className="flex-row gap-2">
             <View className="flex-row gap-2">
-              <Text className="text-primaryGray font-regular">
-                Não possui conta?
-              </Text>
-              <Text>Registrar</Text>
+              <Text className="font-regular text-primaryGray">Não possui conta?</Text>
+              <Text className="font-semibold text-purple100">Registrar</Text>
             </View>
           </Pressable>
         </View>

@@ -39,9 +39,7 @@ describe("StarBadge", () => {
     );
 
     expect(screen.getByText("Estrelas: --")).toBeTruthy();
-    expect(
-      screen.getByText("Não foi possível carregar suas estrelas.")
-    ).toBeTruthy();
+    expect(screen.getByText("Não foi possível carregar suas estrelas.")).toBeTruthy();
   });
 
   it("exibe skeleton em estado de loading", () => {
