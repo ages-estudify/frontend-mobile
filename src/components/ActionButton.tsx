@@ -1,18 +1,20 @@
 import React from "react";
-import { Text, Pressable } from "react-native";
+import { Pressable, Text } from "react-native";
 
 interface ActionButtonProps {
   text: string;
   action: () => void;
+  disabled?: boolean;
 }
 
-export function ActionButton({ text, action }: ActionButtonProps) {
+export function ActionButton({ text, action, disabled }: ActionButtonProps) {
   return (
     <Pressable
       onPress={action}
-      className="items-center rounded-2xl bg-purpleCalm  w-full py-[10px]"
+      disabled={disabled}
+      className="w-full items-center rounded-2xl bg-purpleCalm py-[10px]"
     >
-      <Text className="font-medium text-white text-[16px]">{text}</Text>
+      <Text className="text-[16px] font-medium text-white">{text}</Text>
     </Pressable>
   );
 }

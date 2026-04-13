@@ -1,3 +1,4 @@
+import { endPoints } from "@/routes/endpoints";
 import type {
   LoginRequest,
   LoginResponse,
@@ -6,14 +7,13 @@ import type {
 } from "@/types/auth.types";
 import api from "./api";
 
-export const login = async (body: LoginRequest): Promise<LoginResponse> => {
-  const response: LoginResponse = await api.post("/auth/login", body);
-  return response;
-};
-
-export const register = async (
-  body: RegisterRequest
-): Promise<RegisterResponse> => {
-  const response: RegisterResponse = await api.post("/auth/register", body);
-  return response;
+export const authService = {
+  login: async (body: LoginRequest): Promise<LoginResponse> => {
+    const response: LoginResponse = await api.post(endPoints.auth.login, body);
+    return response;
+  },
+  register: async (body: RegisterRequest): Promise<RegisterResponse> => {
+    const response: RegisterResponse = await api.post(endPoints.auth.register, body);
+    return response;
+  },
 };

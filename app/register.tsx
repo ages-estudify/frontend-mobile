@@ -1,21 +1,21 @@
-import { register } from "@/services/auth.service";
+import { TextInputWithTitle } from "@/components/TextInputWithTitle/TextInputWithTitle";
+import { useAuth } from "@/hooks/useAuth";
 import { RegisterRequest } from "@/types/auth.types";
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RegisterScreen() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { register } = useAuth();
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [birthDateText, setBirthDateText] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [birthDateText, setBirthDateText] = useState("");
+
   const [passwordError, setPasswordError] = useState("");
   const [phoneError, setPhoneError] = useState("");
 
@@ -23,50 +23,13 @@ export default function RegisterScreen() {
     const cleaned = text.replace(/\D/g, "");
 
     if (cleaned.length <= 2) return cleaned;
-    if (cleaned.length <= 4)
-      return `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
+    if (cleaned.length <= 4) return `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
 
-    return `${cleaned.slice(0, 2)}/${cleaned.slice(
-      2,
-      4
-    )}/${cleaned.slice(4, 8)}`;
-  }
-
-  function isValidPhone(phone: string): boolean {
-    const cleaned = phone.replace(/\D/g, "");
-
-    return cleaned.length === 10 || cleaned.length === 11;
-  }
-
-  function formatPhone(text: string) {
-    const cleaned = text.replace(/\D/g, "");
-
-    if (cleaned.length === 0) return "";
-
-    if (cleaned.length <= 2) {
-      return `(${cleaned}`;
-    }
-
-    if (cleaned.length <= 6) {
-      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
-    }
-
-    if (cleaned.length <= 10) {
-      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(
-        2,
-        6
-      )}-${cleaned.slice(6)}`;
-    }
-
-    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(
-      2,
-      7
-    )}-${cleaned.slice(7, 11)}`;
+    return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4, 8)}`;
   }
 
   function parseBirthDate(date: string): string | null {
     const [day, month, year] = date.split("/").map(Number);
-
     if (!day || !month || !year) return null;
 
     const parsed = new Date(year, month - 1, day);
@@ -87,18 +50,37 @@ export default function RegisterScreen() {
   }
 
   function isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
-  function handleRegister() {
-    if (
-      !fullName ||
-      !email ||
-      !phone ||
-      !password ||
-      !confirmPassword ||
-      !birthDateText
-    ) {
+
+  function isValidPhone(phone: string): boolean {
+    const cleaned = phone.replace(/\D/g, "");
+    return cleaned.length === 10 || cleaned.length === 11;
+  }
+
+  function formatPhone(text: string) {
+    const cleaned = text.replace(/\D/g, "");
+
+    const withoutCountry = cleaned.startsWith("55") ? cleaned.slice(2) : cleaned;
+
+    if (withoutCountry.length === 0) return "+55 ";
+
+    if (withoutCountry.length <= 2) {
+      return `+55 (${withoutCountry}`;
+    }
+
+    if (withoutCountry.length <= 7) {
+      return `+55 (${withoutCountry.slice(0, 2)}) ${withoutCountry.slice(2)}`;
+    }
+
+    return `+55 (${withoutCountry.slice(0, 2)}) ${withoutCountry.slice(
+      2,
+      7
+    )}-${withoutCountry.slice(7, 11)}`;
+  }
+
+  async function handleRegister() {
+    if (!fullName || !email || !phone || !password || !confirmPassword || !birthDateText) {
       alert("Preencha todos os campos");
       return;
     }
@@ -119,13 +101,10 @@ export default function RegisterScreen() {
     }
 
     const parsedBirthDate = parseBirthDate(birthDateText);
-
     if (!parsedBirthDate) {
       alert("Data de nascimento inválida");
       return;
     }
-
-    const cleanedPhone = phone.replace(/\D/g, "");
 
     if (!isValidPhone(phone)) {
       alert("Número de telefone inválido");
@@ -133,153 +112,110 @@ export default function RegisterScreen() {
     }
 
     const registerRequest: RegisterRequest = {
-      fullName: fullName,
-      email: email,
-      password: password,
-      phone: cleanedPhone,
+      fullName,
+      email,
+      password,
+      phone: phone.replace(/\D/g, ""),
       birthDate: parsedBirthDate,
     };
 
-    register(registerRequest);
-    console.log("RegisterRequest:", registerRequest);
+    try {
+      await register(registerRequest);
+      alert("Cadastro realizado com sucesso");
+      router.replace("/login");
+    } catch (error) {
+      console.log("Register error:", error);
+      return;
+    }
   }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6 pt-20">
-        <Text className="text-4xl font-bold text-center text-[#3F2A66] mb-16">
-          Cadastro
-        </Text>
+        <Text className="mb-16 text-center text-4xl font-bold text-purple100">Cadastro</Text>
 
-        <View className="mb-8">
-          <Text className="mb-1 font-bold text-[#3F2A66]">Nome</Text>
-          <TextInput
-            placeholder="Ex: Maria dos Santos"
-            value={fullName}
-            onChangeText={setFullName}
-            className="h-12 px-4 border border-neutral-300 rounded-lg"
-          />
-        </View>
+        <TextInputWithTitle
+          title="Nome"
+          placeholder="Ex: Maria dos Santos"
+          text={fullName}
+          onValueChange={setFullName}
+          autoCapitalize="words"
+        />
 
-        <View className="mb-8">
-          <Text className="mb-1 font-bold text-[#3F2A66]">Email</Text>
-          <TextInput
-            placeholder="abc@abc.com"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-            className="h-12 px-4 border border-neutral-300 rounded-lg"
-          />
-        </View>
+        <TextInputWithTitle
+          title="Email"
+          placeholder="abc@abc.com"
+          text={email}
+          onValueChange={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
 
-        <View className="mb-8">
-          <Text className="mb-1 font-bold text-[#3F2A66]">
-            Data de Nascimento
-          </Text>
-          <TextInput
-            placeholder="DD/MM/AAAA"
-            keyboardType="numeric"
-            maxLength={10}
-            value={birthDateText}
-            onChangeText={(text) => setBirthDateText(formatDate(text))}
-            className="h-12 px-4 border border-neutral-300 rounded-lg"
-          />
-        </View>
+        <TextInputWithTitle
+          title="Data de Nascimento"
+          placeholder="DD/MM/AAAA"
+          text={birthDateText}
+          onValueChange={(value) => setBirthDateText(formatDate(value))}
+          keyboardType="numeric"
+          maxLength={10}
+        />
 
-        <View className="mb-8">
-          <Text className="mb-1 font-bold text-[#3F2A66]">Número</Text>
+        <TextInputWithTitle
+          title="Número"
+          placeholder="(11) 99999-9999"
+          text={phone}
+          onValueChange={(value) => {
+            const formatted = formatPhone(value);
+            setPhone(formatted);
 
-          <TextInput
-            placeholder="(11) 99999-9999"
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={(text) => {
-              const formatted = formatPhone(text);
-              setPhone(formatted);
+            if (!isValidPhone(formatted)) {
+              setPhoneError("Número inválido");
+            } else {
+              setPhoneError("");
+            }
+          }}
+          keyboardType="phone-pad"
+          errorMessage={phoneError}
+        />
 
-              if (!isValidPhone(formatted)) {
-                setPhoneError("Número inválido");
-              } else {
-                setPhoneError("");
-              }
-            }}
-            className="h-12 px-4 border border-neutral-300 rounded-lg"
-          />
+        <TextInputWithTitle
+          title="Senha"
+          placeholder="******"
+          text={password}
+          onValueChange={(value) => {
+            setPassword(value);
+            if (value.length > 0 && value.length < 8) {
+              setPasswordError("A senha deve ter no mínimo 8 caracteres");
+            } else {
+              setPasswordError("");
+            }
+          }}
+          isPassword
+          isLogin={false}
+          errorMessage={passwordError}
+        />
 
-          {phoneError ? (
-            <Text className="text-red-500 text-sm mt-0.5">{phoneError}</Text>
-          ) : null}
-        </View>
-
-        <View className="mb-8">
-          <Text className="mb-1 font-bold text-[#3F2A66]">Senha</Text>
-
-          <View className="flex-row items-center border border-neutral-300 rounded-lg px-4 h-12">
-            <TextInput
-              placeholder="******"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                if (text.length > 0 && text.length < 8) {
-                  setPasswordError("A senha deve ter no mínimo 8 caracteres");
-                } else {
-                  setPasswordError("");
-                }
-              }}
-              className="flex-1"
-            />
-
-            <Pressable onPress={() => setShowPassword(!showPassword)}>
-              <Ionicons
-                name={showPassword ? "eye" : "eye-off"}
-                size={18}
-                color="#3F2A66"
-              />
-            </Pressable>
-          </View >
-
-          {
-            passwordError ? (
-              <Text className="text-red-500 text-sm mt-0.5" > {passwordError}</Text>
-            ) : null
-          }
-        </View >
-
-        <View className="mb-14">
-          <Text className="mb-1 font-bold text-[#3F2A66]">Confirmar Senha</Text>
-          <View className="flex-row items-center border border-neutral-300 rounded-lg px-4 h-12">
-            <TextInput
-              placeholder="******"
-              secureTextEntry={!showConfirmPassword}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              className="flex-1"
-            />
-            <Pressable
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              <Ionicons
-                name={showConfirmPassword ? "eye" : "eye-off"}
-                size={18}
-                color="#3F2A66"
-              />
-            </Pressable>
-          </View>
-        </View>
+        <TextInputWithTitle
+          title="Confirmar Senha"
+          placeholder="******"
+          text={confirmPassword}
+          onValueChange={setConfirmPassword}
+          isPassword
+          isLogin={false}
+          errorMessage={password !== confirmPassword ? "As senhas não conferem" : ""}
+        />
 
         <Pressable
           onPress={handleRegister}
-          className="h-12 bg-[#3F2A66] rounded-full justify-center items-center"
+          className="mt-6 h-12 items-center justify-center rounded-full bg-purple100"
         >
-          <Text className="text-white font-semibold text-base">Confirmar</Text>
+          <Text className="text-base font-semibold text-white">Confirmar</Text>
         </Pressable>
 
         <Pressable onPress={() => router.back()} className="mt-4 items-center">
-          <Text className="text-[#3F2A66] font-medium">‹ Voltar</Text>
+          <Text className="font-medium text-purple100">‹ Voltar</Text>
         </Pressable>
-      </View >
-    </SafeAreaView >
+      </View>
+    </SafeAreaView>
   );
 }
