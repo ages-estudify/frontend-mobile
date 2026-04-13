@@ -43,8 +43,13 @@ export default function QuestionScreen() {
 
   if (!question) {
     return (
-      <View className="flex-1 items-center justify-center">
-        <Text>Todas as questões deste tipo foram respondidas neste tópico</Text>
+      <View className="flex-1 justify-normal bg-gray-50 p-4">
+        <BackButton />
+        <View className="flex-1 items-center justify-center p-8">
+          <Text className="text-center">
+            Todas as questões deste tipo foram respondidas neste tópico
+          </Text>
+        </View>
       </View>
     );
   }
@@ -66,7 +71,7 @@ export default function QuestionScreen() {
         </View>
       </View>
 
-      <QuestionCard question={question} />
+      <QuestionCard question={question} progress={progress.current + 1} />
       <View className="mt-6">
         {question.alternatives.map((alt) => {
           const isSelected = selected === alt.label;
