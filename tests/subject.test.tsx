@@ -130,10 +130,10 @@ describe("SubjectScreen (app/subject)", () => {
     fireEvent.press(screen.getByText("Álgebra"));
 
     fireEvent.press(screen.getByLabelText("Treino original"));
-    expect(mockNavigate).toHaveBeenCalledWith("/questions?topicId=topic-x&type=ORIGINAL");
+    expect(mockNavigate).toHaveBeenCalledWith("/question?topicId=topic-x&type=ORIGINAL");
 
     fireEvent.press(screen.getByLabelText("Treino simplificado"));
-    expect(mockNavigate).toHaveBeenCalledWith("/questions?topicId=topic-x&type=SIMPLIFIED");
+    expect(mockNavigate).toHaveBeenCalledWith("/question?topicId=topic-x&type=SIMPLIFIED");
   });
 
   it("shows progress on TopicStep when the topic is partially complete", async () => {

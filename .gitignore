@@ -46,3 +46,7 @@ app-example
 
 .env.local
 .envcoverage/
+
+
+# Tests
+coverage/

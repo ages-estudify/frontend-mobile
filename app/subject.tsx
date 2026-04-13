@@ -65,10 +65,10 @@ export default function SubjectScreen() {
       <QuestionTypeBottomSheet
         modalRef={bottomSheetModalRef}
         onOriginalPress={() =>
-          router.navigate(`/questions?topicId=${selectedTopicId}&type=ORIGINAL`)
+          router.navigate(`/question?topicId=${selectedTopicId}&type=ORIGINAL`)
         }
         onSimplifiedPress={() =>
-          router.navigate(`/questions?topicId=${selectedTopicId}&type=SIMPLIFIED`)
+          router.navigate(`/question?topicId=${selectedTopicId}&type=SIMPLIFIED`)
         }
       />
     </SafeAreaView>
