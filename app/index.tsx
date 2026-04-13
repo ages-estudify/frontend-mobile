@@ -1,9 +1,8 @@
 import { StarBadgeContainer } from "@/components/StarBadgeContainer";
 import { SubjectsGrid } from "@/components/SubjectsGrid";
-import { useAuth } from "@/hooks/useAuth";
 import { getSubjects } from "@/services/subject/subject.service";
 import { Subject } from "@/types/subject.types";
-import { Link, RelativePathString, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,31 +10,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function HomeScreen() {
   const [subjects, setSubjects] = React.useState<Subject[]>([]);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const data = async () => {
       const subjectsData = await getSubjects();
       setSubjects(subjectsData);
-    };
-    data();
-  }, []);
-  const [loading, setLoading] = useState(true);
-  const { isAuthenticated } = useAuth();
-
-  const router = useRouter();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const authenticated = await isAuthenticated();
-
-      if (!authenticated) {
-        router.replace("/login" as RelativePathString);
-        return;
-      }
-
       setLoading(false);
     };
-
-    checkAuth();
+    data();
   }, []);
 
   if (loading) {
