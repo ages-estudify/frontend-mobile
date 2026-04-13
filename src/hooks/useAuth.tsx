@@ -50,11 +50,12 @@ export function useAuth() {
     const response = await authService.register(body);
 
     // se o backend DEVOLVE token no register
-    const { token, refreshToken } = response;
+    const { token, refreshToken, planExpirationDate } = response.data;
 
     if (token && refreshToken) {
       await AsyncStorage.setItem("token", token);
       await AsyncStorage.setItem("refreshToken", refreshToken);
+      await AsyncStorage.setItem("planExpirationDate", planExpirationDate || "");
     }
 
     return response;

@@ -1,32 +1,32 @@
-import { Star } from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";
+import Fire from "../../assets/icons/fire.svg";
 
 interface StarBadgeProps {
-  stars: number | null;
+  sequence: number | null;
   isLoading: boolean;
   hasError: boolean;
   description?: string;
   errorDescription?: string;
 }
 
-export function StarBadge({
-  stars,
+export function SequenceBadge({
+  sequence,
   isLoading,
   hasError,
   description,
   errorDescription,
 }: StarBadgeProps) {
-  const title = `Estrelas: ${hasError || stars === null ? "--" : stars}`;
+  const title = `Sequencia de Dias: ${hasError || sequence === null ? "--" : sequence}`;
 
   const resolvedDescription = hasError
-    ? (errorDescription ?? "Não foi possível carregar suas estrelas.")
-    : (description ?? "Representa o número total de questões que você já respondeu.");
+    ? (errorDescription ?? "Não foi possível carregar sua sequência.")
+    : (description ?? "Representa quantos dias consecutivos você tem estudado na plataforma.");
 
   return (
-    <View className="w-full flex-row items-center rounded-[20px] border border-yellowStarCardBorder bg-yellowStarCard/50 px-5 py-4">
+    <View className="w-full flex-row items-center rounded-[20px] border border-orangeSequenceCardBorder bg-orangeSequenceCard/50 px-5 py-4">
       <View className="mr-4 items-center justify-center">
-        <Star size={30} fill="#F6E200" color="#F6E200" />
+        <Fire width={28} height={33} />
       </View>
 
       <View className="flex-1">

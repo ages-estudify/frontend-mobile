@@ -23,7 +23,10 @@ module.exports = {
         purple50: "#3E2B5C80",
         whitebg: "#F6F6F6",
         yellowStarCard: "#FFFAC1",
+        yellowStarCardBorder: "#FFDE59",
         greenSecondary: "#84D55D",
+        orangeSequenceCard: "#FFE6C580",
+        orangeSequenceCardBorder: "#FFD195",
       },
       fontFamily: {
         poppins: ["Poppins-Regular"],

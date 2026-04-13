@@ -1,5 +1,6 @@
 import { PlanGuard } from "@/components/navigation/PlanGuard";
 import { TabScreenScrollView } from "@/components/navigation/TabScreenScrollView";
+import { SequenceBadgeContainer } from "@/components/SequenceBadgeContainer";
 import { StarBadgeContainer } from "@/components/StarBadgeContainer";
 import { SubjectsGrid } from "@/components/SubjectsGrid";
 import { getSubjects } from "@/services/subject/subject.service";
@@ -42,7 +43,8 @@ export default function TreinarRoute() {
               resizeMode="contain"
             />
             <Text className="font-poppins-semi text-[34px]">Treinar</Text>
-            <StarBadgeContainer variant="treinar" />
+            <Text className="font-inter-semi text-[15px]">Sequência</Text>
+            <SequenceBadgeContainer variant="treinar" />
             <StarBadgeContainer variant="treinar" />
             <SubjectsGrid subjects={subjects}></SubjectsGrid>
           </View>

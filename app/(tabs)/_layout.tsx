@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
@@ -16,6 +17,16 @@ import {
 
 const TAB_BAR_BORDER_RADIUS = TAB_BAR_HEIGHT / 2;
 const TAB_ITEM_ACTIVE_BG = "#EBEBEB";
+
+function BlurTabBarBackground() {
+  return (
+    <BlurView
+      intensity={90}
+      style={{ position: "absolute", width: "100%", height: "100%" }}
+      tint="light"
+    />
+  );
+}
 
 export default function TabsLayout() {
   const blockedListeners = useTabsPlanGateListeners();
@@ -62,22 +73,25 @@ export default function TabsLayout() {
         bottom: bottomOffset,
         height: TAB_BAR_HEIGHT,
         borderRadius: TAB_BAR_BORDER_RADIUS,
-        backgroundColor: "#ffffff",
         borderTopWidth: 0,
         paddingHorizontal: 2,
+        overflow: "hidden" as const,
         ...Platform.select({
           ios: {
+            backgroundColor: "rgba(255, 255, 255, 0.7)",
             shadowColor: "#000000",
             shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.12,
+            shadowOpacity: 0.1,
             shadowRadius: 20,
           },
           android: {
-            elevation: 14,
+            backgroundColor: "#ffffff",
+            elevation: 8,
           },
           default: {},
         }),
       },
+      tabBarBackground: Platform.OS === "ios" ? BlurTabBarBackground : undefined,
     };
   }, [insets.bottom]);
 

@@ -13,7 +13,7 @@ export interface RegisterResponse {
     token: string;
     refreshToken: string;
     role: string;
-    planExpirationDate: Date;
+    planExpirationDate: string | null;
   };
 }
 
