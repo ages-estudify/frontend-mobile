@@ -122,7 +122,7 @@ export default function RegisterScreen() {
     try {
       await register(registerRequest);
       alert("Cadastro realizado com sucesso");
-      router.replace("/login");
+      router.replace("/");
     } catch (error) {
       console.log("Register error:", error);
       return;

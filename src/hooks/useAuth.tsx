@@ -45,8 +45,6 @@ export function useAuth() {
   };
 
   const register = async (body: RegisterParams) => {
-    console.log("Register body:", body);
-
     const response = await authService.register(body);
 
     // se o backend DEVOLVE token no register
