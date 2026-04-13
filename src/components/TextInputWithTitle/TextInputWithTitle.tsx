@@ -37,7 +37,7 @@ export function TextInputWithTitle({
         <Text className="text-base font-semibold text-greenPrimary">{title}</Text>
 
         {isPassword && isLogin && (
-          <Pressable onPress={() => {}}>
+          <Pressable onPress={() => { }}>
             <Text className="text-xs text-greenPrimary">Esqueceu sua senha?</Text>
           </Pressable>
         )}
@@ -52,9 +52,8 @@ export function TextInputWithTitle({
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           maxLength={maxLength}
-          className={`rounded-2xl border px-4 py-3 ${
-            errorMessage ? "border-red-500" : "border-gray-300"
-          }`}
+          className={`rounded-2xl border px-4 py-3 ${errorMessage ? "border-red-500" : "border-gray-300"
+            }`}
         />
 
         {isPassword && (

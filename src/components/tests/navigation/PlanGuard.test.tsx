@@ -2,9 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { Text } from "react-native";
 
-jest.mock("expo-router", () =>
-  require("../../../../test/mocks/expo-router-redirect.js")
-);
+jest.mock("expo-router", () => require("../../../../test/mocks/expo-router-redirect.js"));
 
 const mockUseAuth = jest.fn();
 

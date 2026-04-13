@@ -35,24 +35,18 @@ describe("auth.service login", () => {
 
   it("lança com corpo de erro", async () => {
     mockPost.mockResolvedValueOnce({ success: false, message: "inválido" });
-    await expect(login({ email: "a@b.com", password: "x" })).rejects.toThrow(
-      "inválido"
-    );
+    await expect(login({ email: "a@b.com", password: "x" })).rejects.toThrow("inválido");
   });
 
   it("lança com mensagem de erro estilo HTTP client", async () => {
     mockPost.mockRejectedValueOnce({
       response: { data: { message: "401" } },
     });
-    await expect(login({ email: "a@b.com", password: "x" })).rejects.toThrow(
-      "401"
-    );
+    await expect(login({ email: "a@b.com", password: "x" })).rejects.toThrow("401");
   });
 
   it("propaga Error genérico", async () => {
     mockPost.mockRejectedValueOnce(new Error("network"));
-    await expect(login({ email: "a@b.com", password: "x" })).rejects.toThrow(
-      "network"
-    );
+    await expect(login({ email: "a@b.com", password: "x" })).rejects.toThrow("network");
   });
 });

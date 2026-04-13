@@ -6,7 +6,7 @@ export type MainTabIonIcon =
   | "stats-chart-outline";
 
 export type MainTabDefinition = {
-  name: "home" | "treinar" | "simulados" | "cronograma" | "progresso";
+  name: "treinar" | "simulados" | "cronograma" | "progresso";
   title: string;
   tabBarAccessibilityLabel: string;
   icon: MainTabIonIcon;
@@ -15,13 +15,6 @@ export type MainTabDefinition = {
 };
 
 export const MAIN_TAB_DEFINITIONS: MainTabDefinition[] = [
-  {
-    name: "home",
-    title: "Início",
-    tabBarAccessibilityLabel: "Aba Início",
-    icon: "home-outline",
-    planGated: false,
-  },
   {
     name: "treinar",
     title: "Treinar",

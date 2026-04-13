@@ -1,14 +1,21 @@
 import { useRouter } from "expo-router";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { useAuth } from "@/providers/AuthProvider";
-
+import { useAuth } from "@/hooks/useAuth";
 import { createPlanGateTabListeners } from "./tab-plan-gate";
 
 export function useTabsPlanGateListeners() {
   const router = useRouter();
-  const { session } = useAuth();
-  const planActive = session?.planActive ?? false;
+  const { isPlanActive } = useAuth();
+  const [planActive, setPlanActive] = useState(true);
+
+  useEffect(() => {
+    const checkPlan = async () => {
+      const isActive = await isPlanActive();
+      setPlanActive(isActive);
+    };
+    checkPlan();
+  }, [isPlanActive]);
 
   return useMemo(
     () =>

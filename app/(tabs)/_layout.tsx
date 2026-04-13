@@ -3,13 +3,13 @@ import { Tabs } from "expo-router";
 
 import { MAIN_TAB_DEFINITIONS } from "@/components/navigation/main-tabs";
 import { useTabsPlanGateListeners } from "@/components/navigation/use-tabs-plan-gate";
+import React from "react";
 
 export default function TabsLayout() {
   const blockedListeners = useTabsPlanGateListeners();
 
   return (
     <Tabs
-      initialRouteName="home"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: "#2563eb",
@@ -23,9 +23,7 @@ export default function TabsLayout() {
           options={{
             title: def.title,
             tabBarAccessibilityLabel: def.tabBarAccessibilityLabel,
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name={def.icon} size={size} color={color} />
-            ),
+            tabBarIcon: ({ color, size }) => <Ionicons name={def.icon} size={size} color={color} />,
           }}
           listeners={def.planGated ? blockedListeners : undefined}
         />

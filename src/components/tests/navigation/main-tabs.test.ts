@@ -15,8 +15,6 @@ describe("MAIN_TAB_DEFINITIONS (barra inferior)", () => {
   it("somente Início não é planGated", () => {
     const gated = MAIN_TAB_DEFINITIONS.filter((d) => d.planGated);
     expect(gated).toHaveLength(4);
-    expect(MAIN_TAB_DEFINITIONS.find((d) => d.name === "home")?.planGated).toBe(
-      false
-    );
+    expect(MAIN_TAB_DEFINITIONS.find((d) => d.name === "home")?.planGated).toBe(false);
   });
 });

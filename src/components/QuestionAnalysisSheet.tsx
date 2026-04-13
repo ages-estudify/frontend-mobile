@@ -34,9 +34,7 @@ export function QuestionAnalysisSheet({
           <AnswerStatusBadge isCorrect={isCorrect} />
 
           <View className="gap-[16px]">
-            <Text className="text-greenPrimary font-semibold text-2xl">
-              Análise
-            </Text>
+            <Text className="text-2xl font-semibold text-greenPrimary">Análise</Text>
             {isCorrect ? (
               <AnswerCard
                 isCorrect={true}
@@ -67,20 +65,14 @@ export function QuestionAnalysisSheet({
         </View>
 
         <View className="gap-[16px]">
-          <Text className="text-greenPrimary text-[16px] font-semibold">
-            Explicação
-          </Text>
-          <Text className="text-greenPrimary text-[16px] font-regular">
-            {comment}
-          </Text>
+          <Text className="text-[16px] font-semibold text-greenPrimary">Explicação</Text>
+          <Text className="font-regular text-[16px] text-greenPrimary">{comment}</Text>
         </View>
 
-        <View className="gap-[11px] items-center">
+        <View className="items-center gap-[11px]">
           <ActionButton text="Próxima Questão" action={onNext} />
           <Pressable onPress={onFinish} className="">
-            <Text className="font-medium text-primaryGray text-[16px]">
-              Finalizar Treino
-            </Text>
+            <Text className="text-[16px] font-medium text-primaryGray">Finalizar Treino</Text>
           </Pressable>
         </View>
       </View>
