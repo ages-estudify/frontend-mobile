@@ -65,7 +65,7 @@ export default function QuestionCard({ question, progress }: QuestionCardProps) 
 
             {/* Scroll */}
             <ScrollView className="mt-6" showsVerticalScrollIndicator={true}>
-              <Text className="mb-2 text-xl font-bold text-gray-800">Questão {question.id}</Text>
+              <Text className="mb-2 text-xl font-bold text-gray-800">Questão {progress}</Text>
               <Text className="text-sm font-normal text-gray-800">{question.text}</Text>
             </ScrollView>
           </View>

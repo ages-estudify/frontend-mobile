@@ -55,7 +55,9 @@ export default function RegisterScreen() {
 
   function isValidPhone(phone: string): boolean {
     const cleaned = phone.replace(/\D/g, "");
-    return cleaned.length === 10 || cleaned.length === 11;
+    // Remove country code if present (55)
+    const withoutCountry = cleaned.startsWith("55") ? cleaned.slice(2) : cleaned;
+    return withoutCountry.length === 10 || withoutCountry.length === 11;
   }
 
   function formatPhone(text: string) {
@@ -80,8 +82,13 @@ export default function RegisterScreen() {
   }
 
   async function handleRegister() {
-    if (!fullName || !email || !phone || !password || !confirmPassword || !birthDateText) {
+    if (!fullName || !email || !phone || !password || !confirmPassword) {
       alert("Preencha todos os campos");
+      return;
+    }
+
+    if (!birthDateText || birthDateText.length < 10) {
+      alert("Data de nascimento inválida");
       return;
     }
 
@@ -115,16 +122,16 @@ export default function RegisterScreen() {
       fullName,
       email,
       password,
-      phone: phone.replace(/\D/g, ""),
+      phone: phone.replace(/\D/g, "").replace(/^55/, ""), // Remove non-digits and country code
       birthDate: parsedBirthDate,
     };
 
     try {
       await register(registerRequest);
-      alert("Cadastro realizado com sucesso");
       router.replace("/");
     } catch (error) {
       console.log("Register error:", error);
+      alert("Erro ao realizar cadastro. Tente novamente.");
       return;
     }
   }
