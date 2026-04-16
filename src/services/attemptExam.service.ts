@@ -1,0 +1,58 @@
+import { CreatedAttempt, LatestAttempt } from "@/mocks/ExamMock";
+import { endPoints } from "@/routes/endpoints";
+import {
+  AttemptResponse,
+  CreateAttemptRequest,
+  FinishAttemptRequest,
+  FinishAttemptResponse,
+  PauseAttemptRequest,
+  PauseAttemptResponse,
+  SubmitAnswerRequest,
+  SubmitAnswerResponse,
+} from "@/types/exam.types";
+import api from "./api";
+
+export const attemptExamService = {
+  createAttempt: async (examId: string, body: CreateAttemptRequest): Promise<AttemptResponse> => {
+    // const response: AttemptResponse = await api.post(endPoints.exams.attempts(examId), body);
+    // return response;
+
+    return CreatedAttempt;
+  },
+  getLatestAttempt: async (examId: string): Promise<AttemptResponse> => {
+    // const response: AttemptResponse = await api.get(endPoints.exams.latestAttempt(examId));
+    // return response;
+
+    return LatestAttempt;
+  },
+  submitAnswer: async (
+    questionId: string,
+    body: SubmitAnswerRequest
+  ): Promise<SubmitAnswerResponse> => {
+    const response: SubmitAnswerResponse = await api.post(
+      endPoints.questions.answer(questionId),
+      body
+    );
+    return response;
+  },
+  pauseAttempt: async (
+    attemptId: string,
+    body: PauseAttemptRequest
+  ): Promise<PauseAttemptResponse> => {
+    const response: PauseAttemptResponse = await api.patch(
+      endPoints.exams.pauseAttempt(attemptId),
+      body
+    );
+    return response;
+  },
+  finishAttempt: async (
+    attemptId: string,
+    body: FinishAttemptRequest
+  ): Promise<FinishAttemptResponse> => {
+    const response: FinishAttemptResponse = await api.post(
+      endPoints.exams.finishAttempt(attemptId),
+      body
+    );
+    return response;
+  },
+};

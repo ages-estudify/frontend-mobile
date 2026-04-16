@@ -1,16 +1,8 @@
 import { getQuestions, postAnswer } from "@/services/question.service";
-import { Question } from "@/types/questions.types";
+import { AnswerQuestionResponse, Question, QuestionType } from "@/types/questions.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-
-type QuestionType = "ORIGINAL" | "SIMPLIFIED";
-
-type Feedback = {
-  isCorrect: boolean;
-  correctAnswer: string;
-  explanation: string;
-};
 
 async function saveFailedAnswer(questionId: string, answer: string) {
   try {
@@ -32,7 +24,7 @@ export function useQuestionSession() {
   const [hasMore, setHasMore] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [feedback, setFeedback] = useState<AnswerQuestionResponse | null>(null);
   const question = queue[cursor];
   const [progress, setProgress] = useState({
     current: 0,
@@ -63,7 +55,7 @@ export function useQuestionSession() {
 
       setQueue((prev) => {
         const existingIds = new Set(prev.map((q) => q.id));
-        const newQuestions = response.data.questions.filter((q) => !existingIds.has(q.id));
+        const newQuestions = response.data?.questions.filter((q) => !existingIds.has(q.id)) ?? [];
         return [...prev, ...newQuestions];
       });
     } catch (error) {
@@ -97,7 +89,7 @@ export function useQuestionSession() {
 
     try {
       const response = await postAnswer(question.id, selected);
-      const feedbackData = response.data;
+      const feedbackData = response;
       setFeedback(feedbackData);
 
       return feedbackData;

@@ -1,8 +1,9 @@
 import { Question } from "@/types/questions.types";
 import React, { useState } from "react";
-import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import ExpandIcon from "../../assets/icons/expand.svg";
+import XIcon from "../../assets/icons/x.svg";
 
 interface QuestionCardProps {
   question: Question;
@@ -45,7 +46,6 @@ export default function QuestionCard({ question, progress }: QuestionCardProps) 
         </TouchableOpacity>
       </View>
 
-      {/* Modal */}
       <Modal visible={expanded} transparent animationType="fade">
         <View className="flex-1 items-center justify-center bg-black/20">
           <TouchableOpacity
@@ -53,20 +53,24 @@ export default function QuestionCard({ question, progress }: QuestionCardProps) 
             onPress={() => setExpanded(false)}
           />
 
-          {/* Content */}
           <View className="h-[85%] w-[90%] rounded-xl bg-white p-6">
-            {/* Close Button */}
             <TouchableOpacity
               onPress={() => setExpanded(false)}
               className="absolute right-6 top-6 h-10 w-10 items-center justify-center rounded-full bg-purpleCalm"
             >
-              <Text className="text-lg text-white">X</Text>
+              <XIcon width={16} height={16} color="#fff" />
             </TouchableOpacity>
 
-            {/* Scroll */}
             <ScrollView className="mt-6" showsVerticalScrollIndicator={true}>
               <Text className="mb-2 text-xl font-bold text-gray-800">Questão {progress}</Text>
               <Text className="text-sm font-normal text-gray-800">{question.text}</Text>
+              {question.imageUrl && (
+                <Image
+                  source={{ uri: question.imageUrl }}
+                  className="mt-4 h-48 w-full rounded-lg"
+                  resizeMode="contain"
+                />
+              )}
             </ScrollView>
           </View>
         </View>

@@ -12,4 +12,13 @@ export const endPoints = {
   onboarding: {
     submit: `/onboarding`,
   },
+  exams: {
+    attempts: (examId: string) => `/exams/${examId}/attempts`,
+    latestAttempt: (examId: string) => `/exams/${examId}/attempts/latest`,
+    pauseAttempt: (attemptId: string) => `/exams/attempts/${attemptId}/pause`,
+    finishAttempt: (attemptId: string) => `/exams/attempts/${attemptId}/finish`,
+  },
+  questions: {
+    answer: (questionId: string) => `/questions/${questionId}/answer`,
+  },
 };

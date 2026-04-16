@@ -8,18 +8,25 @@ export interface AnswerQuestionResponse {
   };
 }
 export type Alternative = {
-  label: string;
+  id?: string;
   text: string;
+  letter?: string;
+  label?: string;
 };
+
+export type QuestionType = "ORIGINAL" | "SIMPLIFIED";
 
 export type Question = {
   id: string;
+  number?: number;
+  day?: number;
   text: string;
   imageUrl?: string | null;
-  origin: "ORIGINAL" | "SIMPLIFIED";
-  subjectName: string;
-  topicName: string;
+  origin?: QuestionType;
+  subjectName?: string;
+  topicName?: string;
   alternatives: Alternative[];
+  selectedAlternativeId?: string | null;
 };
 
 export type GetQuestionParams = {
