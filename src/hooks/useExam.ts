@@ -32,6 +32,8 @@ export function useExam() {
   const [error, setError] = useState<string | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAlternative, setSelectedAlternative] = useState<string | null>(null);
+  const [seconds, setSeconds] = useState<number>(0);
+  const [time, setTime] = useState<string>();
 
   const currentQuestion = currentAttempt?.questions[currentQuestionIndex] || null;
 
@@ -50,6 +52,17 @@ export function useExam() {
   }, [currentAttempt]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds((s) => {
+        const newSeconds = s + 1;
+        formatTime(newSeconds);
+        return newSeconds;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     if (currentQuestion) {
       const selected = currentQuestion.alternatives.find(
         (alt) => alt.id === currentQuestion.selectedAlternativeId
@@ -65,6 +78,20 @@ export function useExam() {
       const total = currentAttempt.questions.length;
       const answered = currentAttempt.questions.filter((q) => q.selectedAlternativeId).length;
       setProgress({ current: answered, total });
+    }
+  };
+
+  const formatTime = (totalSeconds: number) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const pad = (num: number) => num.toString().padStart(2, "0");
+
+    if (hours > 0) {
+      setTime(`${hours}:${pad(minutes)}:${pad(seconds)}`);
+    } else {
+      setTime(`${pad(minutes)}:${pad(seconds)}`);
     }
   };
 
@@ -92,7 +119,8 @@ export function useExam() {
     try {
       const response = await attemptExamService.getLatestAttempt(examId);
       setCurrentAttempt(response.data);
-      setCurrentQuestionIndex(response.data.attempt.currentQuestion);
+      setCurrentQuestionIndex(response.data.attempt.currentQuestion - 1);
+      setSeconds(response.data.attempt.timeSpentMinutes * 60);
       return response;
     } catch (err: any) {
       setError(err.message || "Erro ao buscar tentativa");
@@ -189,6 +217,13 @@ export function useExam() {
     }
   };
 
+  const goToQuestion = (index: number, selectedAlternativeId: string | null) => {
+    if (!currentAttempt) return;
+
+    updateAnswer(selectedAlternativeId);
+    setCurrentQuestionIndex(index);
+  };
+
   const clearError = () => {
     setError(null);
   };
@@ -199,8 +234,11 @@ export function useExam() {
     progress,
     currentQuestion,
     selectedAlternative,
-    setSelectedAlternative,
+    time,
+    seconds,
+    currentQuestionIndex,
     error,
+    setSelectedAlternative,
     createAttempt,
     getLatestAttempt,
     submitAnswer,
@@ -208,6 +246,7 @@ export function useExam() {
     finishAttempt,
     prevQuestion,
     nextQuestion,
+    goToQuestion,
     clearError,
   };
 }

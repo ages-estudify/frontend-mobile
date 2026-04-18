@@ -1,4 +1,3 @@
-import { CreatedAttempt, LatestAttempt } from "@/mocks/ExamMock";
 import { endPoints } from "@/routes/endpoints";
 import {
   AttemptResponse,
@@ -14,16 +13,12 @@ import api from "./api";
 
 export const attemptExamService = {
   createAttempt: async (examId: string, body: CreateAttemptRequest): Promise<AttemptResponse> => {
-    // const response: AttemptResponse = await api.post(endPoints.exams.attempts(examId), body);
-    // return response;
-
-    return CreatedAttempt;
+    const response: AttemptResponse = await api.post(endPoints.exams.attempts(examId), body);
+    return response;
   },
   getLatestAttempt: async (examId: string): Promise<AttemptResponse> => {
-    // const response: AttemptResponse = await api.get(endPoints.exams.latestAttempt(examId));
-    // return response;
-
-    return LatestAttempt;
+    const response: AttemptResponse = await api.get(endPoints.exams.latestAttempt(examId));
+    return response;
   },
   submitAnswer: async (
     questionId: string,

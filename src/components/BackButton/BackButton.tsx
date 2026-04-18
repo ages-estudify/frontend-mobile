@@ -4,16 +4,16 @@ import { Pressable } from "react-native";
 import BackArrowIcon from "../../../assets/icons/back_arrow.svg";
 
 type props = {
-  backFunction?: () => void;
+  onPress?: () => void;
 };
 
-export function BackButton({ backFunction }: props) {
+export function BackButton({ onPress }: props) {
   const router = useRouter();
   return (
     <Pressable
       className="mt-[8px] h-[50px] w-[50px] items-center justify-center rounded-full bg-white"
       onPress={() => {
-        backFunction?.();
+        onPress?.();
         router.back();
       }}
     >

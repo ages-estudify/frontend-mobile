@@ -1,5 +1,6 @@
 import { Alternative } from "@/types/questions.types";
-import React, { Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 
 type Props = {
   alternatives: Alternative[];
@@ -10,17 +11,17 @@ type Props = {
 export default function QuestionAlternatives({ alternatives, selected, setSelected }: Props) {
   return (
     <View className="mt-6">
-      {alternatives.map((alt) => {
+      {alternatives.map((alt, index) => {
         const isSelected = selected === alt.label || selected === alt.letter;
         return (
           <TouchableOpacity
-            key={alt.id}
+            key={alt.id || index}
             onPress={() => setSelected(alt.label || alt.letter || "")}
             className={`mb-3 rounded-xl border p-2 ${
               isSelected ? "border-purpleCalm bg-white" : "border-gray-300 bg-white"
             }`}
           >
-            <View className="flex-row items-center space-x-3">
+            <View className="flex-row items-center gap-4">
               <View
                 className={`h-8 w-8 items-center justify-center rounded-full ${
                   isSelected ? "bg-purpleCalm" : "bg-gray-400"
