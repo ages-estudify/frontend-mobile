@@ -1,114 +1,77 @@
-import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { Tabs } from "expo-router";
-import React, { useMemo } from "react";
-import { Platform } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import {
+  FloatingGlassTabBar,
+  GlassTabBarBackground,
+} from "@/components/navigation/FloatingGlassTabBar";
 import { MAIN_TAB_DEFINITIONS } from "@/components/navigation/main-tabs";
 import { RoundedTabBarButton } from "@/components/navigation/RoundedTabBarButton";
 import { useTabsPlanGateListeners } from "@/components/navigation/use-tabs-plan-gate";
-import {
-  TAB_BAR_HEIGHT,
-  TAB_BAR_HORIZONTAL_INSET,
-  TAB_ITEM_VERTICAL_MARGIN,
-  tabBarBottomOffset,
-} from "@/constants/tabBarLayout";
+import { TAB_BAR_HEIGHT, TAB_ITEM_VERTICAL_MARGIN } from "@/constants/tabBarLayout";
+import { Tabs } from "expo-router";
+import React from "react";
+import { Image } from "react-native";
 
-const TAB_BAR_BORDER_RADIUS = TAB_BAR_HEIGHT / 2;
-const TAB_ITEM_ACTIVE_BG = "#EBEBEB";
+const TAB_R = TAB_BAR_HEIGHT / 2;
+const ACTIVE_BG = "#EBEBEB";
 
-function BlurTabBarBackground() {
-  return (
-    <BlurView
-      intensity={90}
-      style={{ position: "absolute", width: "100%", height: "100%" }}
-      tint="light"
-    />
-  );
-}
+const tabScreenOptions = {
+  headerShown: false as const,
+  tabBarButton: RoundedTabBarButton,
+  tabBarBackground: () => <GlassTabBarBackground />,
+  tabBarActiveTintColor: "#9500FF",
+  tabBarInactiveTintColor: "#000000",
+  tabBarActiveBackgroundColor: ACTIVE_BG,
+  tabBarInactiveBackgroundColor: "transparent",
+  tabBarShowLabel: true,
+  tabBarLabelPosition: "below-icon" as const,
+  tabBarAllowFontScaling: false,
+  tabBarIconStyle: { marginBottom: 2 },
+  tabBarLabelStyle: {
+    fontSize: 10,
+    fontWeight: "600" as const,
+    textAlign: "center" as const,
+    marginTop: 2,
+    lineHeight: 12,
+  },
+  tabBarItemStyle: {
+    flex: 1,
+    borderRadius: TAB_R,
+    overflow: "hidden" as const,
+    marginHorizontal: 0,
+    marginVertical: TAB_ITEM_VERTICAL_MARGIN,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    minWidth: 0,
+  },
+  tabBarStyle: {
+    height: TAB_BAR_HEIGHT,
+    borderTopWidth: 0,
+    paddingHorizontal: 4,
+    backgroundColor: "transparent",
+    elevation: 0,
+  },
+};
 
 export default function TabsLayout() {
   const blockedListeners = useTabsPlanGateListeners();
-  const insets = useSafeAreaInsets();
-
-  const screenOptions = useMemo(() => {
-    const bottomOffset = tabBarBottomOffset(insets.bottom);
-
-    return {
-      headerShown: false as const,
-      tabBarButton: RoundedTabBarButton,
-      tabBarActiveTintColor: "#9500FF",
-      tabBarInactiveTintColor: "#000000",
-      tabBarActiveBackgroundColor: TAB_ITEM_ACTIVE_BG,
-      tabBarInactiveBackgroundColor: "transparent",
-      tabBarShowLabel: true,
-      tabBarLabelPosition: "below-icon" as const,
-      tabBarAllowFontScaling: false,
-      tabBarIconStyle: {
-        marginBottom: -2,
-      },
-      tabBarLabelStyle: {
-        fontSize: 10,
-        fontWeight: "600" as const,
-        textAlign: "center" as const,
-        marginTop: 2,
-        paddingHorizontal: 1,
-        lineHeight: 12,
-        flexShrink: 1,
-      },
-      tabBarItemStyle: {
-        flex: 1,
-        borderRadius: TAB_BAR_BORDER_RADIUS,
-        overflow: "hidden" as const,
-        marginHorizontal: 0,
-        marginVertical: TAB_ITEM_VERTICAL_MARGIN,
-        justifyContent: "center" as const,
-        alignItems: "stretch" as const,
-      },
-      tabBarStyle: {
-        position: "absolute" as const,
-        left: TAB_BAR_HORIZONTAL_INSET,
-        right: TAB_BAR_HORIZONTAL_INSET,
-        bottom: bottomOffset,
-        height: TAB_BAR_HEIGHT,
-        borderRadius: TAB_BAR_BORDER_RADIUS,
-        borderTopWidth: 0,
-        paddingHorizontal: 2,
-        overflow: "hidden" as const,
-        ...Platform.select({
-          ios: {
-            backgroundColor: "rgba(255, 255, 255, 0.7)",
-            shadowColor: "#000000",
-            shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.1,
-            shadowRadius: 20,
-          },
-          android: {
-            backgroundColor: "#ffffff",
-            elevation: 8,
-          },
-          default: {},
-        }),
-      },
-      tabBarBackground: Platform.OS === "ios" ? BlurTabBarBackground : undefined,
-    };
-  }, [insets.bottom]);
 
   return (
-    <Tabs screenOptions={screenOptions}>
-      {MAIN_TAB_DEFINITIONS.map((def) => (
+    <Tabs tabBar={(props) => <FloatingGlassTabBar {...props} />} screenOptions={tabScreenOptions}>
+      {MAIN_TAB_DEFINITIONS.map((aux) => (
         <Tabs.Screen
-          key={def.name}
-          name={def.name}
+          key={aux.name}
+          name={aux.name}
           options={{
-            title: def.title,
-            tabBarAccessibilityLabel: def.tabBarAccessibilityLabel,
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name={def.icon} size={Math.min(size + 2, 28)} color={color} />
+            title: aux.title,
+            tabBarAccessibilityLabel: aux.tabBarAccessibilityLabel,
+            tabBarIcon: ({ focused }) => (
+              <Image
+                source={aux.tabBarImage}
+                style={{ width: 24, height: 24, tintColor: focused ? undefined : "#9CA3AF" }}
+                resizeMode="contain"
+              />
             ),
           }}
-          listeners={def.planGated ? blockedListeners : undefined}
+          listeners={aux.planGated ? blockedListeners : undefined}
         />
       ))}
     </Tabs>
