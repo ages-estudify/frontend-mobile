@@ -25,8 +25,8 @@ export const MAIN_TAB_DEFINITIONS: MainTabDefinition[] = [
   },
   {
     name: "simulado",
-    title: "Simulado",
-    tabBarAccessibilityLabel: "Aba Simulado",
+    title: "Simulados",
+    tabBarAccessibilityLabel: "Aba Simulados",
     tabBarImage: require("../../../assets/tabIcons/simulate_symbol.png"),
     planGated: true,
   },

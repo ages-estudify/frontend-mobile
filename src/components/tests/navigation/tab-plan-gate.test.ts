@@ -6,7 +6,7 @@ import {
 
 describe("tab-plan-gate", () => {
   it("define abas que dependem de plano", () => {
-    expect(PLAN_GATED_TAB_NAMES).toEqual(["treinar", "simulados", "cronograma", "progresso"]);
+    expect(PLAN_GATED_TAB_NAMES).toEqual(["treinar", "simulado", "progresso", "cronograma"]);
   });
 
   it("isPlanGatedTabName", () => {
