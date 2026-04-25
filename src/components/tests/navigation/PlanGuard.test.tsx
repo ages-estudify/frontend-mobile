@@ -1,40 +1,44 @@
 import React from "react";
-import { render, screen } from "@testing-library/react-native";
+import { render, screen, waitFor } from "@testing-library/react-native";
 import { Text } from "react-native";
 
 jest.mock("expo-router", () => require("../../../../test/mocks/expo-router-redirect.js"));
 
 const mockUseAuth = jest.fn();
 
-jest.mock("@/providers/AuthProvider", () => ({
+jest.mock("@/hooks/useAuth", () => ({
   useAuth: () => mockUseAuth(),
 }));
 
 import { PlanGuard } from "../../navigation/PlanGuard";
 
 describe("PlanGuard", () => {
-  it("redireciona para planos sem plano ativo", () => {
+  it("redireciona para paywall sem plano ativo", async () => {
     mockUseAuth.mockReturnValue({
-      session: { token: "t", role: "USER", planActive: false },
+      isPlanActive: jest.fn().mockResolvedValue(false),
     });
     render(
       <PlanGuard>
         <Text>Módulo</Text>
       </PlanGuard>
     );
-    expect(screen.getByTestId("redirect-href")).toHaveTextContent("/planos");
+    await waitFor(() => {
+      expect(screen.getByTestId("redirect-href")).toHaveTextContent("/paywall");
+    });
     expect(screen.queryByText("Módulo")).toBeNull();
   });
 
-  it("renderiza filhos com plano ativo", () => {
+  it("renderiza filhos com plano ativo", async () => {
     mockUseAuth.mockReturnValue({
-      session: { token: "t", role: "USER", planActive: true },
+      isPlanActive: jest.fn().mockResolvedValue(true),
     });
     render(
       <PlanGuard>
         <Text>Módulo</Text>
       </PlanGuard>
     );
-    expect(screen.getByText("Módulo")).toBeTruthy();
+    await waitFor(() => {
+      expect(screen.getByText("Módulo")).toBeTruthy();
+    });
   });
 });

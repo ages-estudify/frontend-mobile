@@ -1,3 +1,5 @@
+import { ImageSourcePropType } from "react-native";
+
 export type MainTabIonIcon =
   | "home-outline"
   | "barbell-outline"
@@ -9,8 +11,7 @@ export type MainTabDefinition = {
   name: "treinar" | "simulado" | "cronograma" | "progresso";
   title: string;
   tabBarAccessibilityLabel: string;
-  icon: MainTabIonIcon;
-  /** Exige planActive para acessar (tab + PlanGuard nas rotas). */
+  tabBarImage: ImageSourcePropType;
   planGated: boolean;
 };
 
@@ -19,28 +20,28 @@ export const MAIN_TAB_DEFINITIONS: MainTabDefinition[] = [
     name: "treinar",
     title: "Treinar",
     tabBarAccessibilityLabel: "Aba Treinar",
-    icon: "barbell-outline",
+    tabBarImage: require("../../../assets/tabIcons/workout_symbol.png"),
     planGated: true,
   },
   {
     name: "simulado",
-    title: "Simulado",
-    tabBarAccessibilityLabel: "Aba Simulado",
-    icon: "document-text-outline",
+    title: "Simulados",
+    tabBarAccessibilityLabel: "Aba Simulados",
+    tabBarImage: require("../../../assets/tabIcons/simulate_symbol.png"),
     planGated: true,
   },
   {
     name: "progresso",
     title: "Progresso",
     tabBarAccessibilityLabel: "Aba Progresso",
-    icon: "stats-chart-outline",
+    tabBarImage: require("../../../assets/tabIcons/progress_symbol.png"),
     planGated: true,
   },
   {
     name: "cronograma",
     title: "Cronograma",
     tabBarAccessibilityLabel: "Aba Cronograma",
-    icon: "calendar-outline",
+    tabBarImage: require("../../../assets/tabIcons/schedule_symbol.png"),
     planGated: true,
   },
 ];
