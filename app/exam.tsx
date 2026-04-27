@@ -8,45 +8,73 @@ import { useExams } from "@/hooks/useExams";
 import { Exam } from "@/types/exam.types";
 
 export default function ExamsScreen() {
+  // 🔹 DATA
   const { exams, loading, error } = useExams();
 
+  // 🔹 UI STATE
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
   const [selectedDayId, setSelectedDayId] = useState<string | null>(null);
+
   const [showDaysSheet, setShowDaysSheet] = useState(false);
   const [showLanguageSheet, setShowLanguageSheet] = useState(false);
 
-  // ===== ações =====
+  // =============================
+  // HANDLERS
+  // =============================
 
   function handleOpenExam(exam: Exam) {
     setSelectedExam(exam);
     setShowDaysSheet(true);
   }
 
+  function handleCloseDaysSheet() {
+    setShowDaysSheet(false);
+    setSelectedExam(null);
+  }
+
   function handleContinueDay(examDayId: string) {
-    // continuar tentativa existente
-    console.log("Continuar dia:", examDayId);
+    console.log("➡️ Continuar dia:", examDayId);
+
+    // futuramente:
+    // router.push(`/exam/${examDayId}`)
+    handleCloseDaysSheet();
   }
 
   function handleStartDay(examDayId: string) {
-    // iniciar tentativa sem idioma
-    console.log("Iniciar dia:", examDayId);
+    console.log("🆕 Iniciar dia:", examDayId);
+
+    // futuramente:
+    // criar attempt + navegar
+    handleCloseDaysSheet();
   }
 
   function handleOpenLanguage(examDayId: string) {
     setSelectedDayId(examDayId);
+    setShowDaysSheet(false);
     setShowLanguageSheet(true);
   }
 
   function handleConfirmLanguage(language: "ENGLISH" | "SPANISH") {
     if (!selectedDayId) return;
 
-    console.log("Iniciar com idioma:", language, selectedDayId);
+    console.log("🌍 Iniciar com idioma:", language, "dia:", selectedDayId);
 
+    // futuramente:
+    // POST /attempts com language
+
+    setShowLanguageSheet(false);
+    setSelectedDayId(null);
+    setSelectedExam(null);
+  }
+
+  function handleCancelLanguage() {
     setShowLanguageSheet(false);
     setSelectedDayId(null);
   }
 
-  // ===== estados =====
+  // =============================
+  // STATES
+  // =============================
 
   if (loading) {
     return (
@@ -72,7 +100,9 @@ export default function ExamsScreen() {
     );
   }
 
-  // ===== render =====
+  // =============================
+  // RENDER
+  // =============================
 
   return (
     <View style={{ flex: 1, padding: 12 }}>
@@ -80,17 +110,19 @@ export default function ExamsScreen() {
         data={exams}
         keyExtractor={(item) => item.id}
         numColumns={2}
+        columnWrapperStyle={{ gap: 12 }}
+        contentContainerStyle={{ paddingBottom: 24 }}
         renderItem={({ item }) => (
           <ExamCard
             exam={item}
             onPress={() => handleOpenExam(item)}
-            onMenuPress={() => console.log("Menu do simulado finalizado")}
+            onMenuPress={() => console.log("📊 Menu do simulado finalizado")}
           />
         )}
         showsVerticalScrollIndicator={false}
       />
 
-      {/* Bottom Sheet — Dias */}
+      {/* 🔽 Bottom Sheet - Dias */}
       {showDaysSheet && selectedExam && (
         <ExamDaysBottomSheet
           exam={selectedExam}
@@ -100,8 +132,10 @@ export default function ExamsScreen() {
         />
       )}
 
-      {/* Bottom Sheet — Idioma */}
-      {showLanguageSheet && <LanguageBottomSheet onConfirm={handleConfirmLanguage} />}
+      {/* 🔽 Bottom Sheet - Idioma */}
+      {showLanguageSheet && (
+        <LanguageBottomSheet onConfirm={handleConfirmLanguage} onCancel={handleCancelLanguage} />
+      )}
     </View>
   );
 }
