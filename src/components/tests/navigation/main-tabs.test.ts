@@ -1,20 +1,18 @@
 import { MAIN_TAB_DEFINITIONS } from "@/components/navigation/main-tabs";
 
 describe("MAIN_TAB_DEFINITIONS (barra inferior)", () => {
-  it("renderiza configuração das 5 abas com títulos esperados", () => {
-    expect(MAIN_TAB_DEFINITIONS).toHaveLength(5);
+  it("renderiza configuração das 4 abas com títulos esperados", () => {
+    expect(MAIN_TAB_DEFINITIONS).toHaveLength(4);
     expect(MAIN_TAB_DEFINITIONS.map((d) => d.title)).toEqual([
-      "Início",
       "Treinar",
       "Simulados",
-      "Cronograma",
       "Progresso",
+      "Cronograma",
     ]);
   });
 
-  it("somente Início não é planGated", () => {
-    const gated = MAIN_TAB_DEFINITIONS.filter((d) => d.planGated);
-    expect(gated).toHaveLength(4);
-    expect(MAIN_TAB_DEFINITIONS.find((d) => d.name === "home")?.planGated).toBe(false);
+  it("todas as abas são planGated e possuem tabBarImage", () => {
+    expect(MAIN_TAB_DEFINITIONS.every((d) => d.planGated)).toBe(true);
+    expect(MAIN_TAB_DEFINITIONS.every((d) => d.tabBarImage)).toBe(true);
   });
 });
