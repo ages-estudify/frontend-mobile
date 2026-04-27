@@ -44,6 +44,7 @@ export default function RootLayout() {
             <Stack.Screen name="subject" options={{ title: "Subject" }} />
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="question" options={{ title: "Question" }} />
+            <Stack.Screen name="examFeedback" options={{ title: "ExamFeedback" }} />
           </Stack>
 
           <StatusBar style="auto" />
