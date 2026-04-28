@@ -17,15 +17,14 @@ export function useExams(): UseExamsResult {
       try {
         setLoading(true);
 
-        // ⏳ simula delay da API
         await new Promise((resolve) => setTimeout(resolve, 800));
 
-        // ✅ MOCK TOTALMENTE COMPATÍVEL COM Exam e ExamDay
         const mockExams: Exam[] = [
           {
             id: "exam-1",
             name: "Simulado ENEM 2024",
             origin: "ORIGINAL",
+            description: "Novembro: Dia 1 - Linguagens, Humanas e Redação",
             imageUrl: null,
             status: "available",
             totalQuestions: 180,
@@ -78,6 +77,40 @@ export function useExams(): UseExamsResult {
                 status: "in_progress",
                 isCompleted: false,
                 attemptDayId: "attempt-123",
+              },
+            ],
+          },
+          {
+            id: "exam-3",
+            name: "Simulado ENEM 2023",
+            origin: "ORIGINAL",
+            description: "Novembro: Dia 1 - Linguagens, Humanas e Redação",
+            imageUrl: null,
+            status: "available",
+            totalQuestions: 180,
+            answeredQuestions: 0,
+            progress: {
+              answered: 0,
+              total: 180,
+              percentage: 0,
+            },
+            hasLanguageChoice: true,
+            days: [
+              {
+                examDayId: "day-1",
+                day: 1,
+                totalQuestions: 90,
+                answeredQuestions: 0,
+                status: "available",
+                isCompleted: false,
+              },
+              {
+                examDayId: "day-2",
+                day: 2,
+                totalQuestions: 90,
+                answeredQuestions: 0,
+                status: "available",
+                isCompleted: false,
               },
             ],
           },

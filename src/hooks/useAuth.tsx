@@ -1,6 +1,5 @@
 import { authService } from "@/services/auth.service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
 
 type LoginParams = {
   email: string;

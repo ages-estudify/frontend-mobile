@@ -16,6 +16,7 @@ export type Exam = {
   id: string;
   name: string;
   origin: ExamOrigin;
+  description?: string;
   imageUrl?: string | null;
   status: ExamStatus;
   totalQuestions: number;

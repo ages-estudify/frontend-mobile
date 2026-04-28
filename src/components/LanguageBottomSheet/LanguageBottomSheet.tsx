@@ -1,9 +1,10 @@
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import React from "react";
-import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { Pressable, Text, View } from "react-native";
 
 type Props = {
   onConfirm: (language: "ENGLISH" | "SPANISH") => void;
+  onCancel: () => void;
 };
 
 export function LanguageBottomSheet({ onConfirm }: Props) {
