@@ -1,5 +1,11 @@
 import React from "react";
-import { Modal, Pressable, Text, View } from "react-native";
+import { Dimensions, Modal, Pressable, Text, View } from "react-native";
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+const MENU_WIDTH = 210;
+const MENU_HEIGHT = 120;
+const MARGIN = 8;
 
 type Props = {
   visible: boolean;
@@ -10,14 +16,24 @@ type Props = {
 };
 
 export function ExamCardMenu({ visible, onClose, onHistory, onRetry, anchorPosition }: Props) {
+  const safeLeft = Math.min(
+    Math.max(anchorPosition?.x ?? 20, MARGIN),
+    SCREEN_WIDTH - MENU_WIDTH - MARGIN
+  );
+
+  const safeTop = Math.min(
+    Math.max(anchorPosition?.y ?? 120, MARGIN),
+    SCREEN_HEIGHT - MENU_HEIGHT - MARGIN
+  );
+
   return (
     <Modal transparent animationType="fade" visible={visible} onRequestClose={onClose}>
       <Pressable style={{ flex: 1 }} onPress={onClose}>
         <View
           style={{
             position: "absolute",
-            top: anchorPosition?.y ?? 120,
-            left: anchorPosition?.x ?? 20,
+            top: safeTop,
+            left: safeLeft,
             backgroundColor: "white",
             borderRadius: 16,
             paddingVertical: 4,
@@ -37,14 +53,13 @@ export function ExamCardMenu({ visible, onClose, onHistory, onRetry, anchorPosit
             style={({ pressed }) => ({
               flexDirection: "row",
               alignItems: "center",
-              gap: 12,
               paddingHorizontal: 16,
               paddingVertical: 14,
               backgroundColor: pressed ? "#F5F5F5" : "white",
               borderRadius: 12,
             })}
           >
-            <Text style={{ fontSize: 18 }}>🕐</Text>
+            <Text style={{ fontSize: 18, marginRight: 12 }}>🕐</Text>
             <Text style={{ fontSize: 15, fontWeight: "500", color: "#1a1a1a" }}>
               Histórico Tentativas
             </Text>
@@ -58,14 +73,13 @@ export function ExamCardMenu({ visible, onClose, onHistory, onRetry, anchorPosit
             style={({ pressed }) => ({
               flexDirection: "row",
               alignItems: "center",
-              gap: 12,
               paddingHorizontal: 16,
               paddingVertical: 14,
               backgroundColor: pressed ? "#F5F5F5" : "white",
               borderRadius: 12,
             })}
           >
-            <Text style={{ fontSize: 18 }}>🔁</Text>
+            <Text style={{ fontSize: 18, marginRight: 12 }}>🔁</Text>
             <Text style={{ fontSize: 15, fontWeight: "500", color: "#1a1a1a" }}>
               Tentar Novamente
             </Text>

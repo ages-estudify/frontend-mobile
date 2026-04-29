@@ -20,11 +20,12 @@ export function ExamCard({ exam, onPress, onMenuPress }: Props) {
       : require("../../../assets/ufrgs_cor 1 1.png");
 
   function handleMenuPress() {
-    menuButtonRef.current?.measure(
-      (x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
-        onMenuPress({ x: pageX - 180, y: pageY + height + 4 });
-      }
-    );
+    menuButtonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      onMenuPress({
+        x: pageX,
+        y: pageY + height + 4,
+      });
+    });
   }
 
   return (

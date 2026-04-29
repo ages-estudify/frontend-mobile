@@ -7,11 +7,27 @@ import { useExams } from "@/hooks/useExams";
 import { Exam } from "@/types/exam.types";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { ActivityIndicator, FlatList, Image, Pressable, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Pressable,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 
 export default function ExamsScreen() {
   const router = useRouter();
-  const { exams, loading, error } = useExams();
+  const { exams, loading, error, retryExam } = useExams();
+
+  const { width } = useWindowDimensions();
+
+  const CARD_WIDTH = 177;
+  const GAP = 12;
+  const PADDING = 19 * 2;
+
+  const canUseTwoColumns = width >= CARD_WIDTH * 2 + GAP + PADDING;
 
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
   const [selectedDayId, setSelectedDayId] = useState<string | null>(null);
@@ -99,8 +115,29 @@ export default function ExamsScreen() {
   }
 
   function startRetry(exam: Exam) {
-    setSelectedExam(exam);
+    retryExam(exam.id);
+
+    const resetted: Exam = {
+      ...exam,
+      status: "available",
+      answeredQuestions: 0,
+      progress: {
+        answered: 0,
+        total: exam.totalQuestions,
+        percentage: 0,
+      },
+      days: exam.days.map((day) => ({
+        ...day,
+        answeredQuestions: 0,
+        status: "available",
+        isCompleted: false,
+        attemptDayId: undefined,
+      })),
+    };
+
+    setSelectedExam(resetted);
     setShowDaysSheet(true);
+    setShowMenu(false);
   }
 
   if (loading)
@@ -139,9 +176,10 @@ export default function ExamsScreen() {
       <View className="mt-[167px] flex-1 px-[19px]">
         <FlatList
           data={exams}
+          key={canUseTwoColumns ? "two-columns" : "one-column"}
           keyExtractor={(item) => item.id}
-          numColumns={2}
-          columnWrapperStyle={{ gap: 12 }}
+          numColumns={canUseTwoColumns ? 2 : 1}
+          columnWrapperStyle={canUseTwoColumns ? { gap: 12 } : undefined}
           contentContainerStyle={{ paddingBottom: 24, gap: 12 }}
           renderItem={({ item }) => (
             <ExamCard

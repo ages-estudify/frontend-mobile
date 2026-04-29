@@ -5,12 +5,37 @@ interface UseExamsResult {
   exams: Exam[];
   loading: boolean;
   error: string | null;
+  retryExam: (examId: string) => void;
 }
 
 export function useExams(): UseExamsResult {
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  function resetExam(exam: Exam): Exam {
+    return {
+      ...exam,
+      status: "available",
+      answeredQuestions: 0,
+      progress: {
+        answered: 0,
+        total: exam.totalQuestions,
+        percentage: 0,
+      },
+      days: exam.days.map((day) => ({
+        ...day,
+        answeredQuestions: 0,
+        status: "available",
+        isCompleted: false,
+        attemptDayId: undefined,
+      })),
+    };
+  }
+
+  function retryExam(examId: string) {
+    setExams((prev) => prev.map((exam) => (exam.id === examId ? resetExam(exam) : exam)));
+  }
 
   useEffect(() => {
     async function fetchExams() {
@@ -28,11 +53,11 @@ export function useExams(): UseExamsResult {
             imageUrl: null,
             status: "available",
             totalQuestions: 180,
-            answeredQuestions: 0,
+            answeredQuestions: 180,
             progress: {
-              answered: 0,
+              answered: 180,
               total: 180,
-              percentage: 0,
+              percentage: 100,
             },
             hasLanguageChoice: true,
             days: [
@@ -40,17 +65,17 @@ export function useExams(): UseExamsResult {
                 examDayId: "day-1",
                 day: 1,
                 totalQuestions: 90,
-                answeredQuestions: 0,
-                status: "available",
-                isCompleted: false,
+                answeredQuestions: 90,
+                status: "completed",
+                isCompleted: true,
               },
               {
                 examDayId: "day-2",
                 day: 2,
                 totalQuestions: 90,
-                answeredQuestions: 0,
-                status: "available",
-                isCompleted: false,
+                answeredQuestions: 90,
+                status: "completed",
+                isCompleted: true,
               },
             ],
           },
@@ -61,11 +86,11 @@ export function useExams(): UseExamsResult {
             imageUrl: null,
             status: "in_progress",
             totalQuestions: 60,
-            answeredQuestions: 20,
+            answeredQuestions: 60,
             progress: {
-              answered: 20,
+              answered: 30,
               total: 60,
-              percentage: 33,
+              percentage: 50,
             },
             hasLanguageChoice: false,
             days: [
@@ -73,7 +98,7 @@ export function useExams(): UseExamsResult {
                 examDayId: "day-unique",
                 day: 1,
                 totalQuestions: 60,
-                answeredQuestions: 20,
+                answeredQuestions: 60,
                 status: "in_progress",
                 isCompleted: false,
                 attemptDayId: "attempt-123",
@@ -129,5 +154,5 @@ export function useExams(): UseExamsResult {
     fetchExams();
   }, []);
 
-  return { exams, loading, error };
+  return { exams, loading, error, retryExam };
 }
