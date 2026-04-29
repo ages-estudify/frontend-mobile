@@ -20,7 +20,7 @@ export function ExamCard({ exam, onPress, onMenuPress }: Props) {
   return (
     <Pressable
       onPress={onPress}
-      className="h-[192px] w-[175px] rounded-xl border border-gray-200 bg-white p-3"
+      className="h-[218px] w-[177px] rounded-xl border border-gray-200 bg-white p-3"
     >
       <View className="flex-row items-start justify-between">
         <Image source={imageSource} className="h-8 w-8" />

@@ -117,6 +117,7 @@ export default function ExamsScreen() {
           onContinueDay={handleContinueDay}
           onStartDay={handleStartDay}
           onOpenLanguage={handleOpenLanguage}
+          onClose={handleCloseDaysSheet}
         />
       )}
 

@@ -1,5 +1,5 @@
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import React from "react";
+import React, { useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 
 type Props = {
@@ -7,9 +7,10 @@ type Props = {
   onCancel: () => void;
 };
 
-export function LanguageBottomSheet({ onConfirm }: Props) {
+export function LanguageBottomSheet({ onConfirm, onCancel }: Props) {
+  const bottomSheetRef = useRef<BottomSheet>(null);
   return (
-    <BottomSheet>
+    <BottomSheet ref={bottomSheetRef} snapPoints={["40%"]} enablePanDownToClose onClose={onCancel}>
       <BottomSheetView style={{ flex: 1, padding: 24 }}>
         <Text className="mb-4 text-lg font-semibold text-gray-800">Escolha o idioma da prova</Text>
 

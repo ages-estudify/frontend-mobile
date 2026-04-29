@@ -1,5 +1,5 @@
 import "../global.css";
-
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { StarsInitializer } from "@/components/StarsInitializer";
 import { StarsProvider } from "@/contexts/StarsContext";
 import { Stack } from "expo-router";
@@ -31,24 +31,26 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <StarsProvider>
-          <StarsInitializer />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen name="index" options={{ title: "HomePage" }} />
-            <Stack.Screen name="login" options={{ title: "LoginPage" }} />
-            <Stack.Screen name="subject" options={{ title: "Subject" }} />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="question" options={{ title: "Question" }} />
-          </Stack>
+      <BottomSheetModalProvider>
+        <SafeAreaProvider>
+          <StarsProvider>
+            <StarsInitializer />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="index" options={{ title: "HomePage" }} />
+              <Stack.Screen name="login" options={{ title: "LoginPage" }} />
+              <Stack.Screen name="subject" options={{ title: "Subject" }} />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="question" options={{ title: "Question" }} />
+            </Stack>
 
-          <StatusBar style="auto" />
-        </StarsProvider>
-      </SafeAreaProvider>
+            <StatusBar style="auto" />
+          </StarsProvider>
+        </SafeAreaProvider>
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 }
