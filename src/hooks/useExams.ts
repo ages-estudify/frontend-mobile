@@ -88,11 +88,11 @@ export function useExams(): UseExamsResult {
             imageUrl: null,
             status: "available",
             totalQuestions: 180,
-            answeredQuestions: 0,
+            answeredQuestions: 180,
             progress: {
-              answered: 0,
+              answered: 180,
               total: 180,
-              percentage: 0,
+              percentage: 100,
             },
             hasLanguageChoice: true,
             days: [
@@ -100,17 +100,17 @@ export function useExams(): UseExamsResult {
                 examDayId: "day-1",
                 day: 1,
                 totalQuestions: 90,
-                answeredQuestions: 0,
-                status: "available",
-                isCompleted: false,
+                answeredQuestions: 90,
+                status: "completed",
+                isCompleted: true,
               },
               {
                 examDayId: "day-2",
                 day: 2,
                 totalQuestions: 90,
-                answeredQuestions: 0,
-                status: "available",
-                isCompleted: false,
+                answeredQuestions: 90,
+                status: "completed",
+                isCompleted: true,
               },
             ],
           },
@@ -119,7 +119,6 @@ export function useExams(): UseExamsResult {
         setExams(mockExams);
         setError(null);
       } catch (err) {
-        console.log("❌ ERRO MOCK EXAMS:", err);
         setError("Erro ao carregar simulados");
         setExams([]);
       } finally {

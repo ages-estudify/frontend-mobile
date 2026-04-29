@@ -1,34 +1,84 @@
+import { TAB_BAR_HEIGHT, tabBarBottomOffset } from "@/constants/tabBarLayout";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import React, { useRef } from "react";
-import { Pressable, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Pressable, Text } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+type Language = "ENGLISH" | "SPANISH";
 
 type Props = {
-  onConfirm: (language: "ENGLISH" | "SPANISH") => void;
+  onConfirm: (language: Language) => void;
   onCancel: () => void;
 };
 
 export function LanguageBottomSheet({ onConfirm, onCancel }: Props) {
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const [selected, setSelected] = useState<Language | null>(null);
+  const insets = useSafeAreaInsets();
+  const bottomInset = tabBarBottomOffset(insets.bottom) + TAB_BAR_HEIGHT + 8;
+
+  const options: { label: string; value: Language }[] = [
+    { label: "Inglês", value: "ENGLISH" },
+    { label: "Espanhol", value: "SPANISH" },
+  ];
+
   return (
-    <BottomSheet ref={bottomSheetRef} snapPoints={["40%"]} enablePanDownToClose onClose={onCancel}>
-      <BottomSheetView style={{ flex: 1, padding: 24 }}>
-        <Text className="mb-4 text-lg font-semibold text-gray-800">Escolha o idioma da prova</Text>
+    <BottomSheet
+      snapPoints={["45%"]}
+      enablePanDownToClose
+      onClose={onCancel}
+      bottomInset={bottomInset}
+      detached={true}
+      style={{ marginHorizontal: 0 }}
+      handleIndicatorStyle={{ backgroundColor: "#D0D0D0", width: 36 }}
+      backgroundStyle={{ borderRadius: 20 }}
+    >
+      <BottomSheetView style={{ flex: 1, paddingHorizontal: 20, paddingTop: 4 }}>
+        <Text style={{ fontSize: 20, fontWeight: "700", color: "#1a1a1a", marginBottom: 4 }}>
+          Escolha o idioma
+        </Text>
+        <Text style={{ fontSize: 13, color: "#888888", lineHeight: 18, marginBottom: 20 }}>
+          Selecione qual língua estrangeira deseja responder no simulado
+        </Text>
 
-        <View className="gap-3">
-          <Pressable
-            onPress={() => onConfirm("ENGLISH")}
-            className="rounded-lg border border-gray-200 bg-white p-4"
-          >
-            <Text className="text-base font-medium text-gray-800">Inglês</Text>
-          </Pressable>
+        {options.map((option) => {
+          const isSelected = selected === option.value;
+          return (
+            <Pressable
+              key={option.value}
+              onPress={() => setSelected(option.value)}
+              style={{
+                borderRadius: 12,
+                borderWidth: isSelected ? 2 : 0.5,
+                borderColor: isSelected ? "#1a1a1a" : "#E0E0E0",
+                backgroundColor: "#FFFFFF",
+                padding: 16,
+                marginBottom: 10,
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: "600", color: "#1a1a1a" }}>
+                {option.label}
+              </Text>
+            </Pressable>
+          );
+        })}
 
-          <Pressable
-            onPress={() => onConfirm("SPANISH")}
-            className="rounded-lg border border-gray-200 bg-white p-4"
+        <Pressable
+          onPress={() => selected && onConfirm(selected)}
+          disabled={!selected}
+          style={({ pressed }) => ({
+            borderRadius: 14,
+            backgroundColor: selected ? (pressed ? "#333333" : "#1a1a1a") : "#E0E0E0",
+            padding: 16,
+            alignItems: "center",
+            marginTop: 8,
+          })}
+        >
+          <Text
+            style={{ fontSize: 15, fontWeight: "600", color: selected ? "#FFFFFF" : "#AAAAAA" }}
           >
-            <Text className="text-base font-medium text-gray-800">Espanhol</Text>
-          </Pressable>
-        </View>
+            Começar Simulado
+          </Text>
+        </Pressable>
       </BottomSheetView>
     </BottomSheet>
   );
