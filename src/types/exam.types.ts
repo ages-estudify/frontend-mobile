@@ -10,6 +10,7 @@ export type ExamDay = {
   status: ExamDayStatus;
   isCompleted: boolean;
   attemptDayId?: string;
+  hasLanguageChoice?: boolean;
 };
 
 export type Exam = {
