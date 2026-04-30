@@ -22,11 +22,11 @@ export function ExamCard({ exam, onPress, onMenuPress }: Props) {
 
   const barColor =
     exam.status === "completed"
-      ? "#22C55E"
+      ? "#63A941"
       : exam.status === "in_progress" && exam.progress.percentage < 50
-        ? "#EF4444"
+        ? "#E05C3A"
         : exam.status === "in_progress" && exam.progress.percentage >= 50
-          ? "#F59E0B"
+          ? "#E0963A"
           : "#D1D5DB";
 
   function handleMenuPress() {
