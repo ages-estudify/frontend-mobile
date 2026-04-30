@@ -14,10 +14,20 @@ export function ExamCard({ exam, onPress, onMenuPress }: Props) {
   const originLabel = exam.origin === "ORIGINAL" ? "ENEM" : "UFRGS";
   const isCompleted = exam.progress.percentage >= 100;
 
-  const imageSource =
-    originLabel === "ENEM"
+  const imageSource = exam.imageUrl
+    ? { uri: exam.imageUrl }
+    : originLabel === "ENEM"
       ? require("../../../assets/enem 2.png")
       : require("../../../assets/ufrgs_cor 1 1.png");
+
+  const barColor =
+    exam.status === "completed"
+      ? "#22C55E"
+      : exam.status === "in_progress" && exam.progress.percentage < 50
+        ? "#EF4444"
+        : exam.status === "in_progress" && exam.progress.percentage >= 50
+          ? "#F59E0B"
+          : "#D1D5DB";
 
   function handleMenuPress() {
     menuButtonRef.current?.measure((x, y, width, height, pageX, pageY) => {
@@ -61,9 +71,8 @@ export function ExamCard({ exam, onPress, onMenuPress }: Props) {
 
       <View className="mt-auto">
         <Text className="mb-1 text-xs text-gray-500">{exam.totalQuestions} questões</Text>
-        <ProgressBar percentage={exam.progress.percentage} />
+        <ProgressBar percentage={exam.progress.percentage} color={barColor} />
 
-        {/* ✅ Badge Finalizado */}
         {isCompleted && (
           <View
             style={{

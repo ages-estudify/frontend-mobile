@@ -37,7 +37,13 @@ export function ExamDaysBottomSheet({
       return;
     }
 
-    if (exam.hasLanguageChoice) {
+    if (day.hasLanguageChoice) {
+      onOpenLanguage(day.examDayId);
+    } else {
+      onStartDay(day.examDayId);
+    }
+
+    if (exam.hasLanguageChoice && day.day === 1) {
       onOpenLanguage(day.examDayId);
     } else {
       onStartDay(day.examDayId);

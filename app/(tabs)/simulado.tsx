@@ -3,8 +3,9 @@ import { ExamCardMenu } from "@/components/ExamCardMenu/ExamCardMenu";
 import { ExamDaysBottomSheet } from "@/components/ExamDaysBottomSheet/ExamDaysBottomSheet";
 import { LanguageBottomSheet } from "@/components/LanguageBottomSheet/LanguageBottomSheet";
 import { RetryConfirmModal } from "@/components/RetryConfirmModal/RetryConfirmModal";
+import { tabBarScrollContentPaddingBottom } from "@/constants/tabBarLayout";
 import { useExams } from "@/hooks/useExams";
-import { Exam } from "@/types/exam.types";
+import { Exam, ExamStatus } from "@/types/exam.types";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -16,11 +17,11 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ExamsScreen() {
   const router = useRouter();
   const { exams, loading, error, retryExam } = useExams();
-
   const { width } = useWindowDimensions();
 
   const CARD_WIDTH = 177;
@@ -41,6 +42,16 @@ export default function ExamsScreen() {
 
   const [showRetryModal, setShowRetryModal] = useState(false);
   const [pendingRetryExam, setPendingRetryExam] = useState<Exam | null>(null);
+
+  const ORDER: Record<ExamStatus, number> = {
+    in_progress: 0,
+    available: 1,
+    completed: 2,
+  };
+
+  const sortedExams = [...exams].sort((a, b) => ORDER[a.status] - ORDER[b.status]);
+
+  const insets = useSafeAreaInsets();
 
   function handleOpenExam(exam: Exam) {
     setSelectedExam(exam);
@@ -109,7 +120,7 @@ export default function ExamsScreen() {
   function handleConfirmRetry() {
     setShowRetryModal(false);
     if (!pendingRetryExam) return;
-    console.log("Finalizando tentativa anterior e iniciando nova para:", pendingRetryExam.id);
+    retryExam(pendingRetryExam.id);
     startRetry(pendingRetryExam);
     setPendingRetryExam(null);
   }
@@ -175,12 +186,15 @@ export default function ExamsScreen() {
 
       <View className="mt-[167px] flex-1 px-[19px]">
         <FlatList
-          data={exams}
+          data={sortedExams}
           key={canUseTwoColumns ? "two-columns" : "one-column"}
           keyExtractor={(item) => item.id}
           numColumns={canUseTwoColumns ? 2 : 1}
           columnWrapperStyle={canUseTwoColumns ? { gap: 12 } : undefined}
-          contentContainerStyle={{ paddingBottom: 24, gap: 12 }}
+          contentContainerStyle={{
+            paddingBottom: tabBarScrollContentPaddingBottom(insets.bottom),
+            gap: 12,
+          }}
           renderItem={({ item }) => (
             <ExamCard
               exam={item}

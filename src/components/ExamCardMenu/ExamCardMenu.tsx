@@ -1,11 +1,10 @@
 import React from "react";
-import { Dimensions, Modal, Pressable, Text, View } from "react-native";
+import { Dimensions, Modal, Pressable, Text, useWindowDimensions, View } from "react-native";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const MENU_WIDTH = 210;
 const MENU_HEIGHT = 120;
-const MARGIN = 8;
+const MARGIN = 12;
 
 type Props = {
   visible: boolean;
@@ -16,15 +15,14 @@ type Props = {
 };
 
 export function ExamCardMenu({ visible, onClose, onHistory, onRetry, anchorPosition }: Props) {
-  const safeLeft = Math.min(
-    Math.max(anchorPosition?.x ?? 20, MARGIN),
-    SCREEN_WIDTH - MENU_WIDTH - MARGIN
-  );
+  const { width } = useWindowDimensions();
 
   const safeTop = Math.min(
     Math.max(anchorPosition?.y ?? 120, MARGIN),
     SCREEN_HEIGHT - MENU_HEIGHT - MARGIN
   );
+
+  const safeLeft = Math.min(Math.max(anchorPosition?.x ?? 20, MARGIN), width - MENU_WIDTH - MARGIN);
 
   return (
     <Modal transparent animationType="fade" visible={visible} onRequestClose={onClose}>
@@ -37,7 +35,7 @@ export function ExamCardMenu({ visible, onClose, onHistory, onRetry, anchorPosit
             backgroundColor: "white",
             borderRadius: 16,
             paddingVertical: 4,
-            minWidth: 210,
+            width: MENU_WIDTH,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.12,
