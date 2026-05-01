@@ -5,7 +5,7 @@ import { LanguageBottomSheet } from "@/components/LanguageBottomSheet/LanguageBo
 import { RetryConfirmModal } from "@/components/RetryConfirmModal/RetryConfirmModal";
 import { tabBarScrollContentPaddingBottom } from "@/constants/tabBarLayout";
 import { useExams } from "@/hooks/useExams";
-import { Exam, ExamStatus } from "@/types/exam.types";
+import { Exam } from "@/types/exam.types";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -21,7 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ExamsScreen() {
   const router = useRouter();
-  const { exams, loading, error, retryExam } = useExams();
+  const { exams, loading, error, retryExam, refresh } = useExams();
   const { width } = useWindowDimensions();
 
   const CARD_WIDTH = 177;
@@ -42,14 +42,6 @@ export default function ExamsScreen() {
 
   const [showRetryModal, setShowRetryModal] = useState(false);
   const [pendingRetryExam, setPendingRetryExam] = useState<Exam | null>(null);
-
-  const ORDER: Record<ExamStatus, number> = {
-    in_progress: 0,
-    available: 1,
-    completed: 2,
-  };
-
-  const sortedExams = [...exams].sort((a, b) => ORDER[a.status] - ORDER[b.status]);
 
   const insets = useSafeAreaInsets();
 
@@ -117,12 +109,20 @@ export default function ExamsScreen() {
     }
   }
 
-  function handleConfirmRetry() {
+  async function handleConfirmRetry() {
     setShowRetryModal(false);
     if (!pendingRetryExam) return;
-    retryExam(pendingRetryExam.id);
-    startRetry(pendingRetryExam);
-    setPendingRetryExam(null);
+
+    try {
+      // await criarNovaTentativa(pendingRetryExam.id); // descomentar quando endpoint existir
+      // refresh();                                      // descomentar junto
+      retryExam(pendingRetryExam.id); // remover quando descomentar as linhas acima
+    } catch (err) {
+      console.error("Erro ao criar nova tentativa:", err);
+    } finally {
+      startRetry(pendingRetryExam);
+      setPendingRetryExam(null);
+    }
   }
 
   function startRetry(exam: Exam) {
@@ -186,7 +186,7 @@ export default function ExamsScreen() {
 
       <View className="mt-[167px] flex-1 px-[19px]">
         <FlatList
-          data={sortedExams}
+          data={exams}
           key={canUseTwoColumns ? "two-columns" : "one-column"}
           keyExtractor={(item) => item.id}
           numColumns={canUseTwoColumns ? 2 : 1}
