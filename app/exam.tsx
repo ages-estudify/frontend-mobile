@@ -31,17 +31,10 @@ export default function ExamScreen() {
     setSelectedAlternative,
     nextQuestion,
     prevQuestion,
-    pauseAttempt,
     submitAnswer,
     goToQuestion,
     finishAttempt,
   } = useExam();
-
-  const handleAttemptPause = async () => {
-    if (currentAttempt) {
-      await pauseAttempt({ attemptId: currentAttempt.attempt.id, timeSpentMinutes: seconds / 60 });
-    }
-  };
 
   const submitCurrentAnswer = (currentAlt: Alternative | null) => {
     const previousAlternativeId = currentQuestion?.selectedAlternativeId;
@@ -50,7 +43,8 @@ export default function ExamScreen() {
       submitAnswer({
         attemptId: currentAttempt?.attempt.id || "",
         questionId: currentQuestion?.id || "",
-        selectedAnswer: selectedAlternative || "",
+        selectedAnswer: selectedAlternative || null,
+        timeSpentSeconds: seconds,
       });
     }
   };
@@ -72,6 +66,7 @@ export default function ExamScreen() {
   const handleGoToQuestion = (index: number) => {
     const currentAlt =
       currentQuestion?.alternatives.find((alt) => alt.letter === selectedAlternative) || null;
+    submitCurrentAnswer(currentAlt);
     goToQuestion(index, currentAlt?.id || null);
     setOpenGrid(false);
   };
@@ -87,7 +82,7 @@ export default function ExamScreen() {
     try {
       const response = await finishAttempt({
         attemptId: currentAttempt.attempt.id,
-        timeSpentMinutes: seconds / 60,
+        timeSpentSeconds: seconds,
       });
 
       setShowFinishModal(false);
@@ -129,7 +124,7 @@ export default function ExamScreen() {
   return (
     <View className="flex-1 bg-gray-50 p-4">
       <View className="flex flex-row items-center justify-between">
-        <BackButton onPress={handleAttemptPause} />
+        <BackButton />
         <View className="mt-2 flex flex-row items-center gap-2">
           <TimerExam time={time} />
           <Pressable

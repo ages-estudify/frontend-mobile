@@ -2,18 +2,20 @@ import { endPoints } from "@/routes/endpoints";
 import {
   AttemptResponse,
   CreateAttemptRequest,
+  CreatedAttemptResponse,
   FinishAttemptRequest,
   FinishAttemptResponse,
-  PauseAttemptRequest,
-  PauseAttemptResponse,
   SubmitAnswerRequest,
   SubmitAnswerResponse,
 } from "@/types/exam.types";
 import api from "./api";
 
 export const attemptExamService = {
-  createAttempt: async (examId: string, body: CreateAttemptRequest): Promise<AttemptResponse> => {
-    const response: AttemptResponse = await api.post(endPoints.exams.attempts(examId), body);
+  createAttempt: async (
+    examId: string,
+    body: CreateAttemptRequest
+  ): Promise<CreatedAttemptResponse> => {
+    const response: CreatedAttemptResponse = await api.post(endPoints.exams.attempts(examId), body);
     return response;
   },
   getLatestAttempt: async (examId: string): Promise<AttemptResponse> => {
@@ -26,16 +28,6 @@ export const attemptExamService = {
   ): Promise<SubmitAnswerResponse> => {
     const response: SubmitAnswerResponse = await api.post(
       endPoints.questions.answer(questionId),
-      body
-    );
-    return response;
-  },
-  pauseAttempt: async (
-    attemptId: string,
-    body: PauseAttemptRequest
-  ): Promise<PauseAttemptResponse> => {
-    const response: PauseAttemptResponse = await api.patch(
-      endPoints.exams.pauseAttempt(attemptId),
       body
     );
     return response;

@@ -1,7 +1,8 @@
 import { attemptExamService } from "@/services/attemptExam.service";
 import { AttemptResponse, Language } from "@/types/exam.types";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { AppState, AppStateStatus } from "react-native";
 
 type CreateAttemptParams = {
   examId: string;
@@ -10,18 +11,14 @@ type CreateAttemptParams = {
 
 type SubmitAnswerParams = {
   questionId: string;
-  selectedAnswer: string;
+  selectedAnswer: string | null;
   attemptId: string;
-};
-
-type PauseAttemptParams = {
-  attemptId: string;
-  timeSpentMinutes: number;
+  timeSpentSeconds: number;
 };
 
 type FinishAttemptParams = {
   attemptId: string;
-  timeSpentMinutes: number;
+  timeSpentSeconds: number;
 };
 
 export function useExam() {
@@ -34,6 +31,9 @@ export function useExam() {
   const [selectedAlternative, setSelectedAlternative] = useState<string | null>(null);
   const [seconds, setSeconds] = useState<number>(0);
   const [time, setTime] = useState<string>();
+
+  const startTimestampRef = useRef<number | null>(null);
+  const appStateRef = useRef<AppStateStatus>("active");
 
   const currentQuestion = currentAttempt?.questions[currentQuestionIndex] || null;
 
@@ -52,15 +52,36 @@ export function useExam() {
   }, [currentAttempt]);
 
   useEffect(() => {
+    const subscription = AppState.addEventListener("change", handleAppStateChange);
+
     const interval = setInterval(() => {
-      setSeconds((s) => {
-        const newSeconds = s + 1;
-        formatTime(newSeconds);
-        return newSeconds;
-      });
+      updateTimeDisplay();
     }, 1000);
-    return () => clearInterval(interval);
+
+    updateTimeDisplay();
+
+    return () => {
+      clearInterval(interval);
+      subscription.remove();
+    };
   }, []);
+
+  const handleAppStateChange = (state: AppStateStatus) => {
+    appStateRef.current = state;
+
+    if (state === "active") {
+      updateTimeDisplay();
+    }
+  };
+
+  const updateTimeDisplay = () => {
+    if (startTimestampRef.current !== null) {
+      const elapsedMilliseconds = Date.now() - startTimestampRef.current;
+      const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+      setSeconds(elapsedSeconds);
+      formatTime(elapsedSeconds);
+    }
+  };
 
   useEffect(() => {
     if (currentQuestion) {
@@ -101,8 +122,7 @@ export function useExam() {
 
     try {
       const response = await attemptExamService.createAttempt(examId, { language });
-      setCurrentAttempt(response.data);
-      setCurrentQuestionIndex(0);
+      getLatestAttempt(examId);
       return response;
     } catch (err: any) {
       setError(err.message || "Erro ao criar tentativa");
@@ -120,7 +140,9 @@ export function useExam() {
       const response = await attemptExamService.getLatestAttempt(examId);
       setCurrentAttempt(response.data);
       setCurrentQuestionIndex(response.data.attempt.currentQuestion - 1);
-      setSeconds(response.data.attempt.timeSpentMinutes * 60);
+      const timeSpentSeconds = response.data.attempt.timeSpentSeconds;
+      setSeconds(timeSpentSeconds);
+      startTimestampRef.current = Date.now() - timeSpentSeconds * 1000;
       return response;
     } catch (err: any) {
       setError(err.message || "Erro ao buscar tentativa");
@@ -130,7 +152,12 @@ export function useExam() {
     }
   };
 
-  const submitAnswer = async ({ questionId, selectedAnswer, attemptId }: SubmitAnswerParams) => {
+  const submitAnswer = async ({
+    questionId,
+    selectedAnswer,
+    attemptId,
+    timeSpentSeconds,
+  }: SubmitAnswerParams) => {
     setLoading(true);
     setError(null);
 
@@ -138,6 +165,7 @@ export function useExam() {
       const response = await attemptExamService.submitAnswer(questionId, {
         selectedAnswer,
         attemptId,
+        timeSpentSeconds,
       });
       return response;
     } catch (err: any) {
@@ -148,30 +176,13 @@ export function useExam() {
     }
   };
 
-  const pauseAttempt = async ({ attemptId, timeSpentMinutes }: PauseAttemptParams) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await attemptExamService.pauseAttempt(attemptId, {
-        timeSpentMinutes,
-      });
-      return response;
-    } catch (err: any) {
-      setError(err.message || "Erro ao pausar tentativa");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const finishAttempt = async ({ attemptId, timeSpentMinutes }: FinishAttemptParams) => {
+  const finishAttempt = async ({ attemptId, timeSpentSeconds }: FinishAttemptParams) => {
     setLoading(true);
     setError(null);
 
     try {
       const response = await attemptExamService.finishAttempt(attemptId, {
-        timeSpentMinutes,
+        timeSpentSeconds,
       });
       return response;
     } catch (err: any) {
@@ -242,7 +253,6 @@ export function useExam() {
     createAttempt,
     getLatestAttempt,
     submitAnswer,
-    pauseAttempt,
     finishAttempt,
     prevQuestion,
     nextQuestion,

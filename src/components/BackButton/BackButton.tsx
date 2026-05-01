@@ -3,19 +3,12 @@ import React from "react";
 import { Pressable } from "react-native";
 import BackArrowIcon from "../../../assets/icons/back_arrow.svg";
 
-type props = {
-  onPress?: () => void;
-};
-
-export function BackButton({ onPress }: props) {
+export function BackButton() {
   const router = useRouter();
   return (
     <Pressable
       className="mt-[8px] h-[50px] w-[50px] items-center justify-center rounded-full bg-white"
-      onPress={() => {
-        onPress?.();
-        router.back();
-      }}
+      onPress={() => router.back()}
     >
       <BackArrowIcon width={16} height={16} />
     </Pressable>

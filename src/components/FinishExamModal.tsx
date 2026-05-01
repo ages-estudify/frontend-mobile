@@ -48,17 +48,17 @@ export function FinishExamModal({
 
           <View className="flex flex-row gap-3">
             <Pressable
-              onPress={onCancel}
+              onPress={onConfirm}
               disabled={loading}
               className="flex-1 items-center rounded-lg bg-gray-200 py-3"
             >
               <Text className="text-base font-semibold text-gray-800">
-                {hasAllAnswered ? "Finalizar Agora" : "Cancelar"}
+                {hasAllAnswered ? "Finalizar Agora" : "Confirmar"}
               </Text>
             </Pressable>
 
             <Pressable
-              onPress={onConfirm}
+              onPress={onCancel}
               disabled={loading}
               className="flex-1 items-center rounded-lg bg-[#3E2B5C] py-3"
             >
@@ -69,7 +69,7 @@ export function FinishExamModal({
                     : "Finalizando..."
                   : hasAllAnswered
                     ? "Revisar"
-                    : "Confirmar"}
+                    : "Cancelar"}
               </Text>
             </Pressable>
           </View>

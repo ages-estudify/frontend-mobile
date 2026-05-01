@@ -41,10 +41,17 @@ export interface Attempt {
   id: string;
   examId: string;
   currentQuestion: number;
-  timeSpentMinutes: number;
+  timeSpentSeconds: number;
   language: string;
   initTime: string;
   endTime: string | null;
+}
+
+export interface CreatedAttemptResponse {
+  success: boolean;
+  data: {
+    attempt: Attempt;
+  };
 }
 
 export interface AttemptResponse {
@@ -59,15 +66,6 @@ export interface SubmitAnswerResponse {
   success: boolean;
   data: {
     saved: boolean;
-  };
-}
-
-export interface PauseAttemptResponse {
-  success: boolean;
-  data: {
-    attemptId: string;
-    timeSpentMinutes: number;
-    currentQuestion: number;
   };
 }
 
@@ -102,16 +100,13 @@ export interface CreateAttemptRequest {
 }
 
 export interface SubmitAnswerRequest {
-  selectedAnswer: string;
+  selectedAnswer: string | null;
   attemptId: string;
-}
-
-export interface PauseAttemptRequest {
-  timeSpentMinutes: number;
+  timeSpentSeconds: number;
 }
 
 export interface FinishAttemptRequest {
-  timeSpentMinutes: number;
+  timeSpentSeconds: number;
 }
 
 export type Language = "SPANISH" | "ENGLISH";
