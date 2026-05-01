@@ -47,7 +47,7 @@ export function useExams(): UseExamsResult {
       try {
         setLoading(true);
         setError(null);
-        const data = await getExams(); // ← API real
+        const data = await getExams();
         if (!cancelled) setExams(data);
       } catch (err: any) {
         if (!cancelled) setError(err?.message ?? "Erro ao carregar simulados");
