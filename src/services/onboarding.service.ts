@@ -11,27 +11,3 @@ export const onboardingService = {
     }
   },
 };
-
-/**
- * export async function getQuestions({
-   topicId,
-   type,
-   limit = 10,
-   excludeAnswered = true,
-   retrieveWrong = true,
- }: GetQuestionParams): Promise<GetQuestionsResponse> {
-   try {
-     const response = await api.get<never, GetQuestionsResponse>(`/questions/${topicId}`, {
-       params: {
-         type,
-         limit,
-         excludeAnswered,
-         retrieveWrong,
-       },
-     });
-     return response;
-   } catch (error) {
-     throw handleApiError(error);
-   }
- }
- */

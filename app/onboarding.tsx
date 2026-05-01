@@ -170,7 +170,6 @@ export default function OnboardingScreen() {
   async function submitWithPayload(payload: Partial<OnboardingRequest>) {
     if (isSubmittingRef.current) return;
 
-    // validate preferredLanguage if present
     const pref = payload.preferredLanguage as string | undefined;
     if (pref && pref !== "ENGLISH" && pref !== "SPANISH") {
       Alert.alert("Erro", "preferredLanguage deve ser ENGLISH ou SPANISH");
