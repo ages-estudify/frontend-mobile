@@ -1,3 +1,4 @@
+import { GatedTabScreenHeader } from "@/components/navigation/GatedTabScreenHeader";
 import { PlanGuard } from "@/components/navigation/PlanGuard";
 import { TabScreenScrollView } from "@/components/navigation/TabScreenScrollView";
 import { SequenceBadgeContainer } from "@/components/SequenceBadgeContainer";
@@ -49,17 +50,19 @@ export default function TreinarRoute() {
   return (
     <SafeAreaView className="flex-1 bg-whitebg dark:bg-whitebg" edges={["top", "left", "right"]}>
       <View className="flex-1">
-        <View className="shrink-0 gap-[10px] self-center px-[16px]">
-          <Pressable onPress={() => logout()}>
-            <Image
-              source={require("../../assets/placeholder_user.png")}
-              style={{ width: 40, height: 40 }}
-              className="h-10 w-10 self-end rounded-full"
-              resizeMode="contain"
-            />
-          </Pressable>
-          <Text className="font-poppins-semi text-[34px]">Treinar</Text>
-        </View>
+        <GatedTabScreenHeader
+          title="Treinar"
+          trailing={
+            <Pressable onPress={() => logout()}>
+              <Image
+                source={require("../../assets/placeholder_user.png")}
+                style={{ width: 40, height: 40 }}
+                className="h-10 w-10 rounded-full"
+                resizeMode="contain"
+              />
+            </Pressable>
+          }
+        />
         <PlanGuard>
           <TreinarMainContent />
         </PlanGuard>

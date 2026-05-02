@@ -1,3 +1,4 @@
+import { GatedTabScreenHeader } from "@/components/navigation/GatedTabScreenHeader";
 import { PlanGuard } from "@/components/navigation/PlanGuard";
 import { TabScreenScrollView } from "@/components/navigation/TabScreenScrollView";
 import React from "react";
@@ -8,9 +9,7 @@ export default function SimuladosRoute() {
   return (
     <SafeAreaView className="flex-1 bg-whitebg" edges={["top", "left", "right"]}>
       <View className="flex-1">
-        <View className="shrink-0 px-4 pt-4">
-          <Text className="font-poppins-semi text-[34px]">Simulados</Text>
-        </View>
+        <GatedTabScreenHeader title="Simulados" />
         <PlanGuard>
           <TabScreenScrollView>
             <View className="px-4 pt-4">
