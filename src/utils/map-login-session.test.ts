@@ -57,4 +57,15 @@ describe("mapLoginPayloadToSession", () => {
       }).planActive
     ).toBe(false);
   });
+
+  it("ativo para ADM com planExpirationDate null", () => {
+    expect(
+      mapLoginPayloadToSession({
+        token: "t",
+        refreshToken: "r",
+        role: "ADM",
+        planExpirationDate: null,
+      })
+    ).toEqual({ token: "t", role: "ADM", planActive: true });
+  });
 });

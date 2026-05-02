@@ -1,15 +1,15 @@
 import type { LoginResponseData, UserSession } from "@/types/auth.types";
+import { hasGatedContentAccess, normalizeUserRole } from "@/utils/subscription-access";
 
 export function mapLoginPayloadToSession(data: LoginResponseData): UserSession {
   const planActive =
-    data.planActive ??
-    (data.planExpirationDate != null &&
-      !Number.isNaN(Date.parse(data.planExpirationDate)) &&
-      new Date(data.planExpirationDate) > new Date());
+    data.planActive !== undefined
+      ? data.planActive
+      : hasGatedContentAccess(data.role, data.planExpirationDate);
 
   return {
     token: data.token,
-    role: data.role,
+    role: normalizeUserRole(data.role),
     planActive: Boolean(planActive),
   };
 }
