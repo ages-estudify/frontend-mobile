@@ -1,26 +1,24 @@
 import GraphCard from "@/components/graphCard";
 import QuestionFeedbackButton from "@/components/QuestionFeedbackButton";
 import SegmentedControl, { SegmentedControlValue } from "@/components/SegmentedControl";
-import { getExamResultGrid } from "@/services/examFeedback/examFeedback.service";
 import {
+  getAttemptDayResult,
+  getExamResultGrid,
+} from "@/services/examFeedback/examFeedback.service";
+import {
+  AttemptDayResultData,
+  ExamFeedbackType,
   ResultGridFeedback,
   ResultGridQuestion,
   ResultGridStatus,
 } from "@/types/exam-feedback.types";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { X } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
-import { Image, Pressable, SafeAreaView, ScrollView, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type GridQuestion = ResultGridQuestion;
-
-function toNumber(value: string | string[] | undefined): number {
-  if (Array.isArray(value)) {
-    return Number(value[0] ?? 0);
-  }
-
-  return Number(value ?? 0);
-}
 
 function mapStatusToFeedback(status: ResultGridStatus): ResultGridFeedback {
   if (status === "CORRECT") {
@@ -34,41 +32,76 @@ function mapStatusToFeedback(status: ResultGridStatus): ResultGridFeedback {
   return "Blank";
 }
 
+function getParamValue(value: string | string[] | undefined): string | undefined {
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+
+  return value;
+}
+
 export default function ExamFeedback() {
   const params = useLocalSearchParams<{
-    totalQuestions?: string;
-    correctAnswers?: string;
-    wrongAnswers?: string;
-    blankAnswers?: string;
-    stars?: string;
-    timeSpentMinutes?: string;
-    attemptId?: string;
+    attemptDayId?: string;
+    type?: ExamFeedbackType;
   }>();
 
+  const router = useRouter();
+
+  const attemptDayId = getParamValue(params.attemptDayId);
+  const feedbackType = getParamValue(params.type) as ExamFeedbackType | undefined;
+  const isSimulado = feedbackType === "simulado";
+
+  const [resultData, setResultData] = useState<AttemptDayResultData | null>(null);
   const [questions, setQuestions] = useState<GridQuestion[]>([]);
+  const [isLoadingResult, setIsLoadingResult] = useState(false);
   const [isLoadingGrid, setIsLoadingGrid] = useState(false);
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<SegmentedControlValue>("ALL");
 
-  const totalQuestions = toNumber(params.totalQuestions);
-  const correctAnswers = toNumber(params.correctAnswers);
-  const wrongAnswers = toNumber(params.wrongAnswers);
-  const blankAnswers = toNumber(params.blankAnswers);
-  const stars = toNumber(params.stars);
-  const timeSpentMinutes = toNumber(params.timeSpentMinutes);
-  const attemptId = Array.isArray(params.attemptId) ? params.attemptId[0] : params.attemptId;
-
   useEffect(() => {
-    if (!attemptId) return;
+    if (!attemptDayId) return;
 
     let isMounted = true;
 
-    const statusFilter = selectedStatusFilter === "ALL" ? undefined : selectedStatusFilter;
+    const loadAttemptDayResult = async () => {
+      setIsLoadingResult(true);
+
+      try {
+        const response = await getAttemptDayResult(attemptDayId);
+
+        if (!isMounted) return;
+
+        setResultData(response.data);
+      } catch (error) {
+        if (!isMounted) return;
+
+        setResultData(null);
+      } finally {
+        if (isMounted) {
+          setIsLoadingResult(false);
+        }
+      }
+    };
+
+    loadAttemptDayResult();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [attemptDayId]);
+
+  useEffect(() => {
+    const attemptId = resultData?.attemptId;
+
+    if (!attemptId) return;
+
+    let isMounted = true;
 
     const loadResultGrid = async () => {
       setIsLoadingGrid(true);
 
       try {
-        const response = await getExamResultGrid(attemptId, statusFilter);
+        const response = await getExamResultGrid(attemptId, selectedStatusFilter);
 
         if (!isMounted) return;
 
@@ -95,7 +128,15 @@ export default function ExamFeedback() {
     return () => {
       isMounted = false;
     };
-  }, [attemptId, selectedStatusFilter]);
+  }, [resultData?.attemptId, selectedStatusFilter]);
+
+  const totalQuestions = resultData?.totalQuestions ?? 0;
+  const correctAnswers = resultData?.correctAnswers ?? 0;
+  const wrongAnswers = resultData?.wrongAnswers ?? 0;
+  const blankAnswers = resultData?.blankAnswers ?? 0;
+  const timeSpentMinutes = resultData?.timeSpentMinutes ?? 0;
+
+  const stars = correctAnswers;
 
   const rows = useMemo(() => {
     const gridRows: GridQuestion[][] = [];
@@ -125,15 +166,20 @@ export default function ExamFeedback() {
   };
 
   let messageTitle = "";
+  let foxImage = require("../assets/celebratingFox.png");
 
   if (blankAnswers >= totalQuestions / 2) {
-    messageTitle = "Próxima meta: menos questões em branco";
+    messageTitle = "Você consegue preencher mais!";
+    foxImage = require("../assets/sad-fox.png");
   } else if (correctAnswers >= totalQuestions * 0.5 && correctAnswers < totalQuestions * 0.7) {
     messageTitle = "Ótimo resultado!";
+    foxImage = require("../assets/celebratingFox.png");
   } else if (correctAnswers >= totalQuestions * 0.7) {
     messageTitle = "Excelente desempenho!";
+    foxImage = require("../assets/celebratingFox.png");
   } else if (wrongAnswers > totalQuestions * 0.5) {
     messageTitle = "Continue tentando!";
+    foxImage = require("../assets/suport-fox.png");
   }
 
   return (
@@ -143,34 +189,46 @@ export default function ExamFeedback() {
         showsVerticalScrollIndicator={false}
       >
         <View className="gap-12">
-          <View className="flex flex-row items-center justify-between">
-            <Text className="justify-start pt-8 text-2xl font-semibold">Resultados Simulado</Text>
+          <View className="flex-row items-center justify-between pt-8">
+            <Text className="text-2xl font-semibold">
+              {isSimulado ? "Resultados Simulado" : "Resultados Treino"}
+            </Text>
 
-            <Pressable onPress={() => console.log("fechar")}>
-              <View className="h-[50px] w-[50px] items-center justify-center rounded-full bg-[#3E2B5C]">
-                <X size={24} color="#FFFFFF" />
-              </View>
+            <Pressable
+              onPress={() => router.back()}
+              className="h-[50px] w-[50px] items-center justify-center rounded-full bg-[#3E2B5C]"
+            >
+              <X size={24} color="#FFFFFF" />
             </Pressable>
           </View>
 
           <View className="flex items-center justify-center gap-[18px]">
-            <Image source={require("../assets/celebratingFox.png")} />
-            <Text className="text-2xl font-semibold">{messageTitle}</Text>
+            <Image source={foxImage} />
+
+            {isLoadingResult ? (
+              <Text className="text-2xl font-semibold">Carregando resultado...</Text>
+            ) : (
+              <Text className="text-2xl font-semibold">{messageTitle}</Text>
+            )}
 
             <View className="flex flex-row items-center justify-center gap-4">
-              {/* <View className="flex items-center justify-center">
-                <View className="flex flex-row items-center justify-center">
-                  <Image
-                    source={require("../assets/purpleStarCoin.png")}
-                    className="h-[19px] w-[19px]"
-                  />
-                  <Text className="text-purple50">+{stars}</Text>
-                </View>
+              {!isSimulado ? (
+                <>
+                  <View className="flex items-center justify-center">
+                    <View className="flex flex-row items-center justify-center">
+                      <Image
+                        source={require("../assets/purpleStarCoin.png")}
+                        className="h-[19px] w-[19px]"
+                      />
+                      <Text className="text-purple50">+{stars}</Text>
+                    </View>
 
-                <Text className="text-purple50">Estrelas</Text>
-              </View> */}
+                    <Text className="text-purple50">Estrelas</Text>
+                  </View>
 
-              {/* <View className="h-8 w-[1px] bg-purple50" /> */}
+                  <View className="h-8 w-[1px] bg-purple50" />
+                </>
+              ) : null}
 
               <View className="flex items-center justify-center">
                 <Text className="text-purple50">{formatMinutesToHHMM(timeSpentMinutes)}</Text>
@@ -190,7 +248,9 @@ export default function ExamFeedback() {
 
           <View className="gap-4">
             <Text className="text-[16px] font-semibold">Gabarito Detalhado</Text>
+
             <SegmentedControl selected={selectedStatusFilter} onChange={setSelectedStatusFilter} />
+
             <View className="gap-5">
               {isLoadingGrid ? (
                 <Text className="text-primaryGray">Carregando gabarito...</Text>

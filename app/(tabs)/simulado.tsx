@@ -22,13 +22,9 @@ export default function SimuladosRoute() {
                 router.push({
                   pathname: "/examFeedback",
                   params: {
-                    totalQuestions: 10,
-                    correctAnswers: 5,
-                    wrongAnswers: 3,
-                    blankAnswers: 2,
-                    stars: 3,
-                    timeSpentMinutes: 90,
-                    attemptId: "8a72948e-4dab-4759-bbd2-7b4fc816441e",
+                    //This is just for testing the feedback while it's not yet integrated into the rest.
+                    attemptDayId: "33572023-feed-40d1-8159-7000d4ebed27",
+                    type: "simulado",
                   },
                 });
               }}
