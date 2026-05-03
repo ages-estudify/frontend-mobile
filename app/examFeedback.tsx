@@ -212,7 +212,7 @@ export default function ExamFeedback() {
             )}
 
             <View className="flex flex-row items-center justify-center gap-4">
-              {!isSimulado ? (
+              {isSimulado ? (
                 <>
                   <View className="flex items-center justify-center">
                     <View className="flex flex-row items-center justify-center">
