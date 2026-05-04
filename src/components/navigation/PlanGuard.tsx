@@ -1,39 +1,45 @@
+import { LockedFeature } from "@/components/LockedFeature";
 import { useAuth } from "@/hooks/useAuth";
-import { Redirect } from "expo-router";
-import type { ReactNode } from "react";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useState } from "react";
 
 type PlanGuardProps = {
-  children: ReactNode;
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
 };
 
-/**
- * Impede renderização de módulos pagos quando o plano está inativo
- * (deep link ou estado restaurado).
- */
-export function PlanGuard({ children }: PlanGuardProps) {
+let cachedPlanActive = false;
+
+export function PlanGuard({ children, fallback }: PlanGuardProps) {
   const { isPlanActive } = useAuth();
-  const [planIsActive, setPlanIsActive] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    const checkPlan = async () => {
-      const isActive = await isPlanActive();
-      setPlanIsActive(isActive);
-    };
-    checkPlan();
-  }, [isPlanActive]);
+  const [planActive, setPlanActive] = useState(cachedPlanActive);
 
-  if (planIsActive === null) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
 
-  if (!planIsActive) {
-    return <Redirect href="/paywall" />;
+      const checkPlan = async () => {
+        const active = await isPlanActive();
+
+        if (!mounted) return;
+
+        if (cachedPlanActive !== active) {
+          cachedPlanActive = active;
+          setPlanActive(active);
+        }
+      };
+
+      checkPlan();
+
+      return () => {
+        mounted = false;
+      };
+    }, [isPlanActive]),
+  );
+
+  if (!planActive) {
+    return <>{fallback ?? <LockedFeature />}</>;
   }
 
   return <>{children}</>;

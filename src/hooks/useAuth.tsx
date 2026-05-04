@@ -50,8 +50,6 @@ export function useAuth() {
 
   const register = async (body: RegisterParams) => {
     const response = await authService.register(body);
-
-    // se o backend DEVOLVE token no register
     const { token, refreshToken, planExpirationDate } = response.data;
 
     if (token && refreshToken) {
@@ -75,6 +73,12 @@ export function useAuth() {
     return new Date() < expirationDate;
   };
 
+  const updateSession = async (token: string, refreshToken: string, planExpirationDate: string) => {
+    await AsyncStorage.setItem("token", token);
+    await AsyncStorage.setItem("refreshToken", refreshToken);
+    await AsyncStorage.setItem("planExpirationDate", planExpirationDate);
+  };
+
   return {
     login,
     register,
@@ -84,5 +88,6 @@ export function useAuth() {
     isAuthenticated,
     getPlanExpirationDate,
     isPlanActive,
+    updateSession,
   };
 }

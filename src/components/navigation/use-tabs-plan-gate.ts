@@ -20,7 +20,7 @@ export function useTabsPlanGateListeners() {
   return useMemo(
     () =>
       createPlanGateTabListeners(planActive, () => {
-        router.push("/planos");
+        router.push("/plans");
       }),
     [planActive, router]
   );

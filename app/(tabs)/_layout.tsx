@@ -4,11 +4,11 @@ import {
 } from "@/components/navigation/FloatingGlassTabBar";
 import { MAIN_TAB_DEFINITIONS } from "@/components/navigation/main-tabs";
 import { RoundedTabBarButton } from "@/components/navigation/RoundedTabBarButton";
-import { useTabsPlanGateListeners } from "@/components/navigation/use-tabs-plan-gate";
+import { TabHeader } from "@/components/navigation/TabHeader";
 import { TAB_BAR_HEIGHT, TAB_ITEM_VERTICAL_MARGIN } from "@/constants/tabBarLayout";
-import { Tabs } from "expo-router";
+import { Tabs, usePathname } from "expo-router";
 import React from "react";
-import { Image } from "react-native";
+import { Image, View } from "react-native";
 
 const TAB_R = TAB_BAR_HEIGHT / 2;
 const ACTIVE_BG = "#EBEBEB";
@@ -51,29 +51,68 @@ const tabScreenOptions = {
   },
 };
 
+function getHeaderConfig(pathname: string) {
+  if (pathname.includes("cronograma")) {
+    return {
+      title: "Cronograma",
+      subtitle: "Seu plano de estudos personalizado!",
+    };
+  }
+
+  if (pathname.includes("progresso")) {
+    return {
+      title: "Meu Progresso",
+      subtitle: "Sua evolução nos estudos",
+    };
+  }
+
+  if (pathname.includes("simulado")) {
+    return {
+      title: "Simulados",
+      subtitle: undefined,
+    };
+  }
+
+  return {
+    title: "Treinar",
+    subtitle: undefined,
+  };
+}
+
 export default function TabsLayout() {
-  const blockedListeners = useTabsPlanGateListeners();
+  const pathname = usePathname();
+  const headerConfig = getHeaderConfig(pathname);
 
   return (
-    <Tabs tabBar={(props) => <FloatingGlassTabBar {...props} />} screenOptions={tabScreenOptions}>
-      {MAIN_TAB_DEFINITIONS.map((aux) => (
-        <Tabs.Screen
-          key={aux.name}
-          name={aux.name}
-          options={{
-            title: aux.title,
-            tabBarAccessibilityLabel: aux.tabBarAccessibilityLabel,
-            tabBarIcon: ({ focused }) => (
-              <Image
-                source={aux.tabBarImage}
-                style={{ width: 24, height: 24, tintColor: focused ? undefined : "#9CA3AF" }}
-                resizeMode="contain"
-              />
-            ),
-          }}
-          listeners={aux.planGated ? blockedListeners : undefined}
-        />
-      ))}
-    </Tabs>
+    <View className="flex-1 bg-whitebg">
+      <TabHeader title={headerConfig.title} subtitle={headerConfig.subtitle} />
+
+      <View className="flex-1 bg-whitebg">
+        <Tabs tabBar={(props) => <FloatingGlassTabBar {...props} />} screenOptions={tabScreenOptions}>
+          {MAIN_TAB_DEFINITIONS.map((aux) => (
+            <Tabs.Screen
+              key={aux.name}
+              name={aux.name}
+              options={{
+                title: aux.title,
+                tabBarAccessibilityLabel: aux.tabBarAccessibilityLabel,
+                tabBarIcon: ({ focused }) => (
+                  <Image
+                    source={aux.tabBarImage}
+                    style={{
+                      width: 24,
+                      height: 24,
+                      tintColor: focused ? undefined : "#9CA3AF",
+                    }}
+                    resizeMode="contain"
+                  />
+                ),
+              }}
+              listeners={undefined}
+            />
+          ))}
+        </Tabs>
+      </View>
+    </View>
   );
 }
