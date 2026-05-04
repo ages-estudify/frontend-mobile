@@ -1,3 +1,5 @@
+import type { UserRole } from "@/utils/subscription-access";
+
 export interface RegisterRequest {
   fullName: string;
   email: string;
@@ -5,6 +7,16 @@ export interface RegisterRequest {
   phone: string;
   birthDate: string;
 }
+
+/** Corpo comum de login/register retornado pela API. */
+export type LoginResponseData = {
+  token: string;
+  refreshToken: string;
+  role: string;
+  planExpirationDate: string | null;
+  /** Só usado em testes / overrides explícitos de mapLoginPayloadToSession. */
+  planActive?: boolean;
+};
 
 export interface RegisterResponse {
   sucess: boolean;
@@ -24,17 +36,12 @@ export interface LoginRequest {
 
 export type LoginResponse = {
   success: boolean;
-  data: {
-    token: string;
-    refreshToken: string;
-    role: string;
-    planExpirationDate: string | null;
-  };
+  data: LoginResponseData;
 };
 
 /** Sessão persistida após login (JWT + metadados usados na UI). */
 export interface UserSession {
   token: string;
-  role: string;
+  role: UserRole;
   planActive: boolean;
 }

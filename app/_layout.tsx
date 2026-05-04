@@ -1,6 +1,7 @@
 import "../global.css";
 
 import { StarsInitializer } from "@/components/StarsInitializer";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { StarsProvider } from "@/contexts/StarsContext";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -32,23 +33,25 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <StarsProvider>
-          <StarsInitializer />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen name="index" options={{ title: "HomePage" }} />
-            <Stack.Screen name="login" options={{ title: "LoginPage" }} />
-            <Stack.Screen name="onboarding" options={{ title: "Onboarding" }} />
-            <Stack.Screen name="subject" options={{ title: "Subject" }} />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="question" options={{ title: "Question" }} />
-          </Stack>
+        <AuthProvider>
+          <StarsProvider>
+            <StarsInitializer />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="index" options={{ title: "HomePage" }} />
+              <Stack.Screen name="login" options={{ title: "LoginPage" }} />
+              <Stack.Screen name="onboarding" options={{ title: "Onboarding" }} />
+              <Stack.Screen name="subject" options={{ title: "Subject" }} />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="question" options={{ title: "Question" }} />
+            </Stack>
 
-          <StatusBar style="auto" />
-        </StarsProvider>
+            <StatusBar style="auto" />
+          </StarsProvider>
+        </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
