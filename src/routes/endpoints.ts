@@ -4,4 +4,7 @@ export const endPoints = {
     login: `/auth/login`,
     refresh: `/auth/refresh`,
   },
+  onboarding: {
+    submit: `/onboarding`,
+  },
 };
