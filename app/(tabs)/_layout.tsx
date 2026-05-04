@@ -4,9 +4,8 @@ import {
 } from "@/components/navigation/FloatingGlassTabBar";
 import { MAIN_TAB_DEFINITIONS } from "@/components/navigation/main-tabs";
 import { RoundedTabBarButton } from "@/components/navigation/RoundedTabBarButton";
-import { TabHeader } from "@/components/navigation/TabHeader";
 import { TAB_BAR_HEIGHT, TAB_ITEM_VERTICAL_MARGIN } from "@/constants/tabBarLayout";
-import { Tabs, usePathname } from "expo-router";
+import { Tabs } from "expo-router";
 import React from "react";
 import { Image, View } from "react-native";
 
@@ -80,39 +79,25 @@ function getHeaderConfig(pathname: string) {
 }
 
 export default function TabsLayout() {
-  const pathname = usePathname();
-  const headerConfig = getHeaderConfig(pathname);
-
   return (
-    <View className="flex-1 bg-whitebg">
-      <TabHeader title={headerConfig.title} subtitle={headerConfig.subtitle} />
-
-      <View className="flex-1 bg-whitebg">
-        <Tabs tabBar={(props) => <FloatingGlassTabBar {...props} />} screenOptions={tabScreenOptions}>
-          {MAIN_TAB_DEFINITIONS.map((aux) => (
-            <Tabs.Screen
-              key={aux.name}
-              name={aux.name}
-              options={{
-                title: aux.title,
-                tabBarAccessibilityLabel: aux.tabBarAccessibilityLabel,
-                tabBarIcon: ({ focused }) => (
-                  <Image
-                    source={aux.tabBarImage}
-                    style={{
-                      width: 24,
-                      height: 24,
-                      tintColor: focused ? undefined : "#9CA3AF",
-                    }}
-                    resizeMode="contain"
-                  />
-                ),
-              }}
-              listeners={undefined}
-            />
-          ))}
-        </Tabs>
-      </View>
-    </View>
+    <Tabs tabBar={(props) => <FloatingGlassTabBar {...props} />} screenOptions={tabScreenOptions}>
+      {MAIN_TAB_DEFINITIONS.map((aux) => (
+        <Tabs.Screen
+          key={aux.name}
+          name={aux.name}
+          options={{
+            title: aux.title,
+            tabBarAccessibilityLabel: aux.tabBarAccessibilityLabel,
+            tabBarIcon: ({ focused }) => (
+              <Image
+                source={aux.tabBarImage}
+                style={{ width: 24, height: 24, tintColor: focused ? undefined : "#9CA3AF" }}
+                resizeMode="contain"
+              />
+            ),
+          }}
+        />
+      ))}
+    </Tabs>
   );
 }

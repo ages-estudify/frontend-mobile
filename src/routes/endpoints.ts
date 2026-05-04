@@ -8,4 +8,8 @@ export const endPoints = {
   subscriptions: {
     create: "/subscriptions",
   },
+
+  onboarding: {
+    submit: `/onboarding`,
+  },
 };

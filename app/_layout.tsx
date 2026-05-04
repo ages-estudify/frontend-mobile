@@ -1,6 +1,7 @@
 import "../global.css";
 
 import { StarsInitializer } from "@/components/StarsInitializer";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { StarsProvider } from "@/contexts/StarsContext";
 import { useAssets } from "expo-asset";
 import { Stack } from "expo-router";
@@ -45,27 +46,29 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <StarsProvider>
-          <StarsInitializer />
+        <AuthProvider>
+          <StarsProvider>
+            <StarsInitializer />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="index" options={{ title: "HomePage" }} />
+              <Stack.Screen name="login" options={{ title: "LoginPage" }} />
+              <Stack.Screen name="intro" options={{ title: "IntroPage" }} />
+              <Stack.Screen name="register" options={{ title: "RegisterPage" }} />
+              <Stack.Screen name="plans" options={{ title: "PlansPage" }} />
+              <Stack.Screen name="paywall" options={{ title: "PaywallPage" }} />
+              <Stack.Screen name="subject" options={{ title: "Subject" }} />
+              <Stack.Screen name="question" options={{ title: "Question" }} />
+              <Stack.Screen name="onboarding" options={{ title: "Onboarding" }} />
+              <Stack.Screen name="(tabs)" />
+            </Stack>
 
-          <Stack
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen name="index" options={{ title: "HomePage" }} />
-            <Stack.Screen name="login" options={{ title: "LoginPage" }} />
-            <Stack.Screen name="intro" options={{ title: "IntroPage" }} />
-            <Stack.Screen name="register" options={{ title: "RegisterPage" }} />
-            <Stack.Screen name="plans" options={{ title: "PlansPage" }} />
-            <Stack.Screen name="paywall" options={{ title: "PaywallPage" }} />
-            <Stack.Screen name="subject" options={{ title: "Subject" }} />
-            <Stack.Screen name="question" options={{ title: "Question" }} />
-            <Stack.Screen name="(tabs)" />
-          </Stack>
-
-          <StatusBar style="auto" />
-        </StarsProvider>
+            <StatusBar style="auto" />
+          </StarsProvider>
+        </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

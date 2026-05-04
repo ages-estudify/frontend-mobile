@@ -14,7 +14,7 @@ describe("stars.service", () => {
     jest.clearAllMocks();
   });
 
-  it("chama GET /users/coins corretamente", async () => {
+  it("chama GET /users/me/coins corretamente", async () => {
     const mockedResponse = {
       data: {
         coins: 47,
@@ -25,7 +25,7 @@ describe("stars.service", () => {
 
     const result = await getUserStars();
 
-    expect(api.get).toHaveBeenCalledWith("/users/coins");
+    expect(api.get).toHaveBeenCalledWith("/users/me/coins");
     expect(result).toEqual(mockedResponse);
   });
 

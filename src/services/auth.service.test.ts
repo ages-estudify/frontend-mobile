@@ -1,4 +1,4 @@
-import { login } from "./auth.service";
+import { authService } from "./auth.service";
 import http from "./api";
 
 jest.mock("./api", () => ({
@@ -15,8 +15,8 @@ describe("auth.service login", () => {
     jest.clearAllMocks();
   });
 
-  it("retorna UserSession em sucesso", async () => {
-    mockPost.mockResolvedValueOnce({
+  it("retorna LoginResponse em sucesso", async () => {
+    const apiBody = {
       success: true,
       data: {
         token: "jwt",
@@ -24,29 +24,26 @@ describe("auth.service login", () => {
         role: "USER",
         planExpirationDate: "2099-01-01",
       },
-    });
+    };
+    mockPost.mockResolvedValueOnce(apiBody);
 
-    await expect(login({ email: "a@b.com", password: "x" })).resolves.toEqual({
-      token: "jwt",
-      role: "USER",
-      planActive: true,
-    });
+    await expect(authService.login({ email: "a@b.com", password: "x" })).resolves.toEqual(apiBody);
   });
 
-  it("lança com corpo de erro", async () => {
-    mockPost.mockResolvedValueOnce({ success: false, message: "inválido" });
-    await expect(login({ email: "a@b.com", password: "x" })).rejects.toThrow("inválido");
+  it("repassa resposta com success false sem lançar", async () => {
+    const body = { success: false, message: "inválido" };
+    mockPost.mockResolvedValueOnce(body);
+    await expect(authService.login({ email: "a@b.com", password: "x" })).resolves.toEqual(body);
   });
 
-  it("lança com mensagem de erro estilo HTTP client", async () => {
-    mockPost.mockRejectedValueOnce({
-      response: { data: { message: "401" } },
-    });
-    await expect(login({ email: "a@b.com", password: "x" })).rejects.toThrow("401");
+  it("propaga rejeição estilo HTTP client", async () => {
+    const err = { response: { data: { message: "401" } } };
+    mockPost.mockRejectedValueOnce(err);
+    await expect(authService.login({ email: "a@b.com", password: "x" })).rejects.toEqual(err);
   });
 
   it("propaga Error genérico", async () => {
     mockPost.mockRejectedValueOnce(new Error("network"));
-    await expect(login({ email: "a@b.com", password: "x" })).rejects.toThrow("network");
+    await expect(authService.login({ email: "a@b.com", password: "x" })).rejects.toThrow("network");
   });
 });

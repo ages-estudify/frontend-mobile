@@ -59,6 +59,7 @@ export function TextInputWithTitle({
 
         {isPassword && (
           <Pressable
+            testID="toggle-password-visibility"
             onPress={() => setShowPassword(!showPassword)}
             className="absolute right-4 top-1/2 -translate-y-1/2"
           >
