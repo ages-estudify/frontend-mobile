@@ -24,7 +24,7 @@ export default function PaywallScreen() {
         </View>
         <Pressable
           testID="planos"
-          onPress={() => router.replace("/planos")}
+          onPress={() => router.replace("/plans")}
           className="h-[34px] w-[164px] items-center justify-center self-center rounded-2xl bg-purpleCalm"
         >
           <Text className="text-center font-poppins text-[16px] text-white">Ver Planos</Text>
