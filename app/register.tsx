@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { RegisterRequest } from "@/types/auth.types";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RegisterScreen() {
@@ -83,38 +83,38 @@ export default function RegisterScreen() {
 
   async function handleRegister() {
     if (!fullName || !email || !phone || !password || !confirmPassword) {
-      alert("Preencha todos os campos");
+      Alert.alert("Erro", "Preencha todos os campos");
       return;
     }
 
     if (!birthDateText || birthDateText.length < 10) {
-      alert("Data de nascimento inválida");
+      Alert.alert("Erro", "Data de nascimento inválida");
       return;
     }
 
     if (!isValidEmail(email)) {
-      alert("Email inválido");
+      Alert.alert("Erro", "Email inválido");
       return;
     }
 
     if (password.length < 8) {
-      alert("A senha deve ter no mínimo 8 caracteres");
+      Alert.alert("Erro", "A senha deve ter no mínimo 8 caracteres");
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("As senhas não conferem");
+      Alert.alert("Erro", "As senhas não conferem");
       return;
     }
 
     const parsedBirthDate = parseBirthDate(birthDateText);
     if (!parsedBirthDate) {
-      alert("Data de nascimento inválida");
+      Alert.alert("Erro", "Data de nascimento inválida");
       return;
     }
 
     if (!isValidPhone(phone)) {
-      alert("Número de telefone inválido");
+      Alert.alert("Erro", "Número de telefone inválido");
       return;
     }
 
@@ -131,7 +131,7 @@ export default function RegisterScreen() {
       router.replace("/");
     } catch (error) {
       console.log("Register error:", error);
-      alert("Erro ao realizar cadastro. Tente novamente.");
+      Alert.alert("Erro", "Erro ao realizar cadastro. Tente novamente.");
       return;
     }
   }
