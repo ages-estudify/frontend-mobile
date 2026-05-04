@@ -1,3 +1,4 @@
+import { LockedFeature } from "@/components/LockedFeature";
 import { GatedTabScreenHeader } from "@/components/navigation/GatedTabScreenHeader";
 import { PlanGuard } from "@/components/navigation/PlanGuard";
 import { TabScreenScrollView } from "@/components/navigation/TabScreenScrollView";

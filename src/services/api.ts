@@ -55,6 +55,7 @@ export const handleApiError = (error: unknown): never => {
   }
 
   console.log(error);
+  throw error;
 };
 
 export default api;

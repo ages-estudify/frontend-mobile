@@ -1,3 +1,4 @@
+import { LockedFeature } from "@/components/LockedFeature";
 import { GatedTabScreenHeader } from "@/components/navigation/GatedTabScreenHeader";
 import { PlanGuard } from "@/components/navigation/PlanGuard";
 import { TabScreenScrollView } from "@/components/navigation/TabScreenScrollView";
@@ -16,12 +17,33 @@ function TreinarMainContent() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const data = async () => {
-      const subjectsData = await getSubjects();
-      setSubjects(subjectsData);
-      setLoading(false);
+    let mounted = true;
+
+    const loadSubjects = async () => {
+      try {
+        const subjectsData = await getSubjects();
+
+        if (mounted) {
+          setSubjects(subjectsData);
+        }
+      } catch (error) {
+        console.log("Erro ao buscar disciplinas:", error);
+
+        if (mounted) {
+          setSubjects([]);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
     };
-    data();
+
+    loadSubjects();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   if (loading) {
