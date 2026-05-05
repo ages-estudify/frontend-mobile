@@ -4,7 +4,6 @@ import {
 } from "@/components/navigation/FloatingGlassTabBar";
 import { MAIN_TAB_DEFINITIONS } from "@/components/navigation/main-tabs";
 import { RoundedTabBarButton } from "@/components/navigation/RoundedTabBarButton";
-import { useTabsPlanGateListeners } from "@/components/navigation/use-tabs-plan-gate";
 import { TAB_BAR_HEIGHT, TAB_ITEM_VERTICAL_MARGIN } from "@/constants/tabBarLayout";
 import { Tabs } from "expo-router";
 import React from "react";
@@ -52,8 +51,6 @@ const tabScreenOptions = {
 };
 
 export default function TabsLayout() {
-  const blockedListeners = useTabsPlanGateListeners();
-
   return (
     <Tabs tabBar={(props) => <FloatingGlassTabBar {...props} />} screenOptions={tabScreenOptions}>
       {MAIN_TAB_DEFINITIONS.map((aux) => (
@@ -71,7 +68,6 @@ export default function TabsLayout() {
               />
             ),
           }}
-          listeners={aux.planGated ? blockedListeners : undefined}
         />
       ))}
     </Tabs>

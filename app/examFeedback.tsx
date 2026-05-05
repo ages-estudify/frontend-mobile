@@ -203,7 +203,7 @@ export default function ExamFeedback() {
           </View>
 
           <View className="flex items-center justify-center gap-[18px]">
-            <Image source={foxImage} />
+            <Image className="h-[102px] w-[102px]" source={foxImage} resizeMode="contain" />
 
             {isLoadingResult ? (
               <Text className="text-2xl font-semibold">Carregando resultado...</Text>
