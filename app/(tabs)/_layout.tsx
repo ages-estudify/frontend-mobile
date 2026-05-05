@@ -4,11 +4,10 @@ import {
 } from "@/components/navigation/FloatingGlassTabBar";
 import { MAIN_TAB_DEFINITIONS } from "@/components/navigation/main-tabs";
 import { RoundedTabBarButton } from "@/components/navigation/RoundedTabBarButton";
-import { useTabsPlanGateListeners } from "@/components/navigation/use-tabs-plan-gate";
 import { TAB_BAR_HEIGHT, TAB_ITEM_VERTICAL_MARGIN } from "@/constants/tabBarLayout";
 import { Tabs } from "expo-router";
 import React from "react";
-import { Image } from "react-native";
+import { Image, View } from "react-native";
 
 const TAB_R = TAB_BAR_HEIGHT / 2;
 const ACTIVE_BG = "#EBEBEB";
@@ -51,9 +50,35 @@ const tabScreenOptions = {
   },
 };
 
-export default function TabsLayout() {
-  const blockedListeners = useTabsPlanGateListeners();
+function getHeaderConfig(pathname: string) {
+  if (pathname.includes("cronograma")) {
+    return {
+      title: "Cronograma",
+      subtitle: "Seu plano de estudos personalizado!",
+    };
+  }
 
+  if (pathname.includes("progresso")) {
+    return {
+      title: "Meu Progresso",
+      subtitle: "Sua evolução nos estudos",
+    };
+  }
+
+  if (pathname.includes("simulado")) {
+    return {
+      title: "Simulados",
+      subtitle: undefined,
+    };
+  }
+
+  return {
+    title: "Treinar",
+    subtitle: undefined,
+  };
+}
+
+export default function TabsLayout() {
   return (
     <Tabs tabBar={(props) => <FloatingGlassTabBar {...props} />} screenOptions={tabScreenOptions}>
       {MAIN_TAB_DEFINITIONS.map((aux) => (
@@ -71,7 +96,6 @@ export default function TabsLayout() {
               />
             ),
           }}
-          listeners={aux.planGated ? blockedListeners : undefined}
         />
       ))}
     </Tabs>

@@ -1,4 +1,6 @@
+import { useAuthSession } from "@/contexts/AuthContext";
 import { authService } from "@/services/auth.service";
+import { hasGatedContentAccess } from "@/utils/subscription-access";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type LoginParams = {
@@ -14,23 +16,35 @@ type RegisterParams = {
   password: string;
 };
 
+async function persistPlanExpirationDate(planExpirationDate: string | null) {
+  if (planExpirationDate) {
+    await AsyncStorage.setItem("planExpirationDate", planExpirationDate);
+  } else {
+    await AsyncStorage.removeItem("planExpirationDate");
+  }
+}
+
 export function useAuth() {
+  const session = useAuthSession();
+
   const login = async ({ email, password }: LoginParams) => {
     const response = await authService.login({ email, password });
 
-    const { token, refreshToken, planExpirationDate } = response.data;
+    const { token, refreshToken, role, planExpirationDate } = response.data;
 
     await AsyncStorage.setItem("token", token);
     await AsyncStorage.setItem("refreshToken", refreshToken);
-    await AsyncStorage.setItem("planExpirationDate", planExpirationDate || "");
+    await AsyncStorage.setItem("role", role);
+    await persistPlanExpirationDate(planExpirationDate);
+
+    session.setSessionFromCredentials(role, planExpirationDate);
 
     return response;
   };
 
   const logout = async () => {
-    await AsyncStorage.removeItem("token");
-    await AsyncStorage.removeItem("refreshToken");
-    await AsyncStorage.removeItem("planExpirationDate");
+    await AsyncStorage.multiRemove(["token", "refreshToken", "planExpirationDate", "role"]);
+    session.clearSessionMetadata();
     router.replace("/login");
   };
 
@@ -50,13 +64,14 @@ export function useAuth() {
   const register = async (body: RegisterParams) => {
     const response = await authService.register(body);
 
-    // se o backend DEVOLVE token no register
-    const { token, refreshToken, planExpirationDate } = response.data;
+    const { token, refreshToken, planExpirationDate, role } = response.data;
 
     if (token && refreshToken) {
       await AsyncStorage.setItem("token", token);
       await AsyncStorage.setItem("refreshToken", refreshToken);
-      await AsyncStorage.setItem("planExpirationDate", planExpirationDate || "");
+      await AsyncStorage.setItem("role", role);
+      await persistPlanExpirationDate(planExpirationDate);
+      session.setSessionFromCredentials(role, planExpirationDate);
     }
 
     return response;
@@ -64,14 +79,17 @@ export function useAuth() {
 
   const getPlanExpirationDate = async () => {
     const dateStr = await AsyncStorage.getItem("planExpirationDate");
-    return dateStr ? new Date(dateStr) : null;
+    return dateStr && dateStr.length > 0 ? new Date(dateStr) : null;
   };
 
   const isPlanActive = async () => {
-    const expirationDate = await getPlanExpirationDate();
-    if (!expirationDate) return false;
+    return hasGatedContentAccess(session.role, session.planExpirationDate);
+  };
 
-    return new Date() < expirationDate;
+  const updateSession = async (token: string, refreshToken: string, planExpirationDate: string) => {
+    await AsyncStorage.setItem("token", token);
+    await AsyncStorage.setItem("refreshToken", refreshToken);
+    await AsyncStorage.setItem("planExpirationDate", planExpirationDate);
   };
 
   return {
@@ -83,5 +101,7 @@ export function useAuth() {
     isAuthenticated,
     getPlanExpirationDate,
     isPlanActive,
+    updateSession,
+    updatePlanExpirationDate: session.updatePlanExpirationDate,
   };
 }

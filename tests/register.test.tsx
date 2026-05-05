@@ -1,14 +1,15 @@
-import { fireEvent, render, waitFor } from "@testing-library/react-native";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { Alert } from "react-native";
 import RegisterScreen from "../app/register";
 
 const mockReplace = jest.fn();
+const mockBack = jest.fn();
 jest.mock("expo-router", () => ({
-  useRouter: () => ({
-    replace: mockReplace,
-    back: jest.fn(),
-  }),
+  router: {
+    replace: (...args: unknown[]) => mockReplace(...args),
+    back: mockBack,
+  },
 }));
 
 const mockRegister = jest.fn();
@@ -83,80 +84,80 @@ describe("RegisterScreen", () => {
   });
 
   it("deve mostrar alerta se o email for inválido", () => {
-    const { getByText, getByPlaceholderText } = render(<RegisterScreen />);
+    render(<RegisterScreen />);
 
-    fireEvent.changeText(getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
-    fireEvent.changeText(getByPlaceholderText("abc@abc.com"), "email_invalido");
-    fireEvent.changeText(getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
-    fireEvent.changeText(getByPlaceholderText("(11) 99999-9999"), "11999999999");
-    fireEvent.changeText(getByPlaceholderText("******"), "password123");
-    fireEvent.changeText(getByPlaceholderText("Confirmar Senha"), "password123");
+    fireEvent.changeText(screen.getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
+    fireEvent.changeText(screen.getByPlaceholderText("abc@abc.com"), "email_invalido");
+    fireEvent.changeText(screen.getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
+    fireEvent.changeText(screen.getByPlaceholderText("(11) 99999-9999"), "11999999999");
+    fireEvent.changeText(screen.getByTestId("input-Senha"), "password123");
+    fireEvent.changeText(screen.getByTestId("input-Confirmar Senha"), "password123");
 
-    fireEvent.press(getByText("Confirmar"));
+    fireEvent.press(screen.getByText("Confirmar"));
 
     expect(Alert.alert).toHaveBeenCalledWith("Erro", "Email inválido");
     expect(mockRegister).not.toHaveBeenCalled();
   });
 
   it("deve mostrar alerta se a senha tiver menos de 8 caracteres", () => {
-    const { getByText, getByPlaceholderText } = render(<RegisterScreen />);
+    render(<RegisterScreen />);
 
-    fireEvent.changeText(getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
-    fireEvent.changeText(getByPlaceholderText("abc@abc.com"), "maria@email.com");
-    fireEvent.changeText(getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
-    fireEvent.changeText(getByPlaceholderText("(11) 99999-9999"), "11999999999");
-    fireEvent.changeText(getByPlaceholderText("Senha"), "123");
-    fireEvent.changeText(getByPlaceholderText("Confirmar Senha"), "123");
+    fireEvent.changeText(screen.getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
+    fireEvent.changeText(screen.getByPlaceholderText("abc@abc.com"), "maria@email.com");
+    fireEvent.changeText(screen.getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
+    fireEvent.changeText(screen.getByPlaceholderText("(11) 99999-9999"), "11999999999");
+    fireEvent.changeText(screen.getByTestId("input-Senha"), "123");
+    fireEvent.changeText(screen.getByTestId("input-Confirmar Senha"), "123");
 
-    fireEvent.press(getByText("Confirmar"));
+    fireEvent.press(screen.getByText("Confirmar"));
 
     expect(Alert.alert).toHaveBeenCalledWith("Erro", "A senha deve ter no mínimo 8 caracteres");
     expect(mockRegister).not.toHaveBeenCalled();
   });
 
   it("deve mostrar alerta se as senhas não conferem", () => {
-    const { getByText, getByPlaceholderText } = render(<RegisterScreen />);
+    render(<RegisterScreen />);
 
-    fireEvent.changeText(getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
-    fireEvent.changeText(getByPlaceholderText("abc@abc.com"), "maria@email.com");
-    fireEvent.changeText(getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
-    fireEvent.changeText(getByPlaceholderText("(11) 99999-9999"), "11999999999");
-    fireEvent.changeText(getByPlaceholderText("Senha"), "password123");
-    fireEvent.changeText(getByPlaceholderText("Confirmar Senha"), "differentpassword");
+    fireEvent.changeText(screen.getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
+    fireEvent.changeText(screen.getByPlaceholderText("abc@abc.com"), "maria@email.com");
+    fireEvent.changeText(screen.getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
+    fireEvent.changeText(screen.getByPlaceholderText("(11) 99999-9999"), "11999999999");
+    fireEvent.changeText(screen.getByTestId("input-Senha"), "password123");
+    fireEvent.changeText(screen.getByTestId("input-Confirmar Senha"), "differentpassword");
 
-    fireEvent.press(getByText("Confirmar"));
+    fireEvent.press(screen.getByText("Confirmar"));
 
     expect(Alert.alert).toHaveBeenCalledWith("Erro", "As senhas não conferem");
     expect(mockRegister).not.toHaveBeenCalled();
   });
 
   it("deve mostrar alerta se a data de nascimento for inválida", () => {
-    const { getByText, getByPlaceholderText } = render(<RegisterScreen />);
+    render(<RegisterScreen />);
 
-    fireEvent.changeText(getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
-    fireEvent.changeText(getByPlaceholderText("abc@abc.com"), "maria@email.com");
-    fireEvent.changeText(getByPlaceholderText("DD/MM/AAAA"), "32/13/1990");
-    fireEvent.changeText(getByPlaceholderText("(11) 99999-9999"), "11999999999");
-    fireEvent.changeText(getByPlaceholderText("Senha"), "password123");
-    fireEvent.changeText(getByPlaceholderText("Confirmar Senha"), "password123");
+    fireEvent.changeText(screen.getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
+    fireEvent.changeText(screen.getByPlaceholderText("abc@abc.com"), "maria@email.com");
+    fireEvent.changeText(screen.getByPlaceholderText("DD/MM/AAAA"), "32/13/1990");
+    fireEvent.changeText(screen.getByPlaceholderText("(11) 99999-9999"), "11999999999");
+    fireEvent.changeText(screen.getByTestId("input-Senha"), "password123");
+    fireEvent.changeText(screen.getByTestId("input-Confirmar Senha"), "password123");
 
-    fireEvent.press(getByText("Confirmar"));
+    fireEvent.press(screen.getByText("Confirmar"));
 
     expect(Alert.alert).toHaveBeenCalledWith("Erro", "Data de nascimento inválida");
     expect(mockRegister).not.toHaveBeenCalled();
   });
 
   it("deve mostrar alerta se o telefone for inválido", () => {
-    const { getByText, getByPlaceholderText } = render(<RegisterScreen />);
+    render(<RegisterScreen />);
 
-    fireEvent.changeText(getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
-    fireEvent.changeText(getByPlaceholderText("abc@abc.com"), "maria@email.com");
-    fireEvent.changeText(getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
-    fireEvent.changeText(getByPlaceholderText("(11) 99999-9999"), "123");
-    fireEvent.changeText(getByPlaceholderText("Senha"), "password123");
-    fireEvent.changeText(getByPlaceholderText("Confirmar Senha"), "password123");
+    fireEvent.changeText(screen.getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
+    fireEvent.changeText(screen.getByPlaceholderText("abc@abc.com"), "maria@email.com");
+    fireEvent.changeText(screen.getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
+    fireEvent.changeText(screen.getByPlaceholderText("(11) 99999-9999"), "123");
+    fireEvent.changeText(screen.getByTestId("input-Senha"), "password123");
+    fireEvent.changeText(screen.getByTestId("input-Confirmar Senha"), "password123");
 
-    fireEvent.press(getByText("Confirmar"));
+    fireEvent.press(screen.getByText("Confirmar"));
 
     expect(Alert.alert).toHaveBeenCalledWith("Erro", "Número de telefone inválido");
     expect(mockRegister).not.toHaveBeenCalled();
@@ -165,16 +166,16 @@ describe("RegisterScreen", () => {
   it("deve chamar register e redirecionar em caso de sucesso", async () => {
     mockRegister.mockResolvedValueOnce(undefined);
 
-    const { getByText, getByPlaceholderText } = render(<RegisterScreen />);
+    render(<RegisterScreen />);
 
-    fireEvent.changeText(getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
-    fireEvent.changeText(getByPlaceholderText("abc@abc.com"), "maria@email.com");
-    fireEvent.changeText(getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
-    fireEvent.changeText(getByPlaceholderText("(11) 99999-9999"), "11999999999");
-    fireEvent.changeText(getByPlaceholderText("Senha"), "password123");
-    fireEvent.changeText(getByPlaceholderText("Confirmar Senha"), "password123");
+    fireEvent.changeText(screen.getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
+    fireEvent.changeText(screen.getByPlaceholderText("abc@abc.com"), "maria@email.com");
+    fireEvent.changeText(screen.getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
+    fireEvent.changeText(screen.getByPlaceholderText("(11) 99999-9999"), "11999999999");
+    fireEvent.changeText(screen.getByTestId("input-Senha"), "password123");
+    fireEvent.changeText(screen.getByTestId("input-Confirmar Senha"), "password123");
 
-    fireEvent.press(getByText("Confirmar"));
+    fireEvent.press(screen.getByText("Confirmar"));
 
     await waitFor(() => {
       expect(mockRegister).toHaveBeenCalledWith({
@@ -187,7 +188,7 @@ describe("RegisterScreen", () => {
     });
 
     await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith("/login");
+      expect(mockReplace).toHaveBeenCalledWith("/");
     });
   });
 
@@ -195,36 +196,38 @@ describe("RegisterScreen", () => {
     const errorMessage = "Email já cadastrado";
     mockRegister.mockRejectedValueOnce(new Error(errorMessage));
 
-    const { getByText, getByPlaceholderText } = render(<RegisterScreen />);
+    render(<RegisterScreen />);
 
-    fireEvent.changeText(getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
-    fireEvent.changeText(getByPlaceholderText("abc@abc.com"), "maria@email.com");
-    fireEvent.changeText(getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
-    fireEvent.changeText(getByPlaceholderText("(11) 99999-9999"), "11999999999");
-    fireEvent.changeText(getByPlaceholderText("Senha"), "password123");
-    fireEvent.changeText(getByPlaceholderText("Confirmar Senha"), "password123");
+    fireEvent.changeText(screen.getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
+    fireEvent.changeText(screen.getByPlaceholderText("abc@abc.com"), "maria@email.com");
+    fireEvent.changeText(screen.getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
+    fireEvent.changeText(screen.getByPlaceholderText("(11) 99999-9999"), "11999999999");
+    fireEvent.changeText(screen.getByTestId("input-Senha"), "password123");
+    fireEvent.changeText(screen.getByTestId("input-Confirmar Senha"), "password123");
 
-    fireEvent.press(getByText("Confirmar"));
+    fireEvent.press(screen.getByText("Confirmar"));
 
     await waitFor(() => {
       expect(mockRegister).toHaveBeenCalled();
     });
 
     expect(mockReplace).not.toHaveBeenCalled();
+
+    expect(Alert.alert).toHaveBeenCalledWith("Erro", "Erro ao realizar cadastro. Tente novamente.");
   });
 
   it("deve validar telefone com 10 e 11 dígitos", () => {
-    const { getByText, getByPlaceholderText, queryByTestId } = render(<RegisterScreen />);
+    render(<RegisterScreen />);
 
     // Testando com 10 dígitos
-    fireEvent.changeText(getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
-    fireEvent.changeText(getByPlaceholderText("abc@abc.com"), "maria@email.com");
-    fireEvent.changeText(getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
-    fireEvent.changeText(getByPlaceholderText("(11) 99999-9999"), "1199999999");
-    fireEvent.changeText(getByPlaceholderText("Senha"), "password123");
-    fireEvent.changeText(getByPlaceholderText("Confirmar Senha"), "password123");
+    fireEvent.changeText(screen.getByPlaceholderText("Ex: Maria dos Santos"), "Maria Silva");
+    fireEvent.changeText(screen.getByPlaceholderText("abc@abc.com"), "maria@email.com");
+    fireEvent.changeText(screen.getByPlaceholderText("DD/MM/AAAA"), "01/01/1990");
+    fireEvent.changeText(screen.getByPlaceholderText("(11) 99999-9999"), "1199999999");
+    fireEvent.changeText(screen.getByTestId("input-Senha"), "password123");
+    fireEvent.changeText(screen.getByTestId("input-Confirmar Senha"), "password123");
 
-    fireEvent.press(getByText("Confirmar"));
+    fireEvent.press(screen.getByText("Confirmar"));
 
     // A validação deve passar e chamar o register
     expect(mockRegister).toHaveBeenCalled();

@@ -1,40 +1,45 @@
-import { useAuth } from "@/hooks/useAuth";
-import { Redirect } from "expo-router";
-import type { ReactNode } from "react";
-import React, { useEffect, useState } from "react";
+import { SubscriptionPaywallInline } from "@/components/subscription/SubscriptionPaywallInline";
+import { useAuthSession } from "@/contexts/AuthContext";
+import { hasGatedContentAccess } from "@/utils/subscription-access";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 
 type PlanGuardProps = {
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
-/**
- * Impede renderização de módulos pagos quando o plano está inativo
- * (deep link ou estado restaurado).
- */
 export function PlanGuard({ children }: PlanGuardProps) {
-  const { isPlanActive } = useAuth();
-  const [planIsActive, setPlanIsActive] = useState<boolean | null>(null);
+  const { hydrated, role, planExpirationDate } = useAuthSession();
+  const [focusTick, setFocusTick] = useState(0);
 
-  useEffect(() => {
-    const checkPlan = async () => {
-      const isActive = await isPlanActive();
-      setPlanIsActive(isActive);
-    };
-    checkPlan();
-  }, [isPlanActive]);
+  useFocusEffect(
+    useCallback(() => {
+      setFocusTick((n) => n + 1);
+    }, [])
+  );
 
-  if (planIsActive === null) {
+  const hasAccess = useMemo(
+    () => hasGatedContentAccess(role, planExpirationDate),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- focusTick é gatilho de foco
+    [role, planExpirationDate, focusTick]
+  );
+
+  if (!hydrated) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View className="flex-1 items-center justify-center">
         <ActivityIndicator />
       </View>
     );
   }
 
-  if (!planIsActive) {
-    return <Redirect href="/paywall" />;
+  if (!hasAccess) {
+    return (
+      <View className="flex-1">
+        <SubscriptionPaywallInline />
+      </View>
+    );
   }
 
-  return <>{children}</>;
+  return <View className="flex-1">{children}</View>;
 }
