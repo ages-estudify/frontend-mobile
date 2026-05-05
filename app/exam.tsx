@@ -71,6 +71,12 @@ export default function ExamScreen() {
     setOpenGrid(false);
   };
 
+  const handleBackPress = () => {
+    const currentAlt =
+      currentQuestion?.alternatives.find((alt) => alt.letter === selectedAlternative) || null;
+    submitCurrentAnswer(currentAlt);
+  };
+
   const handleFinishExam = () => {
     setShowFinishModal(true);
   };
@@ -124,7 +130,7 @@ export default function ExamScreen() {
   return (
     <View className="flex-1 bg-gray-50 p-4">
       <View className="flex flex-row items-center justify-between">
-        <BackButton />
+        <BackButton onPress={handleBackPress} />
         <View className="mt-2 flex flex-row items-center gap-2">
           <TimerExam time={time} />
           <Pressable
