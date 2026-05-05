@@ -218,7 +218,9 @@ export default function ExamFeedback() {
                     <View className="flex flex-row items-center justify-center">
                       <Image
                         source={require("../assets/purpleStarCoin.png")}
+                        style={{ width: 19, height: 19 }}
                         className="h-[19px] w-[19px]"
+                        resizeMode="contain"
                       />
                       <Text className="text-purple50">+{stars}</Text>
                     </View>

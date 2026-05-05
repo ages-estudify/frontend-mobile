@@ -27,6 +27,9 @@ module.exports = {
         greenSecondary: "#84D55D",
         orangeSequenceCard: "#FFE6C580",
         orangeSequenceCardBorder: "#FFD195",
+        greenBubble: "#E2EBDE",
+        purplePrice: "#9969EB",
+        featureGray: "#EBEBEB",
       },
       fontFamily: {
         poppins: ["Poppins-Regular"],

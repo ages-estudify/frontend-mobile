@@ -87,6 +87,12 @@ export function useAuth() {
     return hasGatedContentAccess(session.role, session.planExpirationDate);
   };
 
+  const updateSession = async (token: string, refreshToken: string, planExpirationDate: string) => {
+    await AsyncStorage.setItem("token", token);
+    await AsyncStorage.setItem("refreshToken", refreshToken);
+    await AsyncStorage.setItem("planExpirationDate", planExpirationDate);
+  };
+
   return {
     login,
     register,
@@ -96,6 +102,7 @@ export function useAuth() {
     isAuthenticated,
     getPlanExpirationDate,
     isPlanActive,
+    updateSession,
     updatePlanExpirationDate: session.updatePlanExpirationDate,
   };
 }

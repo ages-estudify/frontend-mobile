@@ -7,7 +7,7 @@ import { RoundedTabBarButton } from "@/components/navigation/RoundedTabBarButton
 import { TAB_BAR_HEIGHT, TAB_ITEM_VERTICAL_MARGIN } from "@/constants/tabBarLayout";
 import { Tabs } from "expo-router";
 import React from "react";
-import { Image } from "react-native";
+import { Image, View } from "react-native";
 
 const TAB_R = TAB_BAR_HEIGHT / 2;
 const ACTIVE_BG = "#EBEBEB";
@@ -49,6 +49,34 @@ const tabScreenOptions = {
     elevation: 0,
   },
 };
+
+function getHeaderConfig(pathname: string) {
+  if (pathname.includes("cronograma")) {
+    return {
+      title: "Cronograma",
+      subtitle: "Seu plano de estudos personalizado!",
+    };
+  }
+
+  if (pathname.includes("progresso")) {
+    return {
+      title: "Meu Progresso",
+      subtitle: "Sua evolução nos estudos",
+    };
+  }
+
+  if (pathname.includes("simulado")) {
+    return {
+      title: "Simulados",
+      subtitle: undefined,
+    };
+  }
+
+  return {
+    title: "Treinar",
+    subtitle: undefined,
+  };
+}
 
 export default function TabsLayout() {
   return (
