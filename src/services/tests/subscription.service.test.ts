@@ -6,7 +6,9 @@ jest.mock("@/services/api", () => ({
   default: {
     post: jest.fn(),
   },
-  handleApiError: (err: unknown) => { throw err; },
+  handleApiError: (err: unknown) => {
+    throw err;
+  },
 }));
 
 const MOCK_SUCCESS_RESPONSE = {
@@ -62,8 +64,8 @@ describe("subscriptionService", () => {
     const apiError = new Error("Network error");
     (api.post as jest.Mock).mockRejectedValueOnce(apiError);
 
-    await expect(
-      subscriptionService.subscribe({ planType: "TRIMESTRAL" })
-    ).rejects.toThrow("Network error");
+    await expect(subscriptionService.subscribe({ planType: "TRIMESTRAL" })).rejects.toThrow(
+      "Network error"
+    );
   });
 });

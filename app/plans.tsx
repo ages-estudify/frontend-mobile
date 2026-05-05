@@ -7,15 +7,7 @@ import { useRouter } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { cssInterop } from "nativewind";
 import React, { useRef, useState } from "react";
-import {
-  Alert,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  type ViewToken,
-} from "react-native";
+import { Alert, FlatList, Pressable, StyleSheet, Text, View, type ViewToken } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const StyledArrowLeft = cssInterop(ArrowLeft, {
@@ -65,13 +57,11 @@ export default function PlanosScreen() {
   const router = useRouter();
   const { updateSession } = useAuth();
 
-  const onViewableItemsChanged = useRef(
-    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-      if (viewableItems.length > 0 && viewableItems[0].index !== null) {
-        setActiveIndex(viewableItems[0].index);
-      }
-    },
-  ).current;
+  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+    if (viewableItems.length > 0 && viewableItems[0].index !== null) {
+      setActiveIndex(viewableItems[0].index);
+    }
+  }).current;
 
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
@@ -175,7 +165,10 @@ export default function PlanosScreen() {
 
           <View style={styles.bubbleWrapper}>
             <View style={styles.bubbleContainer}>
-              <View style={styles.bubbleTail} className="border-r-greenBubble border-t-transparent border-b-transparent" />
+              <View
+                style={styles.bubbleTail}
+                className="border-b-transparent border-r-greenBubble border-t-transparent"
+              />
 
               <View style={styles.bubble} className="bg-greenBubble">
                 <Text

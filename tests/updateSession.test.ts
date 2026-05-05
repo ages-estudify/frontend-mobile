@@ -4,7 +4,6 @@ jest.mock("expo-router", () => ({
   router: { replace: jest.fn() },
 }));
 
-
 jest.mock("@/services/auth.service", () => ({
   authService: {
     login: jest.fn(),
@@ -24,11 +23,7 @@ describe("useAuth.updateSession", () => {
   it("deve persistir access token no AsyncStorage", async () => {
     const { updateSession } = useAuth();
 
-    await updateSession(
-      "new_tok",
-      "new_ref",
-      "2026-07-18"
-    );
+    await updateSession("new_tok", "new_ref", "2026-07-18");
 
     expect(mockSetItem).toHaveBeenCalledWith("token", "new_tok");
   });
@@ -36,11 +31,7 @@ describe("useAuth.updateSession", () => {
   it("deve persistir refresh token no AsyncStorage", async () => {
     const { updateSession } = useAuth();
 
-    await updateSession(
-      "new_tok",
-      "new_ref",
-      "2026-07-18"
-    );
+    await updateSession("new_tok", "new_ref", "2026-07-18");
 
     expect(mockSetItem).toHaveBeenCalledWith("refreshToken", "new_ref");
   });
@@ -48,11 +39,7 @@ describe("useAuth.updateSession", () => {
   it("deve persistir planExpirationDate no AsyncStorage", async () => {
     const { updateSession } = useAuth();
 
-    await updateSession(
-      "new_tok",
-      "new_ref",
-      "2026-07-18"
-    );
+    await updateSession("new_tok", "new_ref", "2026-07-18");
 
     expect(mockSetItem).toHaveBeenCalledWith("planExpirationDate", "2026-07-18");
   });
@@ -62,11 +49,7 @@ describe("useAuth.updateSession", () => {
 
     (AsyncStorage.getItem as jest.Mock).mockResolvedValueOnce("old_token");
 
-    await updateSession(
-      "brand_new_token",
-      "brand_new_ref",
-      "2026-07-18"
-    );
+    await updateSession("brand_new_token", "brand_new_ref", "2026-07-18");
 
     const tokenCalls = mockSetItem.mock.calls.filter(([k]: [string]) => k === "token");
     expect(tokenCalls.at(-1)![1]).toBe("brand_new_token");
@@ -75,11 +58,7 @@ describe("useAuth.updateSession", () => {
   it("deve sobrescrever refreshToken anterior com o novo refreshToken", async () => {
     const { updateSession } = useAuth();
 
-    await updateSession(
-      "t",
-      "brand_new_refresh",
-      "2026-07-18"
-    );
+    await updateSession("t", "brand_new_refresh", "2026-07-18");
 
     const refCalls = mockSetItem.mock.calls.filter(([k]: [string]) => k === "refreshToken");
     expect(refCalls.at(-1)![1]).toBe("brand_new_refresh");
@@ -88,11 +67,7 @@ describe("useAuth.updateSession", () => {
   it("deve persistir todos os três valores em uma única chamada", async () => {
     const { updateSession } = useAuth();
 
-    await updateSession(
-      "tok",
-      "ref",
-      "2026-12-31"
-    );
+    await updateSession("tok", "ref", "2026-12-31");
 
     const keys = mockSetItem.mock.calls.map(([k]: [string]) => k);
     expect(keys).toContain("token");

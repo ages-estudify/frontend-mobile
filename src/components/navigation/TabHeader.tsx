@@ -16,7 +16,7 @@ export function TabHeader({ title, subtitle }: TabHeaderProps) {
 
   return (
     <SafeAreaView className="bg-whitebg dark:bg-whitebg" edges={["top", "left", "right"]}>
-      <View className="w-full px-[16px] pt-2 pb-1">
+      <View className="w-full px-[16px] pb-1 pt-2">
         <Pressable onPress={() => logout()} style={{ alignSelf: "flex-end" }}>
           <Image
             source={USER_IMAGE}
@@ -35,9 +35,7 @@ export function TabHeader({ title, subtitle }: TabHeaderProps) {
           />
         </Pressable>
 
-        <Text className="mt-2 font-inter-semi text-[34px] leading-none text-black">
-          {title}
-        </Text>
+        <Text className="mt-2 font-inter-semi text-[34px] leading-none text-black">{title}</Text>
 
         <Text
           className="mt-1 font-inter text-[15px] text-primaryGray"

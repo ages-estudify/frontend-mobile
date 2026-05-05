@@ -26,7 +26,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { subscriptionService } from "@/services/subscription.service";
 import PlanosScreen from "../app/plans";
 
-
 const MOCK_SUCCESS_RESPONSE = {
   success: true,
   data: {
@@ -36,7 +35,6 @@ const MOCK_SUCCESS_RESPONSE = {
     refreshToken: "new_refresh_token",
   },
 };
-
 
 describe("PlanosScreen", () => {
   const subscribe = subscriptionService.subscribe as jest.Mock;
@@ -90,12 +88,13 @@ describe("PlanosScreen", () => {
     expect(getByText("O Estu recomenda o plano anual!")).toBeTruthy();
   });
 
-
   it("deve ter TRIMESTRAL como plano padrão (índice 0)", async () => {
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(subscribe).toHaveBeenCalledWith({ planType: "TRIMESTRAL" });
   });
@@ -108,17 +107,20 @@ describe("PlanosScreen", () => {
       viewableItems: [{ index: 1 }],
     });
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(subscribe).toHaveBeenCalledWith({ planType: "ANUAL" });
   });
-
 
   it("deve chamar subscriptionService.subscribe ao clicar em Liberar Acesso", async () => {
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(subscribe).toHaveBeenCalledTimes(1);
   });
@@ -127,7 +129,9 @@ describe("PlanosScreen", () => {
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(subscribe).toHaveBeenCalledWith({ planType: "TRIMESTRAL" });
   });
@@ -136,17 +140,20 @@ describe("PlanosScreen", () => {
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(["TRIMESTRAL", "ANUAL"]).toContain(subscribe.mock.calls[0][0].planType);
   });
-
 
   it("deve chamar updateSession com token, refreshToken e planExpirationDate", async () => {
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(updateSessionMock).toHaveBeenCalledWith({
       token: "new_access_token",
@@ -159,7 +166,9 @@ describe("PlanosScreen", () => {
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(updateSessionMock.mock.calls[0][0].planExpirationDate).toBe("2026-07-18");
   });
@@ -168,7 +177,9 @@ describe("PlanosScreen", () => {
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(updateSessionMock.mock.calls[0][0].token).toBe("new_access_token");
   });
@@ -177,30 +188,39 @@ describe("PlanosScreen", () => {
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(updateSessionMock.mock.calls[0][0].refreshToken).toBe("new_refresh_token");
   });
-
 
   it("deve redirecionar para '/' após sucesso", async () => {
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(replaceMock).toHaveBeenCalledWith("/");
   });
 
   it("deve chamar updateSession antes do redirect (tokens persistidos antes do acesso)", async () => {
     const callOrder: string[] = [];
-    updateSessionMock.mockImplementation(async () => { callOrder.push("updateSession"); });
-    replaceMock.mockImplementation(() => { callOrder.push("replace"); });
+    updateSessionMock.mockImplementation(async () => {
+      callOrder.push("updateSession");
+    });
+    replaceMock.mockImplementation(() => {
+      callOrder.push("replace");
+    });
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
 
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(callOrder).toEqual(["updateSession", "replace"]);
   });
@@ -209,7 +229,9 @@ describe("PlanosScreen", () => {
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(Alert.alert).toHaveBeenCalledWith(
       "Bem-vindo!",
@@ -217,12 +239,13 @@ describe("PlanosScreen", () => {
     );
   });
 
-
   it("deve exibir alerta com mensagem de erro da API", async () => {
     subscribe.mockRejectedValueOnce(new Error("Pagamento recusado"));
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(Alert.alert).toHaveBeenCalledWith("Erro", "Pagamento recusado");
   });
@@ -231,7 +254,9 @@ describe("PlanosScreen", () => {
     subscribe.mockRejectedValueOnce({ code: 500 });
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(Alert.alert).toHaveBeenCalledWith("Erro", "Erro ao ativar plano");
   });
@@ -240,7 +265,9 @@ describe("PlanosScreen", () => {
     subscribe.mockRejectedValueOnce(new Error("Erro de rede"));
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(replaceMock).not.toHaveBeenCalled();
   });
@@ -249,37 +276,44 @@ describe("PlanosScreen", () => {
     subscribe.mockRejectedValueOnce(new Error("Erro de rede"));
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
     expect(updateSessionMock).not.toHaveBeenCalled();
   });
 
-
   it("deve desabilitar o botão enquanto a requisição está em andamento", async () => {
     let resolve!: (v: unknown) => void;
-    subscribe.mockReturnValueOnce(new Promise((r) => { resolve = r; }));
+    subscribe.mockReturnValueOnce(
+      new Promise((r) => {
+        resolve = r;
+      })
+    );
 
     const { getByTestId } = render(<PlanosScreen />);
 
-    act(() => { fireEvent.press(getByTestId("subscribe-button")); });
-
-    await waitFor(() => {
-      expect(
-        getByTestId("subscribe-button").props.accessibilityState.disabled
-      ).toBe(true);
+    act(() => {
+      fireEvent.press(getByTestId("subscribe-button"));
     });
 
-    await act(async () => { resolve(MOCK_SUCCESS_RESPONSE); });
+    await waitFor(() => {
+      expect(getByTestId("subscribe-button").props.accessibilityState.disabled).toBe(true);
+    });
+
+    await act(async () => {
+      resolve(MOCK_SUCCESS_RESPONSE);
+    });
   });
 
   it("deve reabilitar o botão após a requisição completar", async () => {
     subscribe.mockResolvedValueOnce(MOCK_SUCCESS_RESPONSE);
     const { getByTestId } = render(<PlanosScreen />);
 
-    await act(async () => { fireEvent.press(getByTestId("subscribe-button")); });
+    await act(async () => {
+      fireEvent.press(getByTestId("subscribe-button"));
+    });
 
-    expect(
-      getByTestId("subscribe-button").props.accessibilityState.disabled
-    ).toBe(false);
+    expect(getByTestId("subscribe-button").props.accessibilityState.disabled).toBe(false);
   });
 });

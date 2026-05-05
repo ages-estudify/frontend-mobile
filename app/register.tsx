@@ -122,7 +122,7 @@ export default function RegisterScreen() {
       fullName,
       email,
       password,
-      phone: phone.replace(/\D/g, "").replace(/^55/, ""), // Remove non-digits and country code
+      phone: phone.replace(/\D/g, "").replace(/^55/, ""),
       birthDate: parsedBirthDate,
     };
 

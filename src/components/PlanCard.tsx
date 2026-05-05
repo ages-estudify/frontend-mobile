@@ -45,7 +45,7 @@ export function PlanCard({ plan, isActive, isLoading, onSubscribe }: PlanCardPro
           className={
             index === 0
               ? "text-center font-inter text-[10px] text-primaryGray"
-              : "mt-0.5 mb-4 text-center text-[16px] font-bold text-black"
+              : "mb-4 mt-0.5 text-center text-[16px] font-bold text-black"
           }
           style={index === 1 ? styles.paymentValue : undefined}
         >
@@ -60,13 +60,14 @@ export function PlanCard({ plan, isActive, isLoading, onSubscribe }: PlanCardPro
 
         {plan.features.map((feature) => (
           <View key={feature} className="flex-row items-center gap-2">
-            <View className="items-center justify-center rounded-full border border-purplePrice" style={styles.checkCircle}>
+            <View
+              className="items-center justify-center rounded-full border border-purplePrice"
+              style={styles.checkCircle}
+            >
               <Text className="font-inter-semi text-[9px] text-purplePrice">✓</Text>
             </View>
 
-            <Text className="flex-1 font-inter text-[13px] text-black">
-              {feature}
-            </Text>
+            <Text className="flex-1 font-inter text-[13px] text-black">{feature}</Text>
           </View>
         ))}
       </View>
@@ -82,9 +83,7 @@ export function PlanCard({ plan, isActive, isLoading, onSubscribe }: PlanCardPro
         {isLoading && isActive ? (
           <ActivityIndicator color="white" testID="loading-indicator" />
         ) : (
-          <Text className="font-poppins-semi text-[15px] text-white">
-            Assinar agora
-          </Text>
+          <Text className="font-poppins-semi text-[15px] text-white">Assinar agora</Text>
         )}
       </Pressable>
     </View>

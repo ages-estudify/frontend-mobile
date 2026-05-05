@@ -17,12 +17,12 @@ describe("SubscriptionPaywallInline", () => {
     jest.clearAllMocks();
   });
 
-  it("CTA Ver Planos chama router.push para /planos", () => {
+  it("CTA Ver Planos chama router.push para /plans", () => {
     render(<SubscriptionPaywallInline />);
 
     fireEvent.press(screen.getByTestId("planos"));
 
-    expect(mockPush).toHaveBeenCalledWith("/planos");
+    expect(mockPush).toHaveBeenCalledWith("/plans");
   });
 
   it("renderiza título do paywall", () => {
