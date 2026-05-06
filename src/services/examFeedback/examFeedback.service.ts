@@ -22,7 +22,7 @@ export async function getExamResultGrid(
           }
         : undefined;
 
-    return await api.get<never, ResultGridResponse>(`/exam/${attemptId}/resultGrid`, {
+    return await api.get<never, ResultGridResponse>(`/exams/${attemptId}/resultGrid`, {
       params,
     });
   } catch (error) {

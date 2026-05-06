@@ -134,7 +134,7 @@ export default function ExamFeedback() {
   const correctAnswers = resultData?.correctAnswers ?? 0;
   const wrongAnswers = resultData?.wrongAnswers ?? 0;
   const blankAnswers = resultData?.blankAnswers ?? 0;
-  const timeSpentMinutes = resultData?.timeSpentMinutes ?? 0;
+  const timeSpentSeconds = resultData?.timeSpentSeconds ?? 0;
 
   const stars = correctAnswers;
 
@@ -158,9 +158,9 @@ export default function ExamFeedback() {
     return gridRows;
   }, [questions]);
 
-  const formatMinutesToHHMM = (totalMinutes: number): string => {
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
+  const formatSecondsToHHMM = (totalSeconds: number): string => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
 
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
   };
@@ -212,7 +212,7 @@ export default function ExamFeedback() {
             )}
 
             <View className="flex flex-row items-center justify-center gap-4">
-              {isSimulado ? (
+              {!isSimulado ? (
                 <>
                   <View className="flex items-center justify-center">
                     <View className="flex flex-row items-center justify-center">
@@ -233,7 +233,7 @@ export default function ExamFeedback() {
               ) : null}
 
               <View className="flex items-center justify-center">
-                <Text className="text-purple50">{formatMinutesToHHMM(timeSpentMinutes)}</Text>
+                <Text className="text-purple50">{formatSecondsToHHMM(timeSpentSeconds)}</Text>
                 <Text className="text-purple50">Horas Totais</Text>
               </View>
             </View>
