@@ -2,7 +2,6 @@ import { useAuthSession } from "@/contexts/AuthContext";
 import { authService } from "@/services/auth.service";
 import { hasGatedContentAccess } from "@/utils/subscription-access";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
 
 type LoginParams = {
   email: string;
