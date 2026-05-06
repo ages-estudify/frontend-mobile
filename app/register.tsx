@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { RegisterRequest } from "@/types/auth.types";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RegisterScreen() {
@@ -138,91 +138,107 @@ export default function RegisterScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-1 px-6 pt-20">
-        <Text className="mb-16 text-center text-4xl font-bold text-purple100">Cadastro</Text>
-
-        <TextInputWithTitle
-          title="Nome"
-          placeholder="Ex: Maria dos Santos"
-          text={fullName}
-          onValueChange={setFullName}
-          autoCapitalize="words"
-        />
-
-        <TextInputWithTitle
-          title="Email"
-          placeholder="abc@abc.com"
-          text={email}
-          onValueChange={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        <TextInputWithTitle
-          title="Data de Nascimento"
-          placeholder="DD/MM/AAAA"
-          text={birthDateText}
-          onValueChange={(value) => setBirthDateText(formatDate(value))}
-          keyboardType="numeric"
-          maxLength={10}
-        />
-
-        <TextInputWithTitle
-          title="Número"
-          placeholder="(11) 99999-9999"
-          text={phone}
-          onValueChange={(value) => {
-            const formatted = formatPhone(value);
-            setPhone(formatted);
-
-            if (!isValidPhone(formatted)) {
-              setPhoneError("Número inválido");
-            } else {
-              setPhoneError("");
-            }
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
+        className="flex-1"
+      >
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: 24,
+            paddingTop: 80,
+            paddingBottom: 32,
           }}
-          keyboardType="phone-pad"
-          errorMessage={phoneError}
-        />
-
-        <TextInputWithTitle
-          title="Senha"
-          placeholder="******"
-          text={password}
-          onValueChange={(value) => {
-            setPassword(value);
-            if (value.length > 0 && value.length < 8) {
-              setPasswordError("A senha deve ter no mínimo 8 caracteres");
-            } else {
-              setPasswordError("");
-            }
-          }}
-          isPassword
-          isLogin={false}
-          errorMessage={passwordError}
-        />
-
-        <TextInputWithTitle
-          title="Confirmar Senha"
-          placeholder="******"
-          text={confirmPassword}
-          onValueChange={setConfirmPassword}
-          isPassword
-          isLogin={false}
-          errorMessage={password !== confirmPassword ? "As senhas não conferem" : ""}
-        />
-
-        <Pressable
-          onPress={handleRegister}
-          className="mt-6 h-12 items-center justify-center rounded-full bg-purple100"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <Text className="text-base font-semibold text-white">Confirmar</Text>
-        </Pressable>
+          <Text className="mb-16 text-center text-4xl font-bold text-purple100">Cadastro</Text>
 
-        <Pressable onPress={() => router.back()} className="mt-4 items-center">
-          <Text className="font-medium text-purple100">‹ Voltar</Text>
-        </Pressable>
-      </View>
+          <TextInputWithTitle
+            title="Nome"
+            placeholder="Ex: Maria dos Santos"
+            text={fullName}
+            onValueChange={setFullName}
+            autoCapitalize="words"
+          />
+
+          <TextInputWithTitle
+            title="Email"
+            placeholder="abc@abc.com"
+            text={email}
+            onValueChange={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+
+          <TextInputWithTitle
+            title="Data de Nascimento"
+            placeholder="DD/MM/AAAA"
+            text={birthDateText}
+            onValueChange={(value) => setBirthDateText(formatDate(value))}
+            keyboardType="numeric"
+            maxLength={10}
+          />
+
+          <TextInputWithTitle
+            title="Número"
+            placeholder="(11) 99999-9999"
+            text={phone}
+            onValueChange={(value) => {
+              const formatted = formatPhone(value);
+              setPhone(formatted);
+
+              if (!isValidPhone(formatted)) {
+                setPhoneError("Número inválido");
+              } else {
+                setPhoneError("");
+              }
+            }}
+            keyboardType="phone-pad"
+            errorMessage={phoneError}
+          />
+
+          <TextInputWithTitle
+            title="Senha"
+            placeholder="******"
+            text={password}
+            onValueChange={(value) => {
+              setPassword(value);
+              if (value.length > 0 && value.length < 8) {
+                setPasswordError("A senha deve ter no mínimo 8 caracteres");
+              } else {
+                setPasswordError("");
+              }
+            }}
+            isPassword
+            isLogin={false}
+            errorMessage={passwordError}
+          />
+
+          <TextInputWithTitle
+            title="Confirmar Senha"
+            placeholder="******"
+            text={confirmPassword}
+            onValueChange={setConfirmPassword}
+            isPassword
+            isLogin={false}
+            errorMessage={password !== confirmPassword ? "As senhas não conferem" : ""}
+          />
+
+          <Pressable
+            onPress={handleRegister}
+            className="mt-6 h-12 items-center justify-center rounded-full bg-purple100"
+          >
+            <Text className="text-base font-semibold text-white">Confirmar</Text>
+          </Pressable>
+
+          <Pressable onPress={() => router.back()} className="mt-4 items-center">
+            <Text className="font-medium text-purple100">‹ Voltar</Text>
+          </Pressable>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

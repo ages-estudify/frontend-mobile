@@ -5,6 +5,8 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -240,7 +242,11 @@ export default function OnboardingScreen() {
   }
   return (
     <SafeAreaView className="flex-1 bg-purple100">
-      <View className="flex-1">
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
+        className="flex-1"
+      >
         <View className="relative mt-auto h-[45%] rounded-t-[28px] bg-whitebg px-6 pt-8">
           {step === 0 && (
             <View className="absolute right-6" style={{ top: -screenHeight * 0.22 }}>
@@ -459,7 +465,7 @@ export default function OnboardingScreen() {
             </Pressable>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
