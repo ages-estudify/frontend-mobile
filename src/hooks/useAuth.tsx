@@ -89,7 +89,7 @@ export function useAuth() {
   const updateSession = async (token: string, refreshToken: string, planExpirationDate: string) => {
     await AsyncStorage.setItem("token", token);
     await AsyncStorage.setItem("refreshToken", refreshToken);
-    await AsyncStorage.setItem("planExpirationDate", planExpirationDate);
+    await session.updatePlanSession({ planExpirationDate, planActive: true });
   };
 
   return {
