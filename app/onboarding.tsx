@@ -58,8 +58,10 @@ export default function OnboardingScreen() {
   const [desiredCourse, setdesiredCourse] = useState("");
   const [preferredLanguage, setpreferredLanguage] = useState("");
   const [desiredUniversity, setdesiredUniversity] = useState("");
-  const [selectedDays, setSelectedDays] = useState<StudyDay[]>([]);
-  const [selectedHours, setSelectedHours] = useState<number[]>([]);
+  const [studyHoursByDay, setStudyHoursByDay] = useState<StudyHoursMap>({});
+  const [activeDays, setActiveDays] = useState<StudyDay[]>([]);
+
+  const activeHours = activeDays.length > 0 ? (studyHoursByDay[activeDays[0]] ?? []) : [];
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isSubmittingRef = useRef(false);
 
@@ -77,19 +79,53 @@ export default function OnboardingScreen() {
   const primaryButtonLabel = step < 2 ? "Proximo" : isSubmitting ? "Salvando" : "Salvar";
 
   function toggleDay(day: StudyDay) {
-    setSelectedDays((previousDays) =>
-      previousDays.includes(day)
-        ? previousDays.filter((currentDay) => currentDay !== day)
-        : [...previousDays, day]
-    );
+    const isSelected = day in studyHoursByDay;
+    const isActive = activeDays.includes(day);
+
+    if (isActive) {
+      setActiveDays((prev) => prev.filter((d) => d !== day));
+      setStudyHoursByDay((prev) => {
+        const next = { ...prev };
+        delete next[day];
+        return next;
+      });
+      return;
+    }
+
+    if (isSelected) {
+      setStudyHoursByDay((prev) => {
+        const next = { ...prev };
+        delete next[day];
+        return next;
+      });
+      return;
+    }
+
+    if (activeHours.length > 0) {
+      setActiveDays([day]);
+      setStudyHoursByDay((prev) => ({ ...prev, [day]: [] }));
+    } else {
+      setActiveDays((prev) => [...prev, day]);
+      setStudyHoursByDay((prev) => ({ ...prev, [day]: [] }));
+    }
   }
 
   function toggleStudyHour(hour: number) {
-    setSelectedHours((previousHours) =>
-      previousHours.includes(hour)
-        ? previousHours.filter((currentHour) => currentHour !== hour)
-        : sortHours([...previousHours, hour])
-    );
+    if (activeDays.length === 0) return;
+
+    setStudyHoursByDay((prev) => {
+      const currentHours = prev[activeDays[0]] ?? [];
+      const alreadySelected = currentHours.includes(hour);
+      const updatedHours = alreadySelected
+        ? currentHours.filter((currentHour) => currentHour !== hour)
+        : sortHours([...currentHours, hour]);
+
+      const next = { ...prev };
+      activeDays.forEach((d) => {
+        next[d] = updatedHours;
+      });
+      return next;
+    });
   }
 
   function normalizePreferredLanguage(input: string): "ENGLISH" | "SPANISH" | null {
@@ -116,15 +152,16 @@ export default function OnboardingScreen() {
     if (uni) payload.desiredUniversity = uni;
     if (prefLang) payload.preferredLanguage = prefLang;
 
-    if (includeStudyHours && selectedDays.length > 0 && selectedHours.length > 0) {
-      const sortedHours = sortHours(selectedHours);
+    if (includeStudyHours) {
       const studyHoursPayload: StudyHoursMap = {};
-
-      selectedDays.forEach((day) => {
-        studyHoursPayload[day] = sortedHours;
+      Object.entries(studyHoursByDay).forEach(([day, hours]) => {
+        if (hours && hours.length > 0) {
+          studyHoursPayload[day as StudyDay] = sortHours(hours);
+        }
       });
-
-      payload.studyHours = studyHoursPayload;
+      if (Object.keys(studyHoursPayload).length > 0) {
+        payload.studyHours = studyHoursPayload;
+      }
     }
 
     return payload;
@@ -317,7 +354,8 @@ export default function OnboardingScreen() {
                   </Text>
                   <View className="flex-row flex-wrap justify-between gap-3.5">
                     {STUDY_DAY_OPTIONS.map((dayOption) => {
-                      const isSelected = selectedDays.includes(dayOption.value);
+                      const isSelected = dayOption.value in studyHoursByDay;
+                      const isActive = activeDays.includes(dayOption.value);
 
                       return (
                         <Pressable
@@ -325,14 +363,16 @@ export default function OnboardingScreen() {
                           testID={`onboarding-day-${dayOption.value}`}
                           onPress={() => toggleDay(dayOption.value)}
                           className={`w-[30%] shrink-0 items-center rounded-[8px] border px-2 py-2 ${
-                            isSelected
+                            isActive
                               ? "border-purple100 bg-purple100"
-                              : "border-secondaryGray bg-white"
+                              : isSelected
+                                ? "border-purple100 bg-[#EFE7F8]"
+                                : "border-secondaryGray bg-white"
                           }`}
                         >
                           <Text
                             className={`font-inter-semi text-sm ${
-                              isSelected ? "text-white" : "text-primaryGray"
+                              isActive ? "text-white" : "text-primaryGray"
                             }`}
                           >
                             {dayOption.label}
@@ -354,7 +394,7 @@ export default function OnboardingScreen() {
                   <View className="flex-row flex-wrap gap-2">
                     {STUDY_HOURS.map((hour) => {
                       const hourLabel = formatStudyHourLabel(hour);
-                      const isSelected = selectedHours.includes(hour);
+                      const isSelected = activeHours.includes(hour);
 
                       return (
                         <Pressable
