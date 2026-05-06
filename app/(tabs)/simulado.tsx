@@ -25,11 +25,9 @@ export default function ExamsScreen() {
   const { exams, loading, error, retryExam, refresh } = useExams();
   const { width } = useWindowDimensions();
 
-  const CARD_WIDTH = 177;
   const GAP = 12;
   const PADDING = 19 * 2;
-
-  const canUseTwoColumns = width >= CARD_WIDTH * 2 + GAP + PADDING;
+  const cardWidth = Math.floor((width - PADDING - GAP) / 2);
 
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
   const [selectedDayId, setSelectedDayId] = useState<string | null>(null);
@@ -222,17 +220,17 @@ export default function ExamsScreen() {
         <View className="mt-[167px] flex-1 px-[19px]">
           <FlatList
             data={exams}
-            key={canUseTwoColumns ? "two-columns" : "one-column"}
             keyExtractor={(item) => item.id}
-            numColumns={canUseTwoColumns ? 2 : 1}
-            columnWrapperStyle={canUseTwoColumns ? { gap: 12 } : undefined}
+            numColumns={2}
+            columnWrapperStyle={{ gap: GAP }}
             contentContainerStyle={{
               paddingBottom: tabBarScrollContentPaddingBottom(insets.bottom),
-              gap: 12,
+              gap: GAP,
             }}
             renderItem={({ item }) => (
               <ExamCard
                 exam={item}
+                width={cardWidth}
                 onPress={() => handleOpenExam(item)}
                 onMenuPress={(position) => handleMenuPress(item, position)}
               />
