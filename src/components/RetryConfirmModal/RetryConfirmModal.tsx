@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Pressable, Text, View } from "react-native";
+import { Modal, Text, TouchableOpacity, View } from "react-native";
 
 type Props = {
   visible: boolean;
@@ -40,32 +40,36 @@ export function RetryConfirmModal({ visible, onConfirm, onCancel }: Props) {
             finalizada e uma nova será iniciada.
           </Text>
 
-          <Pressable
+          <TouchableOpacity
             onPress={onConfirm}
-            style={({ pressed }) => ({
-              backgroundColor: pressed ? "#333" : "#1a1a1a",
+            activeOpacity={0.85}
+            style={{
+              backgroundColor: "#3E2B5C",
               borderRadius: 12,
               padding: 15,
               alignItems: "center",
               marginBottom: 10,
-            })}
+              width: "100%",
+            }}
           >
             <Text style={{ fontSize: 15, fontWeight: "600", color: "white" }}>
               Sim, iniciar nova tentativa
             </Text>
-          </Pressable>
+          </TouchableOpacity>
 
-          <Pressable
+          <TouchableOpacity
             onPress={onCancel}
-            style={({ pressed }) => ({
-              backgroundColor: pressed ? "#F0F0F0" : "transparent",
+            activeOpacity={0.7}
+            style={{
+              backgroundColor: "transparent",
               borderRadius: 12,
               padding: 15,
               alignItems: "center",
-            })}
+              width: "100%",
+            }}
           >
             <Text style={{ fontSize: 15, fontWeight: "500", color: "#888888" }}>Cancelar</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
