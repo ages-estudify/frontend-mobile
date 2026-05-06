@@ -27,7 +27,9 @@ api.interceptors.request.use(async (config) => {
     !token &&
     !config.url?.includes("/login") &&
     !config.url?.includes("/register") &&
-    !config.url?.includes("/intro")
+    !config.url?.includes("/intro") &&
+    !config.url?.includes("/otp") &&
+    !config.headers?.Authorization
   ) {
     const hasSeen = await AsyncStorage.getItem("hasSeenIntroSlider");
     const isFirstLaunch = hasSeen !== "true";
@@ -43,7 +45,13 @@ api.interceptors.request.use(async (config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  if (!config.url?.includes("/login") && !config.url?.includes("/register") && !token) {
+  if (
+    !config.url?.includes("/login") &&
+    !config.url?.includes("/register") &&
+    !config.url?.includes("/otp") &&
+    !config.headers?.Authorization &&
+    !token
+  ) {
     router.replace("/login" as RelativePathString);
   }
   return config;
