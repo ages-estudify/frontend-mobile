@@ -44,7 +44,13 @@ export function useAuth() {
   };
 
   const logout = async () => {
-    await AsyncStorage.multiRemove(["token", "refreshToken", "planExpirationDate", "role"]);
+    await AsyncStorage.multiRemove([
+      "token",
+      "refreshToken",
+      "planExpirationDate",
+      "role",
+      "hasCompletedOnboarding",
+    ]);
     session.clearSessionMetadata();
     router.replace("/login");
   };
@@ -68,6 +74,7 @@ export function useAuth() {
     const { token, refreshToken, planExpirationDate, role } = response.data;
 
     if (token && refreshToken) {
+      await AsyncStorage.removeItem("hasCompletedOnboarding");
       await AsyncStorage.setItem("token", token);
       await AsyncStorage.setItem("refreshToken", refreshToken);
       await AsyncStorage.setItem("role", role);

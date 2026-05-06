@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -59,8 +59,7 @@ export default function OnboardingScreen() {
   const [preferredLanguage, setpreferredLanguage] = useState("");
   const [desiredUniversity, setdesiredUniversity] = useState("");
   const [selectedDays, setSelectedDays] = useState<StudyDay[]>([]);
-  const [activeDay, setActiveDay] = useState<StudyDay | null>(null);
-  const [studyHoursByDay, setStudyHoursByDay] = useState<StudyHoursMap>({});
+  const [selectedHours, setSelectedHours] = useState<number[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isSubmittingRef = useRef(false);
 
@@ -75,60 +74,22 @@ export default function OnboardingScreen() {
     checkOnboardingStatus();
   }, [router]);
 
-  const activeDayLabel = useMemo(
-    () => STUDY_DAY_OPTIONS.find((dayOption) => dayOption.value === activeDay)?.label ?? "",
-    [activeDay]
-  );
-
   const primaryButtonLabel = step < 2 ? "Proximo" : isSubmitting ? "Salvando" : "Salvar";
 
   function toggleDay(day: StudyDay) {
-    setSelectedDays((previousDays) => {
-      if (previousDays.includes(day)) {
-        const nextDays = previousDays.filter((currentDay) => currentDay !== day);
-
-        setStudyHoursByDay((previousHoursMap) => {
-          const nextHoursMap = { ...previousHoursMap };
-          delete nextHoursMap[day];
-          return nextHoursMap;
-        });
-
-        setActiveDay((previousActiveDay) => {
-          if (previousActiveDay !== day) {
-            return previousActiveDay;
-          }
-
-          return nextDays[0] ?? null;
-        });
-
-        return nextDays;
-      }
-
-      const nextDays = [...previousDays, day];
-      setActiveDay(day);
-
-      return nextDays;
-    });
+    setSelectedDays((previousDays) =>
+      previousDays.includes(day)
+        ? previousDays.filter((currentDay) => currentDay !== day)
+        : [...previousDays, day]
+    );
   }
 
   function toggleStudyHour(hour: number) {
-    if (!activeDay) {
-      return;
-    }
-
-    setStudyHoursByDay((previousHoursMap) => {
-      const activeDayHours = previousHoursMap[activeDay] ?? [];
-      const alreadySelected = activeDayHours.includes(hour);
-
-      const nextHours = alreadySelected
-        ? activeDayHours.filter((activeDayHour) => activeDayHour !== hour)
-        : sortHours([...activeDayHours, hour]);
-
-      return {
-        ...previousHoursMap,
-        [activeDay]: nextHours,
-      };
-    });
+    setSelectedHours((previousHours) =>
+      previousHours.includes(hour)
+        ? previousHours.filter((currentHour) => currentHour !== hour)
+        : sortHours([...previousHours, hour])
+    );
   }
 
   function normalizePreferredLanguage(input: string): "ENGLISH" | "SPANISH" | null {
@@ -155,17 +116,15 @@ export default function OnboardingScreen() {
     if (uni) payload.desiredUniversity = uni;
     if (prefLang) payload.preferredLanguage = prefLang;
 
-    if (includeStudyHours) {
+    if (includeStudyHours && selectedDays.length > 0 && selectedHours.length > 0) {
+      const sortedHours = sortHours(selectedHours);
       const studyHoursPayload: StudyHoursMap = {};
 
       selectedDays.forEach((day) => {
-        const hours = studyHoursByDay[day] ?? [];
-        if (hours.length > 0) {
-          studyHoursPayload[day] = sortHours(hours);
-        }
+        studyHoursPayload[day] = sortedHours;
       });
 
-      if (Object.keys(studyHoursPayload).length > 0) payload.studyHours = studyHoursPayload;
+      payload.studyHours = studyHoursPayload;
     }
 
     return payload;
@@ -359,7 +318,6 @@ export default function OnboardingScreen() {
                   <View className="flex-row flex-wrap justify-between gap-3.5">
                     {STUDY_DAY_OPTIONS.map((dayOption) => {
                       const isSelected = selectedDays.includes(dayOption.value);
-                      const isActive = activeDay === dayOption.value;
 
                       return (
                         <Pressable
@@ -367,16 +325,14 @@ export default function OnboardingScreen() {
                           testID={`onboarding-day-${dayOption.value}`}
                           onPress={() => toggleDay(dayOption.value)}
                           className={`w-[30%] shrink-0 items-center rounded-[8px] border px-2 py-2 ${
-                            isActive
+                            isSelected
                               ? "border-purple100 bg-purple100"
-                              : isSelected
-                                ? "border-purple100 bg-[#EFE7F8]"
-                                : "border-secondaryGray bg-white"
+                              : "border-secondaryGray bg-white"
                           }`}
                         >
                           <Text
                             className={`font-inter-semi text-sm ${
-                              isActive ? "text-white" : "text-primaryGray"
+                              isSelected ? "text-white" : "text-primaryGray"
                             }`}
                           >
                             {dayOption.label}
@@ -395,29 +351,17 @@ export default function OnboardingScreen() {
                     Toque nos horarios para selecionar ou remover
                   </Text>
 
-                  {activeDay ? (
-                    <Text className="font-inter-semi text-sm text-purple100">
-                      Dia selecionado: {activeDayLabel}
-                    </Text>
-                  ) : (
-                    <Text className="font-inter-semi text-sm text-purple100">
-                      Selecione um dia para escolher os horarios
-                    </Text>
-                  )}
-
                   <View className="flex-row flex-wrap gap-2">
                     {STUDY_HOURS.map((hour) => {
                       const hourLabel = formatStudyHourLabel(hour);
-                      const isSelected = activeDay
-                        ? (studyHoursByDay[activeDay] ?? []).includes(hour)
-                        : false;
+                      const isSelected = selectedHours.includes(hour);
 
                       return (
                         <Pressable
                           key={hour}
                           testID={`onboarding-hour-${hourLabel}`}
                           onPress={() => toggleStudyHour(hour)}
-                          className={`h-[29px] w-[23%] shrink-0 items-center justify-center rounded-[8px] border px-1 py-3 ${
+                          className={`h-[32px] w-[23%] shrink-0 items-center justify-center rounded-[8px] border px-1 ${
                             isSelected
                               ? "border-purple100 bg-[#C79AE8]"
                               : "border-secondaryGray bg-white"
