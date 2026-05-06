@@ -101,7 +101,7 @@ export default function ExamFeedback() {
       setIsLoadingGrid(true);
 
       try {
-        const response = await getExamResultGrid(attemptId, selectedStatusFilter);
+        const response = await getExamResultGrid(attemptId, selectedStatusFilter, attemptDayId);
 
         if (!isMounted) return;
 
@@ -128,7 +128,7 @@ export default function ExamFeedback() {
     return () => {
       isMounted = false;
     };
-  }, [resultData?.attemptId, selectedStatusFilter]);
+  }, [resultData?.attemptId, selectedStatusFilter, attemptDayId]);
 
   const totalQuestions = resultData?.totalQuestions ?? 0;
   const correctAnswers = resultData?.correctAnswers ?? 0;
