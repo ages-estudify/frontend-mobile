@@ -9,6 +9,7 @@ import {
   ScrollView,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -49,6 +50,7 @@ function sortHours(hours: number[]): number[] {
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { height: screenHeight } = useWindowDimensions();
 
   const [step, setStep] = useState<OnboardingStep>(0);
   const [desiredCourse, setdesiredCourse] = useState("");
@@ -239,9 +241,9 @@ export default function OnboardingScreen() {
   return (
     <SafeAreaView className="flex-1 bg-purple100">
       <View className="flex-1">
-        <View className="relative mt-auto rounded-t-[28px] bg-whitebg px-6 pt-8">
+        <View className="relative mt-auto h-[45%] rounded-t-[28px] bg-whitebg px-6 pt-8">
           {step === 0 && (
-            <View className="absolute -top-[214px] right-6">
+            <View className="absolute right-6" style={{ top: -screenHeight * 0.22 }}>
               <Image
                 source={require("../assets/waving_fox.png")}
                 className="h-[190px] w-[210px]"
@@ -251,7 +253,7 @@ export default function OnboardingScreen() {
           )}
 
           {step === 1 && (
-            <View className="absolute -top-[155px] left-8">
+            <View className="absolute left-8" style={{ top: -screenHeight * 0.2 }}>
               <Image
                 source={require("../assets/on_target_fox-1.png")}
                 className="h-[176px] w-[342px]"
@@ -261,7 +263,7 @@ export default function OnboardingScreen() {
           )}
 
           {step === 2 && (
-            <View className="absolute -top-[127px] left-1">
+            <View className="absolute left-1" style={{ top: -screenHeight * 0.16 }}>
               <Image
                 source={require("../assets/fox_watch.png")}
                 className="h-[146px] w-[186px]"
