@@ -13,7 +13,7 @@ type Props = {
 export function ExamCard({ exam, onPress, onMenuPress, width = 177 }: Props) {
   const menuButtonRef = useRef<View>(null);
   const originLabel = exam.origin === "ORIGINAL" ? "ENEM" : "UFRGS";
-  const isCompleted = exam.progress.percentage >= 100;
+  const isCompleted = exam.status === "completed";
 
   const imageSource = exam.imageUrl
     ? { uri: exam.imageUrl }
