@@ -128,7 +128,7 @@ export default function RegisterScreen() {
 
     try {
       await register(registerRequest);
-      router.replace("/");
+      router.replace("/onboarding");
     } catch (error) {
       console.log("Register error:", error);
       Alert.alert("Erro", "Erro ao realizar cadastro. Tente novamente.");
