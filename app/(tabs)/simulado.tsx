@@ -6,8 +6,8 @@ import { RetryConfirmModal } from "@/components/RetryConfirmModal/RetryConfirmMo
 import { tabBarScrollContentPaddingBottom } from "@/constants/tabBarLayout";
 import { useExams } from "@/hooks/useExams";
 import { Exam } from "@/types/exam.types";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -32,6 +32,7 @@ export default function ExamsScreen() {
 
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
   const [selectedDayId, setSelectedDayId] = useState<string | null>(null);
+  const selectedExamRef = useRef<Exam | null>(null);
 
   const [showDaysSheet, setShowDaysSheet] = useState(false);
   const [showLanguageSheet, setShowLanguageSheet] = useState(false);
@@ -45,7 +46,14 @@ export default function ExamsScreen() {
 
   const insets = useSafeAreaInsets();
 
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+    }, [refresh])
+  );
+
   function handleOpenExam(exam: Exam) {
+    selectedExamRef.current = exam;
     setSelectedExam(exam);
     setShowDaysSheet(true);
   }
@@ -55,14 +63,30 @@ export default function ExamsScreen() {
     setSelectedExam(null);
   }
 
+  function buildExamUrl(examDayId: string, language?: "ENGLISH" | "SPANISH") {
+    const exam = selectedExam ?? selectedExamRef.current;
+    if (!exam) return null;
+    const dayNumber = exam.days.find((d) => d.examDayId === examDayId)?.day;
+    const params = new URLSearchParams({ examId: exam.id, examDayId });
+    if (dayNumber !== undefined) params.set("day", String(dayNumber));
+    if (language) params.set("language", language);
+    return `/exam?${params.toString()}`;
+  }
+
   function handleContinueDay(examDayId: string) {
-    console.log("Continuar dia:", examDayId);
+    const url = buildExamUrl(examDayId);
+    if (!url) return;
     handleCloseDaysSheet();
+    selectedExamRef.current = null;
+    router.navigate(url as any);
   }
 
   function handleStartDay(examDayId: string) {
-    console.log("Iniciar dia:", examDayId);
+    const url = buildExamUrl(examDayId, "ENGLISH");
+    if (!url) return;
     handleCloseDaysSheet();
+    selectedExamRef.current = null;
+    router.navigate(url as any);
   }
 
   function handleOpenLanguage(examDayId: string) {
@@ -73,15 +97,18 @@ export default function ExamsScreen() {
 
   function handleConfirmLanguage(language: "ENGLISH" | "SPANISH") {
     if (!selectedDayId) return;
-    console.log("Iniciar com idioma:", language, "dia:", selectedDayId);
+    const url = buildExamUrl(selectedDayId, language);
     setShowLanguageSheet(false);
     setSelectedDayId(null);
     setSelectedExam(null);
+    selectedExamRef.current = null;
+    if (url) router.navigate(url as any);
   }
 
   function handleCancelLanguage() {
     setShowLanguageSheet(false);
     setSelectedDayId(null);
+    selectedExamRef.current = null;
   }
 
   function handleMenuPress(exam: Exam, position: { x: number; y: number }) {

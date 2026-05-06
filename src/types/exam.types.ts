@@ -1,3 +1,4 @@
+import { Question } from "./questions.types";
 export type ExamStatus = "available" | "in_progress" | "completed";
 export type ExamOrigin = "ORIGINAL" | "EXTERNAL";
 export type ExamDayStatus = "available" | "in_progress" | "completed";
@@ -35,7 +36,6 @@ export type ExamsResponse = {
   success: boolean;
   data: Exam[];
 };
-import { Question } from "./questions.types";
 
 export interface Attempt {
   id: string;
@@ -82,6 +82,7 @@ export interface FinishAttemptResponse {
   success: boolean;
   data: {
     attemptId: string;
+    attemptDayId?: string;
     examId: string;
     timeSpentMinutes: number;
     endTime: string;
@@ -107,6 +108,7 @@ export interface SubmitAnswerRequest {
 
 export interface FinishAttemptRequest {
   timeSpentSeconds: number;
+  examDayId?: string;
 }
 
 export type Language = "SPANISH" | "ENGLISH";

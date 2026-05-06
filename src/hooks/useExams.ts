@@ -1,6 +1,6 @@
 import { getExams } from "@/services/exam.service";
 import { Exam } from "@/types/exam.types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseExamsResult {
   exams: Exam[];
@@ -36,9 +36,9 @@ export function useExams(): UseExamsResult {
     setExams((prev) => prev.map((exam) => (exam.id === examId ? resetExam(exam) : exam)));
   }
 
-  function refresh() {
+  const refresh = useCallback(() => {
     setRefreshTrigger((n) => n + 1);
-  }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

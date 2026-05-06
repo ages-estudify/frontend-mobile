@@ -22,7 +22,12 @@ type FinishAttemptParams = {
 };
 
 export function useExam() {
-  const { language, examId } = useLocalSearchParams<{ language?: Language; examId: string }>();
+  const { language, examId, day, examDayId } = useLocalSearchParams<{
+    language?: Language;
+    examId: string;
+    day?: string;
+    examDayId?: string;
+  }>();
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [currentAttempt, setCurrentAttempt] = useState<AttemptResponse["data"] | null>(null);
@@ -45,7 +50,7 @@ export function useExam() {
         getLatestAttempt(examId);
       }
     }
-  }, [examId]);
+  }, [examId, day, language]);
 
   useEffect(() => {
     updateProgress();
@@ -138,8 +143,18 @@ export function useExam() {
 
     try {
       const response = await attemptExamService.getLatestAttempt(examId);
-      setCurrentAttempt(response.data);
-      setCurrentQuestionIndex(response.data.attempt.currentQuestion - 1);
+      const dayNumber = day ? Number(day) : undefined;
+      const filteredQuestions = dayNumber
+        ? response.data.questions.filter((q) => q.day === dayNumber)
+        : response.data.questions;
+
+      const firstUnansweredIdx = filteredQuestions.findIndex((q) => !q.selectedAlternativeId);
+      const initialIndex = dayNumber
+        ? Math.max(0, firstUnansweredIdx)
+        : response.data.attempt.currentQuestion - 1;
+
+      setCurrentAttempt({ ...response.data, questions: filteredQuestions });
+      setCurrentQuestionIndex(initialIndex);
       const timeSpentSeconds = response.data.attempt.timeSpentSeconds;
       setSeconds(timeSpentSeconds);
       startTimestampRef.current = Date.now() - timeSpentSeconds * 1000;
@@ -183,6 +198,7 @@ export function useExam() {
     try {
       const response = await attemptExamService.finishAttempt(attemptId, {
         timeSpentSeconds,
+        examDayId,
       });
       return response;
     } catch (err: any) {

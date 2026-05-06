@@ -37,16 +37,14 @@ export default function ExamScreen() {
   } = useExam();
 
   const submitCurrentAnswer = (currentAlt: Alternative | null) => {
-    const previousAlternativeId = currentQuestion?.selectedAlternativeId;
+    if (!currentAlt?.letter || !currentAttempt || !currentQuestion) return;
 
-    if (currentAlt?.letter && currentAlt.id !== previousAlternativeId) {
-      submitAnswer({
-        attemptId: currentAttempt?.attempt.id || "",
-        questionId: currentQuestion?.id || "",
-        selectedAnswer: selectedAlternative || null,
-        timeSpentSeconds: seconds,
-      });
-    }
+    submitAnswer({
+      attemptId: currentAttempt.attempt.id,
+      questionId: currentQuestion.id,
+      selectedAnswer: selectedAlternative || null,
+      timeSpentSeconds: seconds,
+    });
   };
 
   const handlePrevQuestion = () => {
@@ -93,10 +91,12 @@ export default function ExamScreen() {
 
       setShowFinishModal(false);
 
-      //Mudar para a tela de resultado quando estiver pronta
-      router.navigate({
-        pathname: "/progresso",
-      });
+      const attemptDayId = response?.data?.attemptDayId;
+      if (attemptDayId) {
+        router.navigate(`/examFeedback?attemptDayId=${attemptDayId}&type=simulado` as any);
+      } else {
+        router.navigate("/(tabs)/simulado" as any);
+      }
     } catch (err: any) {
       Alert.alert("Erro", err.message || "Erro ao finalizar simulado");
     } finally {
