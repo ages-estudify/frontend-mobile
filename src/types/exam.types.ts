@@ -1,3 +1,4 @@
+import { Question } from "./questions.types";
 export type ExamStatus = "available" | "in_progress" | "completed";
 export type ExamOrigin = "ORIGINAL" | "EXTERNAL";
 export type ExamDayStatus = "available" | "in_progress" | "completed";
@@ -35,3 +36,79 @@ export type ExamsResponse = {
   success: boolean;
   data: Exam[];
 };
+
+export interface Attempt {
+  id: string;
+  examId: string;
+  currentQuestion: number;
+  timeSpentSeconds: number;
+  language: string;
+  initTime: string;
+  endTime: string | null;
+}
+
+export interface CreatedAttemptResponse {
+  success: boolean;
+  data: {
+    attempt: Attempt;
+  };
+}
+
+export interface AttemptResponse {
+  success: boolean;
+  data: {
+    attempt: Attempt;
+    questions: Question[];
+  };
+}
+
+export interface SubmitAnswerResponse {
+  success: boolean;
+  data: {
+    saved: boolean;
+  };
+}
+
+export interface ResultBySubject {
+  subjectId: string;
+  subjectName: string;
+  totalQuestions: number;
+  correctAnswers: number;
+  wrongAnswers: number;
+  blankAnswers: number;
+}
+
+export interface FinishAttemptResponse {
+  success: boolean;
+  data: {
+    attemptId: string;
+    attemptDayId?: string;
+    examId: string;
+    timeSpentMinutes: number;
+    endTime: string;
+    score: number;
+    totalQuestions: number;
+    answeredQuestions: number;
+    correctAnswers: number;
+    wrongAnswers: number;
+    blankAnswers: number;
+    resultBySubject: ResultBySubject[];
+  };
+}
+
+export interface CreateAttemptRequest {
+  language: string;
+}
+
+export interface SubmitAnswerRequest {
+  selectedAnswer: string | null;
+  attemptId: string;
+  timeSpentSeconds: number;
+}
+
+export interface FinishAttemptRequest {
+  timeSpentSeconds: number;
+  examDayId?: string;
+}
+
+export type Language = "SPANISH" | "ENGLISH";
