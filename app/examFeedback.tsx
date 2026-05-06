@@ -195,7 +195,9 @@ export default function ExamFeedback() {
             </Text>
 
             <Pressable
-              onPress={() => router.back()}
+              onPress={() =>
+                isSimulado ? router.replace("/(tabs)/simulado") : router.replace("/(tabs)/treinar")
+              }
               className="h-[50px] w-[50px] items-center justify-center rounded-full bg-[#3E2B5C]"
             >
               <X size={24} color="#FFFFFF" />

@@ -93,9 +93,9 @@ export default function ExamScreen() {
 
       const attemptDayId = response?.data?.attemptDayId;
       if (attemptDayId) {
-        router.navigate(`/examFeedback?attemptDayId=${attemptDayId}&type=simulado` as any);
+        router.replace(`/examFeedback?attemptDayId=${attemptDayId}&type=simulado` as any);
       } else {
-        router.navigate("/(tabs)/simulado" as any);
+        router.replace("/(tabs)/simulado" as any);
       }
     } catch (err: any) {
       Alert.alert("Erro", err.message || "Erro ao finalizar simulado");
