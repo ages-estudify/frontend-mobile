@@ -1,3 +1,4 @@
+import { useStreak } from "@/hooks/useStreak";
 import { getQuestions, postAnswer } from "@/services/question.service";
 import { AnswerQuestionResponse, Question, QuestionType } from "@/types/questions.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,6 +18,7 @@ async function saveFailedAnswer(questionId: string, answer: string) {
 
 export function useQuestionSession() {
   const { topicId, type } = useLocalSearchParams<{ topicId: string; type: QuestionType }>();
+  const { updateStreak } = useStreak();
   const [queue, setQueue] = useState<Question[]>([]);
   const [cursor, setCursor] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
@@ -91,6 +93,16 @@ export function useQuestionSession() {
       const response = await postAnswer(question.id, selected);
       const feedbackData = response;
       setFeedback(feedbackData);
+
+      if (
+        feedbackData.data?.streakDays !== undefined &&
+        feedbackData.data?.streakActive !== undefined
+      ) {
+        updateStreak({
+          streakDays: feedbackData.data.streakDays,
+          streakActive: feedbackData.data.streakActive,
+        });
+      }
 
       return feedbackData;
     } catch (error) {

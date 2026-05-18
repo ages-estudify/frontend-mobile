@@ -1,6 +1,8 @@
 import { StarsInitializer } from "@/components/StarsInitializer";
+import { StreakInitializer } from "@/components/StreakInitializer";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { StarsProvider } from "@/contexts/StarsContext";
+import { StreakProvider } from "@/contexts/StreakContext";
 import { useAssets } from "expo-asset";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -45,28 +47,31 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <AuthProvider>
-          <StarsProvider>
-            <StarsInitializer />
-            <Stack
-              screenOptions={{
-                headerShown: false,
-              }}
-            >
-              <Stack.Screen name="index" options={{ title: "HomePage" }} />
-              <Stack.Screen name="login" options={{ title: "LoginPage" }} />
-              <Stack.Screen name="intro" options={{ title: "IntroPage" }} />
-              <Stack.Screen name="register" options={{ title: "RegisterPage" }} />
-              <Stack.Screen name="plans" options={{ title: "PlansPage" }} />
-              <Stack.Screen name="paywall" options={{ title: "PaywallPage" }} />
-              <Stack.Screen name="subject" options={{ title: "Subject" }} />
-              <Stack.Screen name="question" options={{ title: "Question" }} />
-              <Stack.Screen name="examFeedback" options={{ title: "ExamFeedback" }} />
-              <Stack.Screen name="onboarding" options={{ title: "Onboarding" }} />
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="exam" options={{ title: "PracticeTest" }} />
-            </Stack>
-            <StatusBar style="auto" />
-          </StarsProvider>
+          <StreakProvider>
+            <StarsProvider>
+              <StarsInitializer />
+              <StreakInitializer />
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                }}
+              >
+                <Stack.Screen name="index" options={{ title: "HomePage" }} />
+                <Stack.Screen name="login" options={{ title: "LoginPage" }} />
+                <Stack.Screen name="intro" options={{ title: "IntroPage" }} />
+                <Stack.Screen name="register" options={{ title: "RegisterPage" }} />
+                <Stack.Screen name="plans" options={{ title: "PlansPage" }} />
+                <Stack.Screen name="paywall" options={{ title: "PaywallPage" }} />
+                <Stack.Screen name="subject" options={{ title: "Subject" }} />
+                <Stack.Screen name="question" options={{ title: "Question" }} />
+                <Stack.Screen name="examFeedback" options={{ title: "ExamFeedback" }} />
+                <Stack.Screen name="onboarding" options={{ title: "Onboarding" }} />
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="exam" options={{ title: "PracticeTest" }} />
+              </Stack>
+              <StatusBar style="auto" />
+            </StarsProvider>
+          </StreakProvider>
         </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

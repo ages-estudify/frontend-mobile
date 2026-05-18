@@ -1,8 +1,12 @@
 import { useExam } from "@/hooks/useExam";
+import { useStreak } from "@/hooks/useStreak";
 import { attemptExamService } from "@/services/attemptExam.service";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 
 jest.mock("@/services/attemptExam.service");
+jest.mock("@/hooks/useStreak", () => ({
+  useStreak: jest.fn(),
+}));
 jest.mock("expo-router", () => ({
   useLocalSearchParams: () => ({
     examId: "exam-123",
@@ -10,10 +14,13 @@ jest.mock("expo-router", () => ({
   }),
 }));
 
+const mockedUseStreak = useStreak as jest.Mock;
+
 describe("useExam", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
+    mockedUseStreak.mockReturnValue({ updateStreak: jest.fn() });
   });
 
   afterEach(() => {
@@ -143,7 +150,7 @@ describe("useExam", () => {
 
       (attemptExamService.createAttempt as jest.Mock).mockResolvedValue(mockAttempt);
       (attemptExamService.submitAnswer as jest.Mock).mockResolvedValue({
-        data: { saved: true },
+        data: { saved: true, streakDays: 4, streakActive: true },
       });
 
       const { result } = renderHook(() => useExam());
@@ -163,6 +170,10 @@ describe("useExam", () => {
       expect(attemptExamService.submitAnswer).toHaveBeenCalledWith("q-1", {
         selectedAnswer: "A",
         attemptId: "attempt-123",
+      });
+      expect(mockedUseStreak().updateStreak).toHaveBeenCalledWith({
+        streakDays: 4,
+        streakActive: true,
       });
     });
   });

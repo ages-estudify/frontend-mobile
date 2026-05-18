@@ -1,4 +1,5 @@
-import React from "react";
+import { useStreak } from "@/hooks/useStreak";
+import React, { useEffect } from "react";
 import { SequenceBadge } from "./SequenceBadge";
 
 type SequenceBadgeVariant = "treinar" | "progresso";
@@ -13,11 +14,20 @@ const descriptionsByVariant: Record<SequenceBadgeVariant, string> = {
 };
 
 export function SequenceBadgeContainer({ variant }: SequenceBadgeContainerProps) {
+  const { streakDays, streakActive, isLoading, hasError, loadStreak } = useStreak();
+
+  useEffect(() => {
+    if (streakDays === null && !isLoading && !hasError) {
+      void loadStreak();
+    }
+  }, [hasError, isLoading, loadStreak, streakDays]);
+
   return (
     <SequenceBadge
-      sequence={null}
-      isLoading={false}
-      hasError={false}
+      sequence={streakDays}
+      streakActive={streakActive}
+      isLoading={isLoading}
+      hasError={hasError}
       description={descriptionsByVariant[variant]}
     />
   );
