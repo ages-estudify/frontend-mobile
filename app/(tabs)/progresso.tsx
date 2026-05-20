@@ -14,11 +14,11 @@ export default function ProgressoRoute() {
         <GatedTabScreenHeader title="Progresso" />
         <PlanGuard>
           <TabScreenScrollView>
-            <View className="px-[16px] pt-[12px]">
-              <View className="gap-[10px] rounded-2xl bg-white px-[16px] py-[14px]">
+            <View className="items-center px-[16px] pt-[12px]">
+              <View className="gap-[10px] self-center rounded-2xl bg-white px-[16px] py-[14px]">
                 <Text className="font-inter-semi text-[15px]">Minhas Métricas</Text>
-                <SequenceBadgeContainer variant="progresso" />
                 <StarBadgeContainer variant="progresso" />
+                <SequenceBadgeContainer variant="progresso" />
               </View>
             </View>
           </TabScreenScrollView>

@@ -8,5 +8,6 @@ export const getUserStreak = async (): Promise<GetStreakResponse> => {
     return response;
   } catch (error) {
     handleApiError(error);
+    throw error;
   }
 };
