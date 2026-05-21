@@ -5,7 +5,7 @@ import { Image, Pressable, Text, View } from "react-native";
 export interface SubjectBoxProps {
   subject: string;
   icon?: string;
-  href: `/subject?id=${string}`;
+  href: `/subject?${string}`;
 }
 
 export default function SubjectBox({ subject, icon, href }: SubjectBoxProps) {
