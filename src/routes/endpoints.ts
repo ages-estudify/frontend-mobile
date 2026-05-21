@@ -27,5 +27,6 @@ export const endPoints = {
   },
   users: {
     streak: "/users/streak",
+    stats: "/users/stats",
   },
 };
