@@ -9,10 +9,10 @@ interface Props {
 function ProgressGeneralIcon() {
   return (
     <View className="mr-2 flex-row items-end">
-      <View className="mr-[2px] h-[10px] w-[4px] rounded-[2px] bg-[#4B2E83]" />
-      <View className="mr-[2px] h-[15px] w-[4px] rounded-[2px] bg-[#4B2E83]" />
-      <View className="mr-[2px] h-[21px] w-[4px] rounded-[2px] bg-[#4B2E83]" />
-      <View className="mr-[2px] h-[13px] w-[4px] rounded-[2px] bg-[#4B2E83]" />
+      <View className="mr-[2px] h-[10px] w-[4px] rounded-[2px] bg-purple100" />
+      <View className="mr-[2px] h-[15px] w-[4px] rounded-[2px] bg-purple100" />
+      <View className="mr-[2px] h-[21px] w-[4px] rounded-[2px] bg-purple100" />
+      <View className="mr-[2px] h-[13px] w-[4px] rounded-[2px] bg-purple100" />
     </View>
   );
 }
@@ -25,13 +25,7 @@ export function ProgressOverviewCard({ overview }: Props) {
   const clampedPercentage = Math.min(Math.max(accuracyPercentage, 0), 100);
 
   return (
-    <View
-      className="mb-[18px] rounded-[16px] bg-white px-[15px] py-[14px]"
-      style={{
-        borderWidth: 1,
-        borderColor: "#F1F1F1",
-      }}
-    >
+    <View className="mb-[18px] rounded-[16px] border border-cardBorder bg-white px-[15px] py-[14px]">
       <View className="mb-[20px] flex-row items-center">
         <ProgressGeneralIcon />
         <Text className="font-poppins-semi text-[18px] leading-[24px] text-purple100">
@@ -43,9 +37,9 @@ export function ProgressOverviewCard({ overview }: Props) {
         Aproveitamento
       </Text>
 
-      <View className="h-[7px] w-full overflow-hidden rounded-full bg-[#D9D9D9]">
+      <View className="h-[7px] w-full overflow-hidden rounded-full bg-progressTrack">
         <View
-          className="h-full rounded-full bg-[#8F52F4]"
+          className="h-full rounded-full bg-progressPurple"
           style={{ width: `${clampedPercentage}%` }}
         />
       </View>

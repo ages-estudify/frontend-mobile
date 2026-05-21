@@ -6,7 +6,6 @@ import { GamificationMetrics } from "../../../src/components/Progress/Gamificati
 import { SimuladosProgressSection } from "../../../src/components/Progress/SimuladosProgressSection";
 import { AccuracyBySubjectSection } from "../../../src/components/Progress/AccuracyBySubjectSection";
 
-// Mock para o expo-router do EmptySimuladosState
 jest.mock("expo-router", () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
@@ -24,7 +23,7 @@ describe("Progress Components", () => {
     it("renders safely with zero or undefined data", () => {
       const { getByText, getAllByText } = render(<ProgressOverviewCard />);
       expect(getByText("Progresso Geral")).toBeTruthy();
-      expect(getAllByText("0")).toHaveLength(2); // Questões e Corretas
+      expect(getAllByText("0")).toHaveLength(2);
     });
   });
 
@@ -85,7 +84,7 @@ describe("Progress Components", () => {
       const { getByText } = render(<SimuladosProgressSection simulados={mockSimulados} />);
       expect(getByText("ENEM")).toBeTruthy();
       expect(getByText("Dia 1")).toBeTruthy();
-      expect(getByText("50%")).toBeTruthy(); // inside CircularProgress
+      expect(getByText("50%")).toBeTruthy();
     });
   });
 
@@ -106,12 +105,11 @@ describe("Progress Components", () => {
 
       expect(getByText("Subject 0")).toBeTruthy();
       expect(getByText("Subject 4")).toBeTruthy();
-      expect(queryByText("Subject 5")).toBeNull(); // 6th is hidden
+      expect(queryByText("Subject 5")).toBeNull();
 
       const verTudo = getByText("Ver tudo");
       expect(verTudo).toBeTruthy();
 
-      // Expands list
       fireEvent.press(verTudo);
       expect(getByText("Subject 5")).toBeTruthy();
       expect(getByText("Ver menos")).toBeTruthy();

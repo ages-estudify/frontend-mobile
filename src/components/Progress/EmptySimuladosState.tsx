@@ -5,6 +5,10 @@ import { Text, TouchableOpacity, View } from "react-native";
 export function EmptySimuladosState() {
   const router = useRouter();
 
+  function handleStartSimulado() {
+    router.navigate("/(tabs)/simulado");
+  }
+
   return (
     <View className="items-center justify-center py-[18px]">
       <Text className="mb-[4px] text-center font-poppins-semi text-[15px] leading-[20px] text-black">
@@ -16,7 +20,8 @@ export function EmptySimuladosState() {
       </Text>
 
       <TouchableOpacity
-        onPress={() => router.push("/simulado")}
+        activeOpacity={0.8}
+        onPress={handleStartSimulado}
         className="rounded-full bg-purpleCalm px-[18px] py-[7px]"
       >
         <Text className="font-inter-semi text-[12px] leading-[15px] text-white">
