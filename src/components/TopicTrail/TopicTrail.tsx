@@ -1,5 +1,5 @@
 import { TopicLabel } from "@/components/TopicLabel";
-import { TopicNode, type TopicColorKey, type TopicIconKey } from "@/components/TopicNode";
+import { TopicNode, type TopicIconKey } from "@/components/TopicNode";
 import React, { Fragment, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
@@ -10,7 +10,6 @@ export interface TopicTrailItem {
   name: string;
   progressPercentage: number;
   iconKey: TopicIconKey;
-  colorKey: TopicColorKey;
 }
 
 export interface TopicTrailProps {
@@ -20,16 +19,16 @@ export interface TopicTrailProps {
 
 export type TrailSide = "left" | "right";
 
-export const TRAIL_CONTAINER_WIDTH = 340;
-export const TRAIL_NODE_SIZE = 68;
-export const TRAIL_LABEL_WIDTH = 140;
+export const TRAIL_CONTAINER_WIDTH = 380;
+export const TRAIL_NODE_SIZE = 60;
+export const TRAIL_LABEL_WIDTH = 116;
 export const TRAIL_LABEL_GAP = 10;
-export const TRAIL_HORIZONTAL_AMPLITUDE = 70;
-export const TRAIL_VERTICAL_SPACING = 150;
-export const TRAIL_TOP_PADDING = 48;
-export const TRAIL_BOTTOM_PADDING = 48;
-const TRAIL_STROKE_COLOR = "#3E2B5C";
-const TRAIL_STROKE_WIDTH = 6;
+export const TRAIL_HORIZONTAL_AMPLITUDE = 35;
+export const TRAIL_VERTICAL_SPACING = 130;
+export const TRAIL_TOP_PADDING = 24;
+export const TRAIL_BOTTOM_PADDING = 32;
+const TRAIL_STROKE_COLOR = "#D9D9D9";
+const TRAIL_STROKE_WIDTH = 8;
 
 export function getNodeSide(index: number): TrailSide {
   return index % 2 === 0 ? "right" : "left";
@@ -68,8 +67,10 @@ export function buildSCurvePath(positions: { x: number; y: number }[]): string {
   for (let i = 1; i < sorted.length; i++) {
     const prev = sorted[i - 1];
     const curr = sorted[i];
-    const midY = (prev.y + curr.y) / 2;
-    d += ` C ${prev.x} ${midY}, ${curr.x} ${midY}, ${curr.x} ${curr.y}`;
+    const dy = curr.y - prev.y;
+    const c1y = prev.y + dy * 0.75;
+    const c2y = curr.y - dy * 0.75;
+    d += ` C ${prev.x} ${c1y}, ${curr.x} ${c2y}, ${curr.x} ${curr.y}`;
   }
 
   return d;
@@ -103,9 +104,10 @@ export function TopicTrail({ topics, onTopicPress }: TopicTrailProps) {
       >
         <Svg
           testID="topic-trail-svg"
+          pointerEvents="none"
           width={TRAIL_CONTAINER_WIDTH}
           height={totalHeight}
-          style={{ position: "absolute", top: 0, left: 0 }}
+          style={{ position: "absolute", top: 0, left: 0, zIndex: 0 }}
         >
           <Path
             testID="topic-trail-path"
@@ -119,7 +121,7 @@ export function TopicTrail({ topics, onTopicPress }: TopicTrailProps) {
 
         {topics.map((topic, i) => {
           const { x, y, side } = positions[i];
-          const labelSide = getOppositeSide(side);
+          const labelSide = side;
           const nodeLeft = x - TRAIL_NODE_SIZE / 2;
           const nodeTop = y - TRAIL_NODE_SIZE / 2;
           const labelLeft =
@@ -130,23 +132,6 @@ export function TopicTrail({ topics, onTopicPress }: TopicTrailProps) {
 
           return (
             <Fragment key={topic.id}>
-              <View
-                testID={`topic-trail-node-${topic.id}`}
-                accessibilityHint={side}
-                style={{
-                  position: "absolute",
-                  left: nodeLeft,
-                  top: nodeTop,
-                }}
-              >
-                <TopicNode
-                  iconKey={topic.iconKey}
-                  colorKey={topic.colorKey}
-                  onPress={() => onTopicPress(topic.id)}
-                  accessibilityLabel={topic.name}
-                />
-              </View>
-
               <View
                 testID={`topic-trail-label-${topic.id}`}
                 accessibilityHint={labelSide}
@@ -162,6 +147,25 @@ export function TopicTrail({ topics, onTopicPress }: TopicTrailProps) {
                   stageNumber={topic.stageNumber}
                   topicName={topic.name}
                   progressPercentage={topic.progressPercentage}
+                />
+              </View>
+
+              <View
+                testID={`topic-trail-node-${topic.id}`}
+                accessibilityHint={side}
+                style={{
+                  position: "absolute",
+                  left: nodeLeft,
+                  top: nodeTop,
+                  zIndex: 2,
+                  elevation: 6,
+                }}
+              >
+                <TopicNode
+                  iconKey={topic.iconKey}
+                  progressPercentage={topic.progressPercentage}
+                  onPress={() => onTopicPress(topic.id)}
+                  accessibilityLabel={topic.name}
                 />
               </View>
             </Fragment>
