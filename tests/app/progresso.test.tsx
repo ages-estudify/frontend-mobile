@@ -5,7 +5,6 @@ import { useUserStats } from "@/hooks/useUserStats";
 import { useAuth } from "@/hooks/useAuth";
 import { populatedUserStatsMock, emptyUserStatsMock } from "@/mocks/userStatsMock";
 
-// Mock das dependências
 jest.mock("@/hooks/useUserStats");
 jest.mock("@/hooks/useAuth");
 jest.mock("../../src/components/navigation/PlanGuard", () => ({
@@ -26,7 +25,6 @@ jest.mock("axios", () => ({
   })),
   isAxiosError: jest.fn(),
 }));
-// Mock do GatedTabScreenHeader e outros componentes complexos que podem falhar no jest-native se não tratados, mas como o jest já lida bem, vamos focar no mock dos hooks.
 
 describe("ProgressoRoute (Meu Progresso)", () => {
   const mockUseUserStats = useUserStats as jest.Mock;
@@ -50,9 +48,7 @@ describe("ProgressoRoute (Meu Progresso)", () => {
     });
 
     const { getByTestId, queryByText } = render(<ProgressoRoute />);
-    // Verifica se o título da página renderiza mesmo carregando
     expect(queryByText("Meu Progresso")).toBeTruthy();
-    // O ActivityIndicator deve estar presente, mas por ser um componente interno do react-native não possui texto, podemos tentar achar o texto "Sua evolução nos estudos" que não deve estar lá ainda
     expect(queryByText("Sua evolução nos estudos")).toBeNull();
   });
 
@@ -104,6 +100,5 @@ describe("ProgressoRoute (Meu Progresso)", () => {
     expect(getByText("Sua evolução nos estudos")).toBeTruthy();
     expect(getByText("Progresso Geral")).toBeTruthy();
     expect(getByText("Você ainda não tem simulados")).toBeTruthy();
-    // A lista de subjects deve estar vazia, sem acertos de matemática, etc., pois ou a lista tá vazia ou está com 0s.
   });
 });

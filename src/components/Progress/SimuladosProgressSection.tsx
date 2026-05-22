@@ -1,7 +1,8 @@
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { CircularProgress } from "./CircularProgress";
+
 interface SimuladoDay {
   day: number;
   label: string;
@@ -9,18 +10,26 @@ interface SimuladoDay {
   total: number;
   scorePercentage: number;
 }
+
 interface Simulado {
   attemptId: string;
   examName: string;
   date: string;
   days: SimuladoDay[];
 }
+
 interface Props {
   simulados?: Simulado[];
 }
+
 export function SimuladosProgressSection({ simulados = [] }: Props) {
   const router = useRouter();
   const hasSimulados = simulados.length > 0;
+
+  function handleGoToSimulados() {
+    router.push("/(tabs)/simulado" as never);
+  }
+
   return (
     <View className="mb-[18px] rounded-[16px] border border-cardBorder bg-white px-[16px] py-[16px]">
       <Text
@@ -29,6 +38,7 @@ export function SimuladosProgressSection({ simulados = [] }: Props) {
       >
         Histórico de Simulados
       </Text>
+
       {!hasSimulados ? (
         <View className="items-center rounded-[16px] bg-progressSubjectCardBg px-[20px] py-[28px]">
           <Text
@@ -37,28 +47,33 @@ export function SimuladosProgressSection({ simulados = [] }: Props) {
           >
             Você ainda não tem simulados
           </Text>
+
           <Text
             allowFontScaling={false}
             className="mb-[18px] text-center font-inter text-[14px] leading-[19px] text-primaryGray"
           >
             Comece um novo simulado e{"\n"}alcance sua aprovação
           </Text>
-          <Link href="/(tabs)/simulado" asChild>
-            <Link href="/(tabs)/simulado" asChild>
-              <TouchableOpacity className="rounded-[999px] bg-purpleCalm px-[18px] py-[10px]">
-                <Text allowFontScaling={false} className="font-inter-semi text-[14px] text-white">
-                  Começar Simulado
-                </Text>
-              </TouchableOpacity>
-            </Link>
-          </Link>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={handleGoToSimulados}
+            className="rounded-[999px] bg-purpleCalm px-[18px] py-[10px]"
+          >
+            <Text
+              allowFontScaling={false}
+              className="font-inter-semi text-[14px] leading-[17px] text-white"
+            >
+              Começar Simulado
+            </Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <View className="gap-y-[12px]">
           {simulados.map((simulado) => (
             <View
               key={simulado.attemptId}
-              className="rounded-[16px] bg-whitebg px-[16px] py-[16px]"
+              className="rounded-[16px] bg-progressSubjectCardBg px-[16px] py-[16px]"
             >
               <Text
                 allowFontScaling={false}
@@ -66,6 +81,7 @@ export function SimuladosProgressSection({ simulados = [] }: Props) {
               >
                 {simulado.examName}
               </Text>
+
               <View className="flex-row justify-between">
                 {simulado.days.map((day) => (
                   <View key={`${simulado.attemptId}-${day.day}`} className="flex-1 items-center">
