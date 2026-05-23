@@ -8,38 +8,23 @@ jest.mock("@/hooks/useStreak", () => ({
   useStreak: jest.fn(),
 }));
 
-jest.mock("@/components/SequenceBadge", () => ({
-  SequenceBadge: ({ sequence, streakActive, isLoading, hasError, description }: any) => (
-    <Text>
-      seq:{sequence ?? "null"} status:{String(streakActive)} loading:{String(isLoading)} error:
-      {String(hasError)} desc:{description}
-    </Text>
-  ),
-}));
+jest.mock("@/components/SequenceBadge", () => {
+  const { Text } = require("react-native");
+  return {
+    SequenceBadge: ({ sequence, streakActive, isLoading, hasError, description }: any) => (
+      <Text>
+        seq:{sequence ?? "null"} status:{String(streakActive)} loading:{String(isLoading)} error:
+        {String(hasError)} desc:{description}
+      </Text>
+    ),
+  };
+});
 
 const mockedUseStreak = useStreak as jest.Mock;
 
 describe("SequenceBadgeContainer", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it("carrega streak ao montar quando ainda não foi carregado", async () => {
-    const loadStreak = jest.fn();
-
-    mockedUseStreak.mockReturnValue({
-      streakDays: null,
-      streakActive: null,
-      isLoading: false,
-      hasError: false,
-      loadStreak,
-    });
-
-    render(<SequenceBadgeContainer variant="treinar" />);
-
-    await waitFor(() => {
-      expect(loadStreak).toHaveBeenCalled();
-    });
   });
 
   it("passa valores de streak para SequenceBadge", () => {

@@ -2,7 +2,10 @@ import { SequenceBadge } from "@/components/SequenceBadge";
 import { render, screen } from "@testing-library/react-native";
 import React from "react";
 
-jest.mock("@/assets/icons/fire.svg", () => ({ __esModule: true, default: () => null }));
+jest.mock("../../../assets/icons/fire.svg", () => ({
+  __esModule: true,
+  default: () => null,
+}));
 
 describe("SequenceBadge", () => {
   it("renderiza contador corretamente quando o streak está ativo", () => {
