@@ -1,9 +1,9 @@
-import { LockedFeature } from "@/components/LockedFeature";
 import { GatedTabScreenHeader } from "@/components/navigation/GatedTabScreenHeader";
 import { PlanGuard } from "@/components/navigation/PlanGuard";
 import { TabScreenScrollView } from "@/components/navigation/TabScreenScrollView";
 import { SequenceBadgeContainer } from "@/components/SequenceBadgeContainer";
 import { StarBadgeContainer } from "@/components/StarBadgeContainer";
+import { StreakInitializer } from "@/components/StreakInitializer";
 import { SubjectsGrid } from "@/components/SubjectsGrid";
 import { useAuth } from "@/hooks/useAuth";
 import { getSubjects } from "@/services/subject/subject.service";
@@ -71,6 +71,7 @@ export default function TreinarRoute() {
 
   return (
     <SafeAreaView className="flex-1 bg-whitebg dark:bg-whitebg" edges={["top", "left", "right"]}>
+      <StreakInitializer />
       <View className="flex-1">
         <GatedTabScreenHeader
           title="Treinar"

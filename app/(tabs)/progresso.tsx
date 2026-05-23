@@ -3,6 +3,7 @@ import { PlanGuard } from "@/components/navigation/PlanGuard";
 import { TabScreenScrollView } from "@/components/navigation/TabScreenScrollView";
 import { SequenceBadgeContainer } from "@/components/SequenceBadgeContainer";
 import { StarBadgeContainer } from "@/components/StarBadgeContainer";
+import { StreakInitializer } from "@/components/StreakInitializer";
 import React from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function ProgressoRoute() {
   return (
     <SafeAreaView className="flex-1 bg-whitebg" edges={["top", "left", "right"]}>
+      <StreakInitializer />
       <View className="flex-1">
         <GatedTabScreenHeader title="Progresso" />
         <PlanGuard>
