@@ -5,7 +5,6 @@ import React from "react";
 import { Text } from "react-native";
 import ExamScreen from "../app/exam";
 
-// Mock axios before any other imports that use it
 jest.mock("axios", () => ({
   __esModule: true,
   default: {
@@ -27,7 +26,6 @@ jest.mock("axios", () => ({
 jest.mock("@/hooks/useExam");
 jest.mock("expo-router");
 
-// Create mock components using class components for better displayName support
 class MockBackButton extends React.Component<any> {
   static displayName = "BackButton";
   render() {
@@ -221,7 +219,6 @@ describe("ExamScreen", () => {
     });
 
     render(<ExamScreen />);
-    // When loading, question card should not be visible
     expect(screen.queryByTestId("question-card")).toBeNull();
   });
 
@@ -234,7 +231,4 @@ describe("ExamScreen", () => {
     render(<ExamScreen />);
     expect(screen.getByText("Failed to load exam")).toBeTruthy();
   });
-
-  // Note: Tests below are disabled due to react-native-css-interop incompatibility with mocked components
-  // These should be tested through integration tests or snapshot tests in the future
 });

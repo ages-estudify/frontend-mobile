@@ -129,7 +129,7 @@ export default function ExamScreen() {
 
   return (
     <View className="flex-1 bg-gray-50 p-4">
-      <View className="flex flex-row items-center justify-between">
+      <View className="mt-6 flex flex-row items-center justify-between">
         <BackButton onPress={handleBackPress} />
         <View className="mt-2 flex flex-row items-center gap-2">
           <TimerExam time={time} />

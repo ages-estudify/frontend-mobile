@@ -73,9 +73,9 @@ export function ExamDaysBottomSheet({
           {exam.description ?? "Simulado inéditas com questões elaboradas pela equipe Estudify"}
         </Text>
 
-        {exam.days.map((day: ExamDay) => (
+        {exam.days.map((day: ExamDay, index) => (
           <Pressable
-            key={day.examDayId}
+            key={index}
             onPress={() => handleDayPress(day)}
             style={({ pressed }) => ({
               flexDirection: "row",

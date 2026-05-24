@@ -21,6 +21,7 @@ export const endPoints = {
     attempts: (examId: string) => `/exams/${examId}/attempts`,
     latestAttempt: (examId: string) => `/exams/${examId}/attempts/latest`,
     finishAttempt: (attemptId: string) => `/exams/attempts/${attemptId}/finish`,
+    history: (examId: string) => `/exams/${examId}/history`,
   },
   questions: {
     answer: (questionId: string) => `/questions/${questionId}/answer`,

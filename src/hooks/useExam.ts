@@ -202,8 +202,8 @@ export function useExam() {
 
     try {
       const response = await attemptExamService.finishAttempt(attemptId, {
+        currentQuestion: currentQuestion?.number,
         timeSpentSeconds,
-        examDayId,
       });
       return response;
     } catch (err: any) {
