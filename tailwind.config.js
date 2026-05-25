@@ -10,6 +10,7 @@ module.exports = {
         green12: "#519B2F1F",
         greenGrid: "#519B2F",
         greenPrimary: "#333E40",
+        borderGreen: "#63A941A6",
         black: "#000000",
         tabActive: "#9500FF",
         purpleCalm: "#5E4980",
