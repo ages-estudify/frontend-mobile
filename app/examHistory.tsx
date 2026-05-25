@@ -6,7 +6,7 @@ import { useExamHistory } from "@/hooks/useExamHistory";
 import { ExamHistory } from "@/types/exam-history.types";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function ExamHistoryScreen() {
@@ -76,13 +76,19 @@ export default function ExamHistoryScreen() {
 
   return (
     <PlanGuard>
-      <View className="flex-1 bg-[#F6F6F6] p-4">
+      <View className="relative flex-1 bg-[#F6F6F6] p-4">
         <View className="relative mb-6 mt-16 flex w-full flex-row items-center justify-center rounded-b-xl">
           <View className="absolute left-0">
             <BackButton />
           </View>
           <Text className="text-2xl font-semibold">Histórico</Text>
         </View>
+
+        <Image
+          source={require("../assets/waving-fox2.png")}
+          className="absolute right-[-16px] top-32 h-[64px] w-[64px] -rotate-[18.82deg] scale-x-[-1]"
+          resizeMode="contain"
+        />
 
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
           <View className="flex items-center">
