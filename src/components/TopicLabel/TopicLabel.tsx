@@ -8,9 +8,15 @@ export interface TopicLabelProps {
   stageNumber: number;
   topicName: string;
   progressPercentage: number;
+  scale?: number;
 }
 
-export function TopicLabel({ stageNumber, topicName, progressPercentage }: TopicLabelProps) {
+export function TopicLabel({
+  stageNumber,
+  topicName,
+  progressPercentage,
+  scale = 1,
+}: TopicLabelProps) {
   const displayStageNumber = useMemo(() => {
     return String(Math.max(0, Math.trunc(stageNumber))).padStart(2, "0");
   }, [stageNumber]);
@@ -24,9 +30,11 @@ export function TopicLabel({ stageNumber, topicName, progressPercentage }: Topic
   return (
     <View
       testID="topic-label-container"
-      className="rounded-xl bg-white px-2.5 py-2"
+      className="rounded-xl bg-white"
       style={{
-        minHeight: 95,
+        minHeight: 95 * scale,
+        paddingHorizontal: 10 * scale,
+        paddingVertical: 8 * scale,
         justifyContent: "center",
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
@@ -35,15 +43,20 @@ export function TopicLabel({ stageNumber, topicName, progressPercentage }: Topic
         elevation: 2,
       }}
     >
-      <View className="flex-row items-center" style={{ gap: 4 }}>
-        <Flag size={11} color="#9CA3AF" strokeWidth={2} />
-        <Text testID="topic-label-stage" className="font-inter text-[12px] text-primaryGray">
+      <View className="flex-row items-center" style={{ gap: 4 * scale }}>
+        <Flag size={11 * scale} color="#9CA3AF" strokeWidth={2} />
+        <Text
+          testID="topic-label-stage"
+          className="font-inter text-primaryGray"
+          style={{ fontSize: 12 * scale }}
+        >
           Etapa {displayStageNumber}
         </Text>
       </View>
       <Text
         testID="topic-label-name"
-        className="mt-0.5 font-inter-semi text-[15px] text-black"
+        className="mt-0.5 font-inter-semi text-black"
+        style={{ fontSize: 15 * scale }}
         numberOfLines={isSingleWord ? 1 : 2}
         adjustsFontSizeToFit={isSingleWord}
         minimumFontScale={0.6}
@@ -57,8 +70,8 @@ export function TopicLabel({ stageNumber, topicName, progressPercentage }: Topic
         </View>
         <Text
           testID="topic-label-percentage"
-          className="ml-2 font-inter-medium text-[11px]"
-          style={{ color: getProgressColor(clampedPercentage) }}
+          className="ml-2 font-inter-medium"
+          style={{ fontSize: 11 * scale, color: getProgressColor(clampedPercentage) }}
         >
           {displayPercentage}%
         </Text>
