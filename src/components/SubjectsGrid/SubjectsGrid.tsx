@@ -11,9 +11,9 @@ export function SubjectsGrid({ subjects }: SubjectsGridProps) {
   return (
     <View className="mt-[8px] gap-[8px]">
       <Text className="font-inter-semi text-[15px]">Categorias</Text>
-      <View className="flex flex-row flex-wrap justify-between">
+      <View className="flex flex-row flex-wrap gap-[8px]">
         {subjects.map((subject) => (
-          <View key={subject.id} className="mb-[16px]">
+          <View key={subject.id} style={{ width: "30.5%" }}>
             <SubjectBox
               subject={subject.name}
               icon={subject.icon_url}
