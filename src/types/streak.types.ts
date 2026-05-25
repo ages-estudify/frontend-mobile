@@ -1,7 +1,4 @@
 export interface GetStreakResponse {
-  success: boolean;
-  data: {
-    streakDays: number;
-    streakActive: boolean;
-  };
+  streakDays: number;
+  streakActive: boolean;
 }

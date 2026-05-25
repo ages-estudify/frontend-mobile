@@ -36,8 +36,8 @@ export function StreakProvider({ children }: StreakProviderProps) {
 
     try {
       const response: GetStreakResponse = await getUserStreak();
-      setStreakDays(response.data.streakDays);
-      setStreakActive(response.data.streakActive);
+      setStreakDays(response.streakDays);
+      setStreakActive(response.streakActive);
       setHasError(false);
     } catch {
       setStreakDays(null);
