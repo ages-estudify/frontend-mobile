@@ -81,6 +81,12 @@ describe("ExamCard", () => {
     expect(screen.getByText("⋯")).toBeTruthy();
   });
 
+  it("não quebra quando progress vem ausente", () => {
+    const exam = makeExam({ progress: undefined as unknown as Exam["progress"] });
+    render(<ExamCard exam={exam} onPress={jest.fn()} onMenuPress={jest.fn()} />);
+    expect(screen.getByText("Simulado ENEM 2024")).toBeTruthy();
+  });
+
   it("renderiza a ProgressBar sem erros com percentage do progress", () => {
     const exam = makeExam({
       status: "in_progress",
