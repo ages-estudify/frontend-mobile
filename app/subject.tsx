@@ -6,9 +6,9 @@ import { useStarsContext } from "@/contexts/StarsContext";
 import { getTopicsBySubject } from "@/services/subject/subject.service";
 import type { Topic } from "@/types/subject.types";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { Flame, Star } from "lucide-react-native";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -44,27 +44,33 @@ export default function SubjectScreen() {
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
 
   const modalRef = useRef<BottomSheetModal>(null);
+  const hasLoadedRef = useRef(false);
 
-  const load = useCallback(async () => {
-    if (!subjectId) return;
-    setStatus("loading");
-    try {
-      const data = await getTopicsBySubject(subjectId);
-      setTopics(data ?? []);
-      setStatus("success");
-    } catch {
-      setTopics([]);
-      setStatus("error");
-    }
-  }, [subjectId]);
+  const load = useCallback(
+    async ({ silent = false }: { silent?: boolean } = {}) => {
+      if (!subjectId) return;
+      if (!silent) setStatus("loading");
+      try {
+        const data = await getTopicsBySubject(subjectId);
+        setTopics(data ?? []);
+        setStatus("success");
+      } catch {
+        if (!silent) {
+          setTopics([]);
+          setStatus("error");
+        }
+      }
+    },
+    [subjectId]
+  );
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  useEffect(() => {
-    loadStars();
-  }, [loadStars]);
+  useFocusEffect(
+    useCallback(() => {
+      load({ silent: hasLoadedRef.current });
+      hasLoadedRef.current = true;
+      loadStars();
+    }, [load, loadStars])
+  );
 
   const trailItems = useMemo(() => topics.map(topicToTrailItem), [topics]);
 
@@ -116,7 +122,7 @@ export default function SubjectScreen() {
           </Text>
           <Pressable
             testID="subject-trail-retry"
-            onPress={load}
+            onPress={() => load()}
             className="rounded-2xl bg-purple100 px-[24px] py-[12px]"
             accessibilityRole="button"
           >

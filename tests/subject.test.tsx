@@ -9,10 +9,14 @@ jest.mock("@/services/subject/subject.service", () => ({
   getTopicsBySubject: jest.fn(),
 }));
 
-jest.mock("expo-router", () => ({
-  useLocalSearchParams: jest.fn(),
-  useRouter: jest.fn(),
-}));
+jest.mock("expo-router", () => {
+  const ReactActual = jest.requireActual("react");
+  return {
+    useLocalSearchParams: jest.fn(),
+    useRouter: jest.fn(),
+    useFocusEffect: (callback: () => void) => ReactActual.useEffect(callback, [callback]),
+  };
+});
 
 jest.mock("@/components/BackButton", () => {
   const React = jest.requireActual("react");
