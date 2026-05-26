@@ -18,6 +18,15 @@ jest.mock("expo-router", () => {
   };
 });
 
+jest.mock("../assets/icons/fire.svg", () => {
+  const React = jest.requireActual("react");
+  const { View } = jest.requireActual("react-native");
+  function MockFire() {
+    return <View testID="fire-icon" />;
+  }
+  return MockFire;
+});
+
 jest.mock("@/components/BackButton", () => {
   const React = jest.requireActual("react");
   const { Text } = jest.requireActual("react-native");

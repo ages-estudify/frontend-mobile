@@ -89,11 +89,11 @@ export default function SubjectScreen() {
 
   return (
     <SafeAreaView className="h-full bg-whitebg" testID="subject-trail-screen">
-      <View className="flex-row items-center px-[16px] pt-[8px]">
+      <View className="flex-row items-center px-[16px] pb-[8px] pt-[24px]">
         <BackButton />
         <Text
           testID="subject-trail-title"
-          className="flex-1 px-[8px] text-center font-poppins-semi text-[20px] text-black"
+          className="flex-1 px-[8px] text-center font-poppins-bold text-[30px] text-black"
           numberOfLines={1}
         >
           {subjectName}
@@ -131,13 +131,14 @@ export default function SubjectScreen() {
         <View className="flex-1">
           <View
             testID="subject-stats-card"
-            className="mx-[16px] mt-[16px] flex-row items-center rounded-2xl bg-white px-2 py-4"
+            className="z-10 mx-[16px] mt-[16px] flex-row items-center rounded-2xl bg-white px-2 py-4"
             style={{
               shadowColor: "#000",
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.08,
-              shadowRadius: 4,
-              elevation: 2,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.15,
+              shadowRadius: 8,
+              elevation: 8,
+              zIndex: 10,
             }}
           >
             <StatCard
