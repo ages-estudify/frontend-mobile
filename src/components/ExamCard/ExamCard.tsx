@@ -13,7 +13,8 @@ type Props = {
 export function ExamCard({ exam, onPress, onMenuPress, width = 177 }: Props) {
   const menuButtonRef = useRef<View>(null);
   const originLabel = exam.origin === "ORIGINAL" ? "ENEM" : "UFRGS";
-  const isCompleted = exam.status === "completed";
+  const progressPercentage = exam.progress?.percentage ?? 0;
+  const isCompleted = exam.status === "completed" || progressPercentage >= 100;
 
   const imageSource = exam.imageUrl
     ? { uri: exam.imageUrl }
@@ -24,9 +25,9 @@ export function ExamCard({ exam, onPress, onMenuPress, width = 177 }: Props) {
   const barColor =
     exam.status === "completed"
       ? "#63A941"
-      : exam.status === "in_progress" && exam.progress.percentage < 50
+      : exam.status === "in_progress" && progressPercentage < 50
         ? "#E05C3A"
-        : exam.status === "in_progress" && exam.progress.percentage >= 50
+        : exam.status === "in_progress" && progressPercentage >= 50
           ? "#E0963A"
           : "#D1D5DB";
 
@@ -73,7 +74,7 @@ export function ExamCard({ exam, onPress, onMenuPress, width = 177 }: Props) {
 
       <View className="mt-auto">
         <Text className="mb-1 text-xs text-gray-500">{exam.totalQuestions} questões</Text>
-        <ProgressBar percentage={exam.progress.percentage} color={barColor} />
+        <ProgressBar percentage={progressPercentage} color={barColor} />
 
         {isCompleted && (
           <View
