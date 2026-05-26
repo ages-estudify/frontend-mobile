@@ -1,5 +1,5 @@
 import { TAB_BAR_HEIGHT, tabBarBottomOffset } from "@/constants/tabBarLayout";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React, { useState } from "react";
 import { Pressable, Text, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -31,6 +31,9 @@ export function LanguageBottomSheet({ onConfirm, onCancel }: Props) {
       bottomInset={bottomInset}
       handleIndicatorStyle={{ backgroundColor: "#D0D0D0", width: 36 }}
       backgroundStyle={{ borderRadius: 20 }}
+      backdropComponent={(props) => (
+        <BottomSheetBackdrop {...props} opacity={0.2} appearsOnIndex={0} disappearsOnIndex={-1} />
+      )}
     >
       <BottomSheetScrollView
         contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 32 }}

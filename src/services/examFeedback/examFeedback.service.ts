@@ -12,18 +12,16 @@ export async function getAttemptDayResult(attemptDayId: string): Promise<Attempt
 
 export async function getExamResultGrid(
   attemptId: string,
-  statusFilter?: SegmentedControlValue
+  statusFilter?: SegmentedControlValue,
+  attemptDayId?: string
 ): Promise<ResultGridResponse> {
   try {
-    const params =
-      statusFilter && statusFilter !== "ALL"
-        ? {
-            statusFilter,
-          }
-        : undefined;
+    const params: Record<string, string> = {};
+    if (statusFilter && statusFilter !== "ALL") params.statusFilter = statusFilter;
+    if (attemptDayId) params.attemptDayId = attemptDayId;
 
-    return await api.get<never, ResultGridResponse>(`/exam/${attemptId}/resultGrid`, {
-      params,
+    return await api.get<never, ResultGridResponse>(`/exams/${attemptId}/resultGrid`, {
+      params: Object.keys(params).length > 0 ? params : undefined,
     });
   } catch (error) {
     throw handleApiError(error);

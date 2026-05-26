@@ -173,9 +173,6 @@ export function useExam() {
     attemptId,
     timeSpentSeconds,
   }: SubmitAnswerParams) => {
-    setLoading(true);
-    setError(null);
-
     try {
       const response = await attemptExamService.submitAnswer(questionId, {
         selectedAnswer,
@@ -186,8 +183,6 @@ export function useExam() {
     } catch (err: any) {
       setError(err.message || "Erro ao enviar resposta");
       throw err;
-    } finally {
-      setLoading(false);
     }
   };
 

@@ -3,7 +3,16 @@ import { TextInputWithTitle } from "@/components/TextInputWithTitle/TextInputWit
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert, Image, Pressable, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginPage() {
@@ -34,44 +43,56 @@ export default function LoginPage() {
 
   return (
     <SafeAreaView className="flex-1">
-      <View className="flex-1 items-center justify-center px-4">
-        <View className="pb-9">
-          <Image
-            source={require("../assets/login_fox.png")}
-            className="h-[132.68px] w-[159px]"
-            resizeMode="contain"
-          />
-          <Text className="text-4xl font-semibold text-purple100">Bem Vindo!</Text>
-        </View>
-
-        <View className="w-full gap-4">
-          <TextInputWithTitle
-            title={"Email"}
-            placeholder={"email@email.com"}
-            onValueChange={setEmail}
-            text={email}
-          />
-          <TextInputWithTitle
-            title={"Senha"}
-            placeholder={"*******"}
-            isPassword={true}
-            isLogin={true}
-            onValueChange={setPassword}
-            text={password}
-          />
-        </View>
-
-        <View className="w-full items-center gap-4 pt-16">
-          <ActionButton text={"Login"} action={handleLogin} disabled={isLoading} />
-
-          <Pressable onPress={() => router.push("/register")} className="flex-row gap-2">
-            <View className="flex-row gap-2">
-              <Text className="font-regular text-primaryGray">Não possui conta?</Text>
-              <Text className="font-semibold text-purple100">Registrar</Text>
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
+        className="flex-1"
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="flex-1 items-center justify-center px-4">
+            <View className="pb-9">
+              <Image
+                source={require("../assets/login_fox.png")}
+                className="h-[132.68px] w-[159px]"
+                resizeMode="contain"
+              />
+              <Text className="text-4xl font-semibold text-purple100">Bem Vindo!</Text>
             </View>
-          </Pressable>
-        </View>
-      </View>
+
+            <View className="w-full gap-4">
+              <TextInputWithTitle
+                title={"Email"}
+                placeholder={"email@email.com"}
+                onValueChange={setEmail}
+                text={email}
+              />
+              <TextInputWithTitle
+                title={"Senha"}
+                placeholder={"*******"}
+                isPassword={true}
+                isLogin={true}
+                onValueChange={setPassword}
+                text={password}
+              />
+            </View>
+
+            <View className="w-full items-center gap-4 pt-16">
+              <ActionButton text={"Login"} action={handleLogin} disabled={isLoading} />
+
+              <Pressable onPress={() => router.push("/register")} className="flex-row gap-2">
+                <View className="flex-row gap-2">
+                  <Text className="font-regular text-primaryGray">Não possui conta?</Text>
+                  <Text className="font-semibold text-purple100">Registrar</Text>
+                </View>
+              </Pressable>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

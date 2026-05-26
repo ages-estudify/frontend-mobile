@@ -17,7 +17,7 @@ function sortExams(exams: Exam[]): Exam[] {
 
 export async function getExams(): Promise<Exam[]> {
   try {
-    const response = (await api.get<ExamsResponse>("/exams")) as unknown as ExamsResponse;
+    const response = (await api.get<ExamsResponse>("/exams/by-user")) as unknown as ExamsResponse;
     return sortExams(response.data);
   } catch (error) {
     handleApiError(error);

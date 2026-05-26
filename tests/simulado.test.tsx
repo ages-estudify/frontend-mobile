@@ -141,7 +141,7 @@ function mockDefault() {
   });
 }
 
-import ExamsScreen from "./simulado";
+import ExamsScreen from "../app/(tabs)/simulado";
 
 describe("ExamsScreen", () => {
   beforeEach(() => {
