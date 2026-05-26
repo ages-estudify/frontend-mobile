@@ -62,7 +62,7 @@ describe("examFeedback.service", () => {
 
       const result = await getExamResultGrid("attempt-id", "ALL");
 
-      expect(api.get).toHaveBeenCalledWith("/exam/attempt-id/resultGrid", {
+      expect(api.get).toHaveBeenCalledWith("/exams/attempt-id/resultGrid", {
         params: undefined,
       });
       expect(result).toEqual(response);
@@ -82,10 +82,30 @@ describe("examFeedback.service", () => {
 
       const result = await getExamResultGrid("attempt-id", "CORRECT");
 
-      expect(api.get).toHaveBeenCalledWith("/exam/attempt-id/resultGrid", {
+      expect(api.get).toHaveBeenCalledWith("/exams/attempt-id/resultGrid", {
         params: {
           statusFilter: "CORRECT",
         },
+      });
+      expect(result).toEqual(response);
+    });
+
+    it("should forward attemptDayId in params when provided", async () => {
+      const response = {
+        success: true,
+        data: {
+          attemptId: "attempt-id",
+          totalQuestions: 3,
+          grid: [],
+        },
+      };
+
+      (api.get as jest.Mock).mockResolvedValue(response);
+
+      const result = await getExamResultGrid("attempt-id", "ALL", "day-id");
+
+      expect(api.get).toHaveBeenCalledWith("/exams/attempt-id/resultGrid", {
+        params: { attemptDayId: "day-id" },
       });
       expect(result).toEqual(response);
     });

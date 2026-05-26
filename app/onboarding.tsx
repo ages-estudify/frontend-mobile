@@ -1,17 +1,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { onboardingService } from "@/services/onboarding.service";
 import type { OnboardingRequest, StudyDay, StudyHoursMap } from "@/types/onboarding.types";
@@ -39,6 +42,12 @@ const STUDY_HOURS: number[] = [
   5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
 ];
 
+const SHEET_HEIGHT_BY_STEP: Record<OnboardingStep, `${number}%`> = {
+  0: "45%",
+  1: "64%",
+  2: "80%",
+};
+
 function formatStudyHourLabel(hour: number): string {
   return `${hour.toString().padStart(2, "0")}:00`;
 }
@@ -49,14 +58,17 @@ function sortHours(hours: number[]): number[] {
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const { height: screenHeight } = useWindowDimensions();
 
   const [step, setStep] = useState<OnboardingStep>(0);
   const [desiredCourse, setdesiredCourse] = useState("");
   const [preferredLanguage, setpreferredLanguage] = useState("");
   const [desiredUniversity, setdesiredUniversity] = useState("");
-  const [selectedDays, setSelectedDays] = useState<StudyDay[]>([]);
-  const [activeDay, setActiveDay] = useState<StudyDay | null>(null);
   const [studyHoursByDay, setStudyHoursByDay] = useState<StudyHoursMap>({});
+  const [activeDays, setActiveDays] = useState<StudyDay[]>([]);
+
+  const activeHours = activeDays.length > 0 ? (studyHoursByDay[activeDays[0]] ?? []) : [];
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isSubmittingRef = useRef(false);
 
@@ -71,59 +83,55 @@ export default function OnboardingScreen() {
     checkOnboardingStatus();
   }, [router]);
 
-  const activeDayLabel = useMemo(
-    () => STUDY_DAY_OPTIONS.find((dayOption) => dayOption.value === activeDay)?.label ?? "",
-    [activeDay]
-  );
-
   const primaryButtonLabel = step < 2 ? "Proximo" : isSubmitting ? "Salvando" : "Salvar";
 
   function toggleDay(day: StudyDay) {
-    setSelectedDays((previousDays) => {
-      if (previousDays.includes(day)) {
-        const nextDays = previousDays.filter((currentDay) => currentDay !== day);
+    const isSelected = day in studyHoursByDay;
+    const isActive = activeDays.includes(day);
 
-        setStudyHoursByDay((previousHoursMap) => {
-          const nextHoursMap = { ...previousHoursMap };
-          delete nextHoursMap[day];
-          return nextHoursMap;
-        });
-
-        setActiveDay((previousActiveDay) => {
-          if (previousActiveDay !== day) {
-            return previousActiveDay;
-          }
-
-          return nextDays[0] ?? null;
-        });
-
-        return nextDays;
-      }
-
-      const nextDays = [...previousDays, day];
-      setActiveDay(day);
-
-      return nextDays;
-    });
-  }
-
-  function toggleStudyHour(hour: number) {
-    if (!activeDay) {
+    if (isActive) {
+      setActiveDays((prev) => prev.filter((d) => d !== day));
+      setStudyHoursByDay((prev) => {
+        const next = { ...prev };
+        delete next[day];
+        return next;
+      });
       return;
     }
 
-    setStudyHoursByDay((previousHoursMap) => {
-      const activeDayHours = previousHoursMap[activeDay] ?? [];
-      const alreadySelected = activeDayHours.includes(hour);
+    if (isSelected) {
+      setStudyHoursByDay((prev) => {
+        const next = { ...prev };
+        delete next[day];
+        return next;
+      });
+      return;
+    }
 
-      const nextHours = alreadySelected
-        ? activeDayHours.filter((activeDayHour) => activeDayHour !== hour)
-        : sortHours([...activeDayHours, hour]);
+    if (activeHours.length > 0) {
+      setActiveDays([day]);
+      setStudyHoursByDay((prev) => ({ ...prev, [day]: [] }));
+    } else {
+      setActiveDays((prev) => [...prev, day]);
+      setStudyHoursByDay((prev) => ({ ...prev, [day]: [] }));
+    }
+  }
 
-      return {
-        ...previousHoursMap,
-        [activeDay]: nextHours,
-      };
+  function toggleStudyHour(hour: number) {
+    if (activeDays.length === 0) return;
+
+    setStudyHoursByDay((prev) => {
+      const currentHours = prev[activeDays[0]] ?? [];
+      const alreadySelected = currentHours.includes(hour);
+      const updatedHours = alreadySelected
+        ? currentHours.filter((currentHour) => currentHour !== hour)
+        : sortHours([...currentHours, hour]);
+
+      const next = { ...prev };
+      activeDays.forEach((d) => {
+        next[d] = updatedHours;
+      });
+      return next;
     });
   }
 
@@ -153,15 +161,14 @@ export default function OnboardingScreen() {
 
     if (includeStudyHours) {
       const studyHoursPayload: StudyHoursMap = {};
-
-      selectedDays.forEach((day) => {
-        const hours = studyHoursByDay[day] ?? [];
-        if (hours.length > 0) {
-          studyHoursPayload[day] = sortHours(hours);
+      Object.entries(studyHoursByDay).forEach(([day, hours]) => {
+        if (hours && hours.length > 0) {
+          studyHoursPayload[day as StudyDay] = sortHours(hours);
         }
       });
-
-      if (Object.keys(studyHoursPayload).length > 0) payload.studyHours = studyHoursPayload;
+      if (Object.keys(studyHoursPayload).length > 0) {
+        payload.studyHours = studyHoursPayload;
+      }
     }
 
     return payload;
@@ -237,11 +244,18 @@ export default function OnboardingScreen() {
     handleSubmitOnboarding();
   }
   return (
-    <SafeAreaView className="flex-1 bg-purple100">
-      <View className="flex-1">
-        <View className="relative mt-auto rounded-t-[28px] bg-whitebg px-6 pt-8">
+    <SafeAreaView className="flex-1 bg-purple100" edges={["top", "left", "right"]}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 24}
+        className="flex-1"
+      >
+        <View
+          className="relative mt-auto rounded-t-[28px] bg-whitebg px-6 pt-8"
+          style={{ height: SHEET_HEIGHT_BY_STEP[step] }}
+        >
           {step === 0 && (
-            <View className="absolute -top-[214px] right-6">
+            <View className="absolute right-6" style={{ top: -screenHeight * 0.22 }}>
               <Image
                 source={require("../assets/waving_fox.png")}
                 className="h-[190px] w-[210px]"
@@ -251,7 +265,7 @@ export default function OnboardingScreen() {
           )}
 
           {step === 1 && (
-            <View className="absolute -top-[155px] left-8">
+            <View className="absolute left-8" style={{ top: -screenHeight * 0.2 }}>
               <Image
                 source={require("../assets/on_target_fox-1.png")}
                 className="h-[176px] w-[342px]"
@@ -261,7 +275,7 @@ export default function OnboardingScreen() {
           )}
 
           {step === 2 && (
-            <View className="absolute -top-[127px] left-1">
+            <View className="absolute left-1" style={{ top: -screenHeight * 0.16 }}>
               <Image
                 source={require("../assets/fox_watch.png")}
                 className="h-[146px] w-[186px]"
@@ -270,168 +284,156 @@ export default function OnboardingScreen() {
             </View>
           )}
 
-          <ScrollView
+          {/* <ScrollView
             className="flex-1"
             contentContainerStyle={{ paddingBottom: 24 }}
             showsVerticalScrollIndicator={false}
-          >
-            {step === 0 && (
-              <View>
-                <Text className="mb-6 text-center font-poppins-semi text-[32px] leading-[48px] text-black">
-                  Ola, eu sou o Estu!
+          > */}
+          {step === 0 && (
+            <View>
+              <Text className="mb-6 text-center font-poppins-semi text-[32px] text-black">
+                Ola, eu sou o Estu!
+              </Text>
+              <Text className="mb-6 text-center font-inter text-[16px] leading-7 text-black">
+                Vou estar ao seu lado em toda essa jornada de estudos. Antes de comecar, quero saber
+                um pouco mais sobre voce para montar um cronograma perfeito para a sua aprovacao!
+              </Text>
+            </View>
+          )}
+
+          {step === 1 && (
+            <View>
+              <Text className="mb-8 text-center font-poppins-semi text-[24px] leading-[30px] text-black">
+                Me conte suas metas e objetivos
+              </Text>
+
+              <View className="mb-4 gap-2">
+                <Text className="font-inter-medium text-[16px] text-primaryGray">
+                  Curso desejado
                 </Text>
-                <Text className="mb-6 text-center font-inter text-[16px] leading-7 text-black">
-                  Vou estar ao seu lado em toda essa jornada de estudos. Antes de comecar, quero
-                  saber um pouco mais sobre voce para montar um cronograma perfeito para a sua
-                  aprovacao!
-                </Text>
+                <TextInput
+                  testID="onboarding-desired-course-input"
+                  value={desiredCourse}
+                  onChangeText={setdesiredCourse}
+                  placeholder="Ex: Computação"
+                  className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
+                  autoCapitalize="words"
+                />
               </View>
-            )}
 
-            {step === 1 && (
-              <View>
-                <Text className="mb-8 text-center font-poppins-semi text-[36px] leading-[46px] text-black">
-                  Me conte suas metas e objetivos
+              <View className="mb-4 gap-2">
+                <Text className="font-inter-medium text-[16px] text-primaryGray">
+                  Língua estrangeira preferida
                 </Text>
-
-                <View className="mb-4 gap-2">
-                  <Text className="font-inter-medium text-[16px] text-primaryGray">
-                    Curso desejado
-                  </Text>
-                  <TextInput
-                    testID="onboarding-desired-course-input"
-                    value={desiredCourse}
-                    onChangeText={setdesiredCourse}
-                    placeholder="Ex: Computação"
-                    className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
-                    autoCapitalize="words"
-                  />
-                </View>
-
-                <View className="mb-4 gap-2">
-                  <Text className="font-inter-medium text-[16px] text-primaryGray">
-                    Língua estrangeira preferida
-                  </Text>
-                  <TextInput
-                    testID="onboarding-preferred-language-input"
-                    value={preferredLanguage}
-                    onChangeText={setpreferredLanguage}
-                    placeholder="Ex: Inglês"
-                    className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
-                    autoCapitalize="words"
-                  />
-                </View>
-
-                <View className="gap-2">
-                  <Text className="font-inter-medium text-[16px] text-primaryGray">
-                    Universidade desejada
-                  </Text>
-                  <TextInput
-                    testID="onboarding-desired-university-input"
-                    value={desiredUniversity}
-                    onChangeText={setdesiredUniversity}
-                    placeholder="Ex: PUCRS"
-                    className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
-                    autoCapitalize="words"
-                  />
-                </View>
+                <TextInput
+                  testID="onboarding-preferred-language-input"
+                  value={preferredLanguage}
+                  onChangeText={setpreferredLanguage}
+                  placeholder="Ex: Inglês"
+                  className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
+                  autoCapitalize="words"
+                />
               </View>
-            )}
 
-            {step === 2 && (
-              <View>
-                <Text className="mb-6 text-center font-poppins-semi text-[30px] leading-[44px] text-black">
-                  Vamos organizar seus horários de estudo
+              <View className="gap-2">
+                <Text className="font-inter-medium text-[16px] text-primaryGray">
+                  Universidade desejada
                 </Text>
+                <TextInput
+                  testID="onboarding-desired-university-input"
+                  value={desiredUniversity}
+                  onChangeText={setdesiredUniversity}
+                  placeholder="Ex: PUCRS"
+                  className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
+                  autoCapitalize="words"
+                />
+              </View>
+            </View>
+          )}
 
-                <View className="mb-8 gap-3">
-                  <Text className="font-inter-medium text-base text-primaryGray">
-                    Dias de Estudo
-                  </Text>
-                  <View className="flex-row flex-wrap justify-between gap-3.5">
-                    {STUDY_DAY_OPTIONS.map((dayOption) => {
-                      const isSelected = selectedDays.includes(dayOption.value);
-                      const isActive = activeDay === dayOption.value;
+          {step === 2 && (
+            <View className="gap-[16px]">
+              <Text className="text-center font-poppins-semi text-[24px] leading-[30px] text-black">
+                Vamos organizar seus horários de estudo
+              </Text>
 
-                      return (
-                        <Pressable
-                          key={dayOption.value}
-                          testID={`onboarding-day-${dayOption.value}`}
-                          onPress={() => toggleDay(dayOption.value)}
-                          className={`w-[30%] shrink-0 items-center rounded-[8px] border px-2 py-2 ${
-                            isActive
-                              ? "border-purple100 bg-purple100"
-                              : isSelected
-                                ? "border-purple100 bg-[#EFE7F8]"
-                                : "border-secondaryGray bg-white"
+              <View className="gap-3">
+                <Text className="font-inter-medium text-base text-primaryGray">Dias de Estudo</Text>
+                <View className="flex-row flex-wrap justify-between gap-[9px]">
+                  {STUDY_DAY_OPTIONS.map((dayOption) => {
+                    const isSelected = dayOption.value in studyHoursByDay;
+                    const isActive = activeDays.includes(dayOption.value);
+
+                    return (
+                      <Pressable
+                        key={dayOption.value}
+                        testID={`onboarding-day-${dayOption.value}`}
+                        onPress={() => toggleDay(dayOption.value)}
+                        className={`w-[30%] shrink-0 items-center rounded-[8px] border px-2 py-2 ${
+                          isActive
+                            ? "border-purple100 bg-purple100"
+                            : isSelected
+                              ? "border-purple100 bg-[#EFE7F8]"
+                              : "border-secondaryGray bg-white"
+                        }`}
+                      >
+                        <Text
+                          className={`font-inter-semi text-sm ${
+                            isActive ? "text-white" : "text-primaryGray"
                           }`}
                         >
-                          <Text
-                            className={`font-inter-semi text-sm ${
-                              isActive ? "text-white" : "text-primaryGray"
-                            }`}
-                          >
-                            {dayOption.label}
-                          </Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
+                          {dayOption.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
                 </View>
+              </View>
 
-                <View className="gap-3">
+              <View className="gap-[14px]">
+                <View className="gap-0">
                   <Text className="font-inter-medium text-base text-primaryGray">
-                    Horarios de Preferencia
+                    Horários de Preferencia
                   </Text>
                   <Text className="font-inter text-xs text-primaryGray">
                     Toque nos horarios para selecionar ou remover
                   </Text>
+                </View>
 
-                  {activeDay ? (
-                    <Text className="font-inter-semi text-sm text-purple100">
-                      Dia selecionado: {activeDayLabel}
-                    </Text>
-                  ) : (
-                    <Text className="font-inter-semi text-sm text-purple100">
-                      Selecione um dia para escolher os horarios
-                    </Text>
-                  )}
+                <View className="flex-row flex-wrap gap-2">
+                  {STUDY_HOURS.map((hour) => {
+                    const hourLabel = formatStudyHourLabel(hour);
+                    const isSelected = activeHours.includes(hour);
 
-                  <View className="flex-row flex-wrap gap-2">
-                    {STUDY_HOURS.map((hour) => {
-                      const hourLabel = formatStudyHourLabel(hour);
-                      const isSelected = activeDay
-                        ? (studyHoursByDay[activeDay] ?? []).includes(hour)
-                        : false;
-
-                      return (
-                        <Pressable
-                          key={hour}
-                          testID={`onboarding-hour-${hourLabel}`}
-                          onPress={() => toggleStudyHour(hour)}
-                          className={`h-[29px] w-[23%] shrink-0 items-center justify-center rounded-[8px] border px-1 py-3 ${
-                            isSelected
-                              ? "border-purple100 bg-[#C79AE8]"
-                              : "border-secondaryGray bg-white"
+                    return (
+                      <Pressable
+                        key={hour}
+                        testID={`onboarding-hour-${hourLabel}`}
+                        onPress={() => toggleStudyHour(hour)}
+                        className={`h-[32px] w-[23%] shrink-0 items-center justify-center rounded-[8px] ${
+                          isSelected ? "bg-[#BC87D7]" : "border border-secondaryGray bg-white px-1"
+                        }`}
+                      >
+                        <Text
+                          className={`font-inter-medium text-[13px] ${
+                            isSelected ? "text-black" : "text-primaryGray"
                           }`}
                         >
-                          <Text
-                            className={`font-inter-medium text-[13px] ${
-                              isSelected ? "text-purple100" : "text-primaryGray"
-                            }`}
-                          >
-                            {hourLabel}
-                          </Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
+                          {hourLabel}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
                 </View>
               </View>
-            )}
-          </ScrollView>
+            </View>
+          )}
+          {/* </ScrollView> */}
 
-          <View className="flex-row items-center justify-between pb-6 pt-3">
+          <View
+            className="absolute left-6 right-6 flex-row items-center justify-between"
+            style={{ bottom: 70 }}
+          >
             <Pressable
               testID="onboarding-skip-button"
               onPress={handleSkip}
@@ -457,7 +459,7 @@ export default function OnboardingScreen() {
             </Pressable>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

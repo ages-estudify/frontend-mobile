@@ -188,7 +188,7 @@ describe("RegisterScreen", () => {
     });
 
     await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith("/");
+      expect(mockReplace).toHaveBeenCalledWith("/onboarding");
     });
   });
 

@@ -2,6 +2,7 @@ import { useAuthSession } from "@/contexts/AuthContext";
 import { authService } from "@/services/auth.service";
 import { hasGatedContentAccess } from "@/utils/subscription-access";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 type LoginParams = {
   email: string;
@@ -43,7 +44,13 @@ export function useAuth() {
   };
 
   const logout = async () => {
-    await AsyncStorage.multiRemove(["token", "refreshToken", "planExpirationDate", "role"]);
+    await AsyncStorage.multiRemove([
+      "token",
+      "refreshToken",
+      "planExpirationDate",
+      "role",
+      "hasCompletedOnboarding",
+    ]);
     session.clearSessionMetadata();
     router.replace("/login");
   };
@@ -67,6 +74,7 @@ export function useAuth() {
     const { token, refreshToken, planExpirationDate, role } = response.data;
 
     if (token && refreshToken) {
+      await AsyncStorage.removeItem("hasCompletedOnboarding");
       await AsyncStorage.setItem("token", token);
       await AsyncStorage.setItem("refreshToken", refreshToken);
       await AsyncStorage.setItem("role", role);
@@ -89,7 +97,7 @@ export function useAuth() {
   const updateSession = async (token: string, refreshToken: string, planExpirationDate: string) => {
     await AsyncStorage.setItem("token", token);
     await AsyncStorage.setItem("refreshToken", refreshToken);
-    await AsyncStorage.setItem("planExpirationDate", planExpirationDate);
+    await session.updatePlanSession({ planExpirationDate, planActive: true });
   };
 
   return {
