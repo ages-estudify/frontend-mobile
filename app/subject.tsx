@@ -7,10 +7,12 @@ import { getTopicsBySubject } from "@/services/subject/subject.service";
 import type { Topic } from "@/types/subject.types";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { Flame, Star } from "lucide-react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Fire from "../assets/icons/fire.svg";
+
+const starCoin = require("../assets/starCoin.png");
 
 type Status = "loading" | "error" | "success";
 type PracticeType = "ORIGINAL" | "SIMPLIFIED";
@@ -101,16 +103,10 @@ export default function SubjectScreen() {
 
       {status === "loading" && (
         <View testID="subject-trail-loading" className="flex-1 px-[16px] py-[16px]">
-          <View className="mb-[16px] flex-row" style={{ gap: 8 }}>
-            <View
-              testID="stat-card-skeleton"
-              className="h-[72px] flex-1 rounded-2xl bg-secondaryGray"
-            />
-            <View
-              testID="stat-card-skeleton"
-              className="h-[72px] flex-1 rounded-2xl bg-secondaryGray"
-            />
-          </View>
+          <View
+            testID="stat-card-skeleton"
+            className="mb-[16px] h-[72px] rounded-2xl bg-secondaryGray"
+          />
           <View testID="topic-trail-skeleton" className="flex-1 rounded-2xl bg-secondaryGray" />
         </View>
       )}
@@ -133,18 +129,29 @@ export default function SubjectScreen() {
 
       {status === "success" && (
         <View className="flex-1">
-          <View className="flex-row px-[16px] pt-[16px]" style={{ gap: 8 }}>
+          <View
+            testID="subject-stats-card"
+            className="mx-[16px] mt-[16px] flex-row items-center rounded-2xl bg-white px-2 py-4"
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.08,
+              shadowRadius: 4,
+              elevation: 2,
+            }}
+          >
             <StatCard
-              icon={<Flame size={24} color="#FFFFFF" />}
+              icon={<Fire width={28} height={32} />}
               label="Sequência de dias"
               value={`0 dias`}
-              iconBgColor="#FFD195"
             />
+            <View className="mx-1 h-10 w-px bg-secondaryGray" />
             <StatCard
-              icon={<Star size={24} color="#FFFFFF" />}
+              icon={
+                <Image source={starCoin} style={{ width: 34, height: 34 }} resizeMode="contain" />
+              }
               label="Estrelas"
               value={`${stars ?? 0}`}
-              iconBgColor="#FFDE59"
             />
           </View>
 
