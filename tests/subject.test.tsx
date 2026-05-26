@@ -40,13 +40,11 @@ jest.mock("@/components/QuestionTypeBottomSheet", () => {
   };
 });
 
-jest.mock("../assets/icons/separator.svg", () => {
-  const React = jest.requireActual("react");
-  const { View } = jest.requireActual("react-native");
-  function MockTopicSeparator() {
-    return <View testID="topic-separator" />;
-  }
-  return MockTopicSeparator;
+jest.mock("@/contexts/StarsContext", () => {
+  const loadStars = jest.fn();
+  const updateStars = jest.fn();
+  const value = { stars: 0, isLoading: false, hasError: false, loadStars, updateStars };
+  return { useStarsContext: () => value };
 });
 
 const mockGetTopics = jest.mocked(getTopicsBySubject);
@@ -90,7 +88,6 @@ describe("SubjectScreen (app/subject)", () => {
 
     render(<SubjectScreen />);
 
-    expect(screen.getByText("TRILHA SUGERIDA")).toBeTruthy();
     expect(screen.getByText("Matemática")).toBeTruthy();
 
     await waitFor(() => {
@@ -102,7 +99,7 @@ describe("SubjectScreen (app/subject)", () => {
     });
   });
 
-  it("renders a separator between multiple topics", async () => {
+  it("renders a trail node for each topic", async () => {
     mockGetTopics.mockResolvedValue([
       makeTopic({ id: "a", name: "A" }),
       makeTopic({ id: "b", name: "B" }),
@@ -114,8 +111,8 @@ describe("SubjectScreen (app/subject)", () => {
       expect(screen.getByText("B")).toBeTruthy();
     });
 
-    const scroll = screen.getByTestId("subject-topics-scroll");
-    expect(within(scroll).getAllByTestId("topic-separator")).toHaveLength(1);
+    const scroll = screen.getByTestId("topic-trail-scroll");
+    expect(within(scroll).getAllByTestId(/^topic-trail-node-/)).toHaveLength(2);
   });
 
   it("navigates to questions with topic id and type when bottom sheet actions fire", async () => {
@@ -127,7 +124,7 @@ describe("SubjectScreen (app/subject)", () => {
       expect(screen.getByText("Álgebra")).toBeTruthy();
     });
 
-    fireEvent.press(screen.getByText("Álgebra"));
+    fireEvent.press(screen.getByLabelText("Álgebra"));
 
     fireEvent.press(screen.getByLabelText("Treino original"));
     expect(mockNavigate).toHaveBeenCalledWith("/question?topicId=topic-x&type=ORIGINAL");
@@ -136,7 +133,7 @@ describe("SubjectScreen (app/subject)", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/question?topicId=topic-x&type=SIMPLIFIED");
   });
 
-  it("shows progress on TopicStep when the topic is partially complete", async () => {
+  it("shows the topic stage and progress percentage when partially complete", async () => {
     mockGetTopics.mockResolvedValue([
       makeTopic({
         availableByType: { ORIGINAL: 4, SIMPLIFIED: 0 },
@@ -147,7 +144,59 @@ describe("SubjectScreen (app/subject)", () => {
     render(<SubjectScreen />);
 
     await waitFor(() => {
-      expect(screen.getByText("Etapa 01 - EM ANDAMENTO · 50%")).toBeTruthy();
+      expect(screen.getByText("Etapa 01")).toBeTruthy();
     });
+    expect(screen.getByText("50%")).toBeTruthy();
+  });
+
+  it("renders a topic with no questions at 0% progress", async () => {
+    mockGetTopics.mockResolvedValue([
+      makeTopic({ availableByType: undefined, answeredByType: undefined }),
+    ]);
+
+    render(<SubjectScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Álgebra")).toBeTruthy();
+    });
+    expect(screen.getByText("0%")).toBeTruthy();
+  });
+
+  it("shows the empty state when the subject has no topics", async () => {
+    mockGetTopics.mockResolvedValue([]);
+
+    render(<SubjectScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("subject-trail-empty")).toBeTruthy();
+    });
+    expect(screen.getByText("Nenhum tópico disponível para esta disciplina.")).toBeTruthy();
+  });
+
+  it("shows the error state and reloads the topics on retry", async () => {
+    mockGetTopics.mockRejectedValueOnce(new Error("network"));
+    mockGetTopics.mockResolvedValueOnce([makeTopic()]);
+
+    render(<SubjectScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("subject-trail-error")).toBeTruthy();
+    });
+    expect(screen.getByText("Não foi possível carregar os tópicos. Tente novamente.")).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId("subject-trail-retry"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Álgebra")).toBeTruthy();
+    });
+  });
+
+  it("does not fetch topics when the route has no subject id", () => {
+    jest.mocked(ExpoRouter.useLocalSearchParams).mockReturnValue({});
+
+    render(<SubjectScreen />);
+
+    expect(mockGetTopics).not.toHaveBeenCalled();
+    expect(screen.getByTestId("subject-trail-loading")).toBeTruthy();
   });
 });

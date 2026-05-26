@@ -1,13 +1,16 @@
 import {
+  buildSCurvePath,
   getLabelLeft,
   getNodePosition,
   getNodeSide,
   getOppositeSide,
+  getTrailHeight,
   MAX_TRAIL_SCALE,
   MAX_TRAIL_WIDTH,
   MIN_TRAIL_WIDTH,
   resolveTrailLayout,
   TRAIL_HORIZONTAL_AMPLITUDE,
+  TRAIL_LABEL_GAP,
   TRAIL_LABEL_WIDTH,
   TRAIL_NODE_SIZE,
 } from "./TopicTrail";
@@ -94,5 +97,37 @@ describe("node sides still alternate", () => {
     expect(getNodeSide(0)).toBe("right");
     expect(getNodeSide(1)).toBe("left");
     expect(getOppositeSide("right")).toBe("left");
+  });
+});
+
+describe("trail path and default sizing", () => {
+  it("returns an empty path when there are no positions", () => {
+    expect(buildSCurvePath([])).toBe("");
+  });
+
+  it("builds an S-curve path from the topmost position downward", () => {
+    const d = buildSCurvePath([
+      { x: 10, y: 100 },
+      { x: 50, y: 0 },
+    ]);
+    expect(d.startsWith("M 50 0")).toBe(true);
+    expect(d).toContain("C");
+  });
+
+  it("computes a node position using the default geometry", () => {
+    const pos = getNodePosition(0, 1);
+    expect(pos.side).toBe("right");
+    expect(pos.x).toBe(225);
+    expect(pos.y).toBe(54);
+  });
+
+  it("computes the label left using the default node size, width and gap", () => {
+    expect(getLabelLeft(100, "right")).toBe(100 + TRAIL_NODE_SIZE + TRAIL_LABEL_GAP);
+    expect(getLabelLeft(100, "left")).toBe(100 - TRAIL_LABEL_WIDTH - TRAIL_LABEL_GAP);
+  });
+
+  it("uses the default vertical spacing when computing trail height", () => {
+    expect(getTrailHeight(0)).toBeGreaterThan(0);
+    expect(getTrailHeight(3)).toBeGreaterThan(getTrailHeight(1));
   });
 });
