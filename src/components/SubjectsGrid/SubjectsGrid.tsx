@@ -4,7 +4,7 @@ import { Text, useWindowDimensions, View } from "react-native";
 import SubjectBox from "../SubjectBox";
 
 export interface SubjectsGridProps {
-  subjects: Subject[];
+  readonly subjects: Subject[];
 }
 
 const NUM_COLUMNS = 3;
