@@ -66,6 +66,8 @@ export interface SubmitAnswerResponse {
   success: boolean;
   data: {
     saved: boolean;
+    streakDays?: number;
+    streakActive?: boolean;
   };
 }
 
