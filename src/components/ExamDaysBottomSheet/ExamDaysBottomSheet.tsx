@@ -1,6 +1,6 @@
 import { TAB_BAR_HEIGHT, tabBarBottomOffset } from "@/constants/tabBarLayout";
 import { Exam, ExamDay } from "@/types/exam.types";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import { router } from "expo-router";
 import React, { useRef } from "react";
 import { Pressable, Text, View } from "react-native";
@@ -61,6 +61,9 @@ export function ExamDaysBottomSheet({
       style={{ marginHorizontal: 0 }}
       handleIndicatorStyle={{ backgroundColor: "#D0D0D0", width: 36 }}
       backgroundStyle={{ borderRadius: 20 }}
+      backdropComponent={(props) => (
+        <BottomSheetBackdrop {...props} opacity={0.2} appearsOnIndex={0} disappearsOnIndex={-1} />
+      )}
     >
       <BottomSheetView style={{ flex: 1, paddingHorizontal: 20, paddingTop: 4, gap: 10 }}>
         <Text style={{ fontSize: 20, fontWeight: "700", color: "#1a1a1a", marginBottom: 2 }}>

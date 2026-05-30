@@ -20,6 +20,14 @@ jest.mock("@/services/onboarding.service", () => ({
   },
 }));
 
+jest.mock("react-native-safe-area-context", () => {
+  const actual = jest.requireActual("react-native-safe-area-context");
+  return {
+    ...actual,
+    useSafeAreaInsets: () => ({ top: 0, right: 0, bottom: 34, left: 0 }),
+  };
+});
+
 function moveToGoalsStep(getByTestId: (testId: string) => any) {
   fireEvent.press(getByTestId("onboarding-primary-button"));
 }

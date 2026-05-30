@@ -25,4 +25,7 @@ export const endPoints = {
   questions: {
     answer: (questionId: string) => `/questions/${questionId}/answer`,
   },
+  users: {
+    streak: "/users/streak",
+  },
 };

@@ -5,6 +5,8 @@ export interface AnswerQuestionResponse {
     explanation: string;
     coinsEarned: number;
     totalCoins: number;
+    streakDays?: number;
+    streakActive?: boolean;
   };
 }
 export type Alternative = {

@@ -4,6 +4,7 @@ import Fire from "../../assets/icons/fire.svg";
 
 interface StarBadgeProps {
   sequence: number | null;
+  streakActive: boolean | null;
   isLoading: boolean;
   hasError: boolean;
   description?: string;
@@ -12,6 +13,7 @@ interface StarBadgeProps {
 
 export function SequenceBadge({
   sequence,
+  streakActive,
   isLoading,
   hasError,
   description,
@@ -19,9 +21,16 @@ export function SequenceBadge({
 }: StarBadgeProps) {
   const title = `Sequencia de Dias: ${hasError || sequence === null ? "--" : sequence}`;
 
+  const fallbackDescription =
+    sequence === 0
+      ? "Seu streak está quebrado."
+      : streakActive
+        ? "Seu streak está ativo."
+        : "Seu streak está pendente.";
+
   const resolvedDescription = hasError
     ? (errorDescription ?? "Não foi possível carregar sua sequência.")
-    : (description ?? "Representa quantos dias consecutivos você tem estudado na plataforma.");
+    : (description ?? fallbackDescription);
 
   return (
     <View className="w-full flex-row items-center rounded-[20px] border border-orangeSequenceCardBorder bg-orangeSequenceCard/50 px-5 py-4">

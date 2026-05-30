@@ -101,7 +101,7 @@ export default function ExamFeedback() {
       setIsLoadingGrid(true);
 
       try {
-        const response = await getExamResultGrid(attemptId, selectedStatusFilter);
+        const response = await getExamResultGrid(attemptId, selectedStatusFilter, attemptDayId);
 
         if (!isMounted) return;
 
@@ -128,13 +128,13 @@ export default function ExamFeedback() {
     return () => {
       isMounted = false;
     };
-  }, [resultData?.attemptId, selectedStatusFilter]);
+  }, [resultData?.attemptId, selectedStatusFilter, attemptDayId]);
 
   const totalQuestions = resultData?.totalQuestions ?? 0;
   const correctAnswers = resultData?.correctAnswers ?? 0;
   const wrongAnswers = resultData?.wrongAnswers ?? 0;
   const blankAnswers = resultData?.blankAnswers ?? 0;
-  const timeSpentMinutes = resultData?.timeSpentMinutes ?? 0;
+  const timeSpentSeconds = resultData?.timeSpentSeconds ?? 0;
 
   const stars = correctAnswers;
 
@@ -158,9 +158,9 @@ export default function ExamFeedback() {
     return gridRows;
   }, [questions]);
 
-  const formatMinutesToHHMM = (totalMinutes: number): string => {
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
+  const formatSecondsToHHMM = (totalSeconds: number): string => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
 
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
   };
@@ -195,7 +195,9 @@ export default function ExamFeedback() {
             </Text>
 
             <Pressable
-              onPress={() => router.back()}
+              onPress={() =>
+                isSimulado ? router.replace("/(tabs)/simulado") : router.replace("/(tabs)/treinar")
+              }
               className="h-[50px] w-[50px] items-center justify-center rounded-full bg-[#3E2B5C]"
             >
               <X size={24} color="#FFFFFF" />
@@ -212,7 +214,7 @@ export default function ExamFeedback() {
             )}
 
             <View className="flex flex-row items-center justify-center gap-4">
-              {isSimulado ? (
+              {!isSimulado ? (
                 <>
                   <View className="flex items-center justify-center">
                     <View className="flex flex-row items-center justify-center">
@@ -233,7 +235,7 @@ export default function ExamFeedback() {
               ) : null}
 
               <View className="flex items-center justify-center">
-                <Text className="text-purple50">{formatMinutesToHHMM(timeSpentMinutes)}</Text>
+                <Text className="text-purple50">{formatSecondsToHHMM(timeSpentSeconds)}</Text>
                 <Text className="text-purple50">Horas Totais</Text>
               </View>
             </View>

@@ -36,7 +36,7 @@ export interface AttemptDayResultData {
   examDayId: string;
   name: string;
   day: number;
-  timeSpentMinutes: number;
+  timeSpentSeconds: number;
   endTime: string;
   totalQuestions: number;
   answeredQuestions: number;

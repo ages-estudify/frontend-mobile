@@ -1,3 +1,4 @@
+import { useStreak } from "@/hooks/useStreak";
 import { attemptExamService } from "@/services/attemptExam.service";
 import { AttemptResponse, Language } from "@/types/exam.types";
 import { useLocalSearchParams } from "expo-router";
@@ -28,6 +29,7 @@ export function useExam() {
     day?: string;
     examDayId?: string;
   }>();
+  const { updateStreak } = useStreak();
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [currentAttempt, setCurrentAttempt] = useState<AttemptResponse["data"] | null>(null);
@@ -173,21 +175,24 @@ export function useExam() {
     attemptId,
     timeSpentSeconds,
   }: SubmitAnswerParams) => {
-    setLoading(true);
-    setError(null);
-
     try {
       const response = await attemptExamService.submitAnswer(questionId, {
         selectedAnswer,
         attemptId,
         timeSpentSeconds,
       });
+
+      if (response.data?.streakDays !== undefined && response.data?.streakActive !== undefined) {
+        updateStreak({
+          streakDays: response.data.streakDays,
+          streakActive: response.data.streakActive,
+        });
+      }
+
       return response;
     } catch (err: any) {
       setError(err.message || "Erro ao enviar resposta");
       throw err;
-    } finally {
-      setLoading(false);
     }
   };
 

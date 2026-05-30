@@ -7,15 +7,16 @@ import {
 } from "@/services/examFeedback/examFeedback.service";
 import ExamFeedback from "../app/examFeedback";
 
-const mockRouterBackck = jest.fn();
+const mockRouterReplace = jest.fn();
+const mockUseLocalSearchParams = jest.fn(() => ({
+  attemptDayId: "attempt-day-id",
+  type: "simulado",
+}));
 
 jest.mock("expo-router", () => ({
-  useLocalSearchParams: jest.fn(() => ({
-    attemptDayId: "attempt-day-id",
-    type: "simulado",
-  })),
+  useLocalSearchParams: () => mockUseLocalSearchParams(),
   useRouter: jest.fn(() => ({
-    back: mockRouterBackck,
+    replace: mockRouterReplace,
   })),
 }));
 
@@ -81,6 +82,10 @@ jest.mock("lucide-react-native", () => {
 describe("ExamFeedback", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseLocalSearchParams.mockReturnValue({
+      attemptDayId: "attempt-day-id",
+      type: "simulado",
+    });
 
     (getAttemptDayResult as jest.Mock).mockResolvedValue({
       success: true,
@@ -91,7 +96,7 @@ describe("ExamFeedback", () => {
         examDayId: "exam-day-id",
         name: "Simulado ENEM",
         day: 1,
-        timeSpentMinutes: 90,
+        timeSpentSeconds: 5400,
         endTime: "2026-05-03T00:00:00.000Z",
         totalQuestions: 10,
         answeredQuestions: 10,
@@ -144,7 +149,7 @@ describe("ExamFeedback", () => {
     const { getByText } = render(<ExamFeedback />);
 
     await waitFor(() => {
-      expect(getExamResultGrid).toHaveBeenCalledWith("attempt-id", "ALL");
+      expect(getExamResultGrid).toHaveBeenCalledWith("attempt-id", "ALL", "attempt-day-id");
     });
 
     expect(getByText("Question 1 Correct")).toBeTruthy();
@@ -156,17 +161,22 @@ describe("ExamFeedback", () => {
     const { getByText } = render(<ExamFeedback />);
 
     await waitFor(() => {
-      expect(getExamResultGrid).toHaveBeenCalledWith("attempt-id", "ALL");
+      expect(getExamResultGrid).toHaveBeenCalledWith("attempt-id", "ALL", "attempt-day-id");
     });
 
     fireEvent.press(getByText("Corretas"));
 
     await waitFor(() => {
-      expect(getExamResultGrid).toHaveBeenCalledWith("attempt-id", "CORRECT");
+      expect(getExamResultGrid).toHaveBeenCalledWith("attempt-id", "CORRECT", "attempt-day-id");
     });
   });
 
-  it("should show stars when type is simulado", async () => {
+  it("should show stars when type is treino", async () => {
+    mockUseLocalSearchParams.mockReturnValue({
+      attemptDayId: "attempt-day-id",
+      type: "treino",
+    });
+
     const { getByText } = render(<ExamFeedback />);
 
     await waitFor(() => {
@@ -176,11 +186,11 @@ describe("ExamFeedback", () => {
     expect(getByText("Estrelas")).toBeTruthy();
   });
 
-  it("should call router.back when pressing close button", async () => {
+  it("should redirect to simulado tab when pressing close button on a simulado feedback", async () => {
     const { getByText } = render(<ExamFeedback />);
 
     fireEvent.press(getByText("X"));
 
-    expect(mockRouterBackck).toHaveBeenCalled();
+    expect(mockRouterReplace).toHaveBeenCalledWith("/(tabs)/simulado");
   });
 });
