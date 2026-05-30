@@ -1,4 +1,5 @@
 import { StarsInitializer } from "@/components/StarsInitializer";
+import { StreakInitializer } from "@/components/StreakInitializer";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { StarsProvider } from "@/contexts/StarsContext";
 import { StreakProvider } from "@/contexts/StreakContext";
@@ -49,6 +50,7 @@ export default function RootLayout() {
           <StreakProvider>
             <StarsProvider>
               <StarsInitializer />
+              <StreakInitializer />
               <Stack
                 screenOptions={{
                   headerShown: false,

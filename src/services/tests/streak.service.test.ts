@@ -14,12 +14,10 @@ describe("streak.service", () => {
     jest.clearAllMocks();
   });
 
-  it("chama GET /users/streak corretamente", async () => {
+  it("chama GET /users/streak corretamente e devolve o payload sem wrapper", async () => {
     const mockedResponse = {
-      data: {
-        streakDays: 7,
-        streakActive: true,
-      },
+      streakDays: 7,
+      streakActive: true,
     };
 
     (api.get as jest.Mock).mockResolvedValue(mockedResponse);
@@ -28,6 +26,8 @@ describe("streak.service", () => {
 
     expect(api.get).toHaveBeenCalledWith("/users/streak");
     expect(result).toEqual(mockedResponse);
+    expect(result.streakDays).toBe(7);
+    expect(result.streakActive).toBe(true);
   });
 
   it("chama handleApiError quando a requisição falha", async () => {

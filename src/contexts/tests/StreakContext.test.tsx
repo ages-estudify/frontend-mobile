@@ -50,10 +50,8 @@ describe("StreakContext", () => {
 
   it("carrega o streak com sucesso usando loadStreak", async () => {
     mockedGetUserStreak.mockResolvedValue({
-      data: {
-        streakDays: 7,
-        streakActive: true,
-      },
+      streakDays: 7,
+      streakActive: true,
     });
 
     render(
