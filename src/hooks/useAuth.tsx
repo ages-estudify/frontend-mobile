@@ -30,7 +30,6 @@ export function useAuth() {
 
   const login = async ({ email, password }: LoginParams) => {
     const response = await authService.login({ email, password });
-    console.log("[auth] login response:", JSON.stringify(response, null, 2));
 
     const { token, refreshToken, role, planExpirationDate } = response.data;
 

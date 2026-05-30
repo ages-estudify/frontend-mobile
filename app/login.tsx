@@ -26,7 +26,6 @@ export default function LoginPage() {
       await login({ email, password });
       router.replace("/");
     } catch (error) {
-      console.log("[auth] login error:", error);
       Alert.alert("Erro", "Verifique os campos preenchidos");
     } finally {
       setIsLoading(false);
