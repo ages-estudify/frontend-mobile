@@ -60,6 +60,11 @@ jest.mock("@/contexts/StarsContext", () => {
   return { useStarsContext: () => value };
 });
 
+const mockUseStreak = jest.fn();
+jest.mock("@/hooks/useStreak", () => ({
+  useStreak: () => mockUseStreak(),
+}));
+
 const mockGetTopics = jest.mocked(getTopicsBySubject);
 
 function makeTopic(overrides: Partial<Topic> = {}): Topic {
@@ -94,6 +99,14 @@ describe("SubjectScreen (app/subject)", () => {
       replace: jest.fn(),
     } as ReturnType<typeof ExpoRouter.useRouter>);
     mockGetTopics.mockResolvedValue([]);
+    mockUseStreak.mockReturnValue({
+      streakDays: null,
+      streakActive: null,
+      isLoading: false,
+      hasError: false,
+      loadStreak: jest.fn(),
+      updateStreak: jest.fn(),
+    });
   });
 
   it("loads topics for the route id and shows the subject name", async () => {
@@ -211,5 +224,41 @@ describe("SubjectScreen (app/subject)", () => {
 
     expect(mockGetTopics).not.toHaveBeenCalled();
     expect(screen.getByTestId("subject-trail-loading")).toBeTruthy();
+  });
+
+  it("shows the streak value from the StreakContext in the stats card", async () => {
+    mockGetTopics.mockResolvedValue([makeTopic()]);
+    mockUseStreak.mockReturnValue({
+      streakDays: 10,
+      streakActive: true,
+      isLoading: false,
+      hasError: false,
+      loadStreak: jest.fn(),
+      updateStreak: jest.fn(),
+    });
+
+    render(<SubjectScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByText("10 dias")).toBeTruthy();
+    });
+  });
+
+  it("falls back to 0 dias when the streak is not loaded yet", async () => {
+    mockGetTopics.mockResolvedValue([makeTopic()]);
+    mockUseStreak.mockReturnValue({
+      streakDays: null,
+      streakActive: null,
+      isLoading: false,
+      hasError: false,
+      loadStreak: jest.fn(),
+      updateStreak: jest.fn(),
+    });
+
+    render(<SubjectScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByText("0 dias")).toBeTruthy();
+    });
   });
 });

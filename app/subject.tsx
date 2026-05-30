@@ -3,6 +3,7 @@ import { QuestionTypeBottomSheet } from "@/components/QuestionTypeBottomSheet";
 import { StatCard } from "@/components/StatCard";
 import { TopicTrail, type TopicTrailItem } from "@/components/TopicTrail/TopicTrail";
 import { useStarsContext } from "@/contexts/StarsContext";
+import { useStreak } from "@/hooks/useStreak";
 import { getTopicsBySubject } from "@/services/subject/subject.service";
 import type { Topic } from "@/types/subject.types";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -40,6 +41,7 @@ export default function SubjectScreen() {
   const subjectName = params.name ?? "";
 
   const { stars, loadStars } = useStarsContext();
+  const { streakDays } = useStreak();
 
   const [status, setStatus] = useState<Status>("loading");
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -144,7 +146,7 @@ export default function SubjectScreen() {
             <StatCard
               icon={<Fire width={28} height={32} />}
               label="Sequência de dias"
-              value={`0 dias`}
+              value={`${streakDays ?? 0} dias`}
             />
             <View className="mx-1 h-10 w-px bg-secondaryGray" />
             <StatCard
