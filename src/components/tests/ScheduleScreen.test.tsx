@@ -205,10 +205,11 @@ describe("ScheduleScreen", () => {
     expect(screen.getByText("18:00")).toBeTruthy();
     expect(screen.getByText("Matemática")).toBeTruthy();
     expect(screen.getByText("Geometria Plana")).toBeTruthy();
-    expect(screen.getByText("Sem planos para hoje")).toBeNull();
+    expect(screen.queryByText("Sem planos para hoje")).toBeNull();
 
     const mondayLabel = screen.getByText("Seg");
-    expect(mondayLabel.parent?.props.className).toContain("bg-secondaryGray");
+    const mondayPressable = mondayLabel.parent?.parent;
+    expect(mondayPressable?.props.className).toContain("bg-secondaryGray");
 
     expect(screen.getByLabelText("Marcar Geometria Plana como concluído")).toBeTruthy();
 

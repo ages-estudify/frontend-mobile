@@ -129,7 +129,6 @@ export function ScheduleScreen() {
     toggleItemCompletion,
     reload,
   } = useSchedule();
-  console.log(noPersonalizedSchedule);
 
   if (loading || refreshingWeek) {
     return (

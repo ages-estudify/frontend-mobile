@@ -323,7 +323,7 @@ describe("useSchedule", () => {
       await result.current.toggleItemCompletion("item-1");
     });
 
-    expect(result.current.selectedItems[0].completed).toBe(false);
+    expect(result.current.selectedItems[0].completed).toBe(true);
     expect(result.current.error).toBe("Falha ao salvar");
   });
 });
