@@ -1,0 +1,18 @@
+export {
+  TopicTrail,
+  buildSCurvePath,
+  getNodePosition,
+  getNodeSide,
+  getOppositeSide,
+  getTrailHeight,
+  TRAIL_CONTAINER_WIDTH,
+  TRAIL_HORIZONTAL_AMPLITUDE,
+  TRAIL_LABEL_GAP,
+  TRAIL_LABEL_WIDTH,
+  TRAIL_NODE_SIZE,
+  TRAIL_VERTICAL_SPACING,
+  type NodeLayout,
+  type TopicTrailItem,
+  type TopicTrailProps,
+  type TrailSide,
+} from "./TopicTrail";

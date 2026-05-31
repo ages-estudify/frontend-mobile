@@ -17,7 +17,7 @@ export function SubjectsGrid({ subjects }: SubjectsGridProps) {
             <SubjectBox
               subject={subject.name}
               icon={subject.icon_url}
-              href={`/subject?id=${subject.id}&name=${subject.name}`}
+              href={`/subject?id=${subject.id}&name=${encodeURIComponent(subject.name)}`}
             />
           </View>
         ))}
