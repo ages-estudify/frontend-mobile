@@ -31,6 +31,22 @@ module.exports = {
         greenBubble: "#E2EBDE",
         purplePrice: "#9969EB",
         featureGray: "#EBEBEB",
+        progressSubjectCardBg: "#F7F7F7",
+
+        // FRONT-06.5 - Meu Progresso
+        cardBorder: "#F1F1F1",
+        progressTrack: "#D9D9D9",
+        progressPurple: "#9500FF",
+        simuladoProgress: "#B879D8",
+
+        metricsYellowBg: "#FFFCE6",
+        metricsOrangeBg: "#FEF3EA",
+        starIcon: "#F6D800",
+        flameIcon: "#F04444",
+
+        accuracyPurpleDark: "#5B3794",
+        accuracyPurpleMuted: "#6B4E79",
+        accuracyPurpleLight: "#A185D1",
       },
       fontFamily: {
         poppins: ["Poppins-Regular"],

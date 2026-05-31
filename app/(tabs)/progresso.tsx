@@ -1,27 +1,92 @@
 import { GatedTabScreenHeader } from "@/components/navigation/GatedTabScreenHeader";
 import { PlanGuard } from "@/components/navigation/PlanGuard";
 import { TabScreenScrollView } from "@/components/navigation/TabScreenScrollView";
-import { SequenceBadgeContainer } from "@/components/SequenceBadgeContainer";
-import { StarBadgeContainer } from "@/components/StarBadgeContainer";
+import { AccuracyBySubjectSection } from "@/components/Progress/AccuracyBySubjectSection";
+import { GamificationMetrics } from "@/components/Progress/GamificationMetrics";
+import { ProgressOverviewCard } from "@/components/Progress/ProgressOverviewCard";
+import { ProgressSummaryCards } from "@/components/Progress/ProgressSummaryCards";
+import { SimuladosProgressSection } from "@/components/Progress/SimuladosProgressSection";
+import { useAuth } from "@/hooks/useAuth";
+import { useUserStats } from "@/hooks/useUserStats";
 import React from "react";
-import { Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProgressoRoute() {
+  const { data, loading, error, refreshing, refreshStats, retry } = useUserStats();
+  const { logout } = useAuth();
+
   return (
     <SafeAreaView className="flex-1 bg-whitebg" edges={["top", "left", "right"]}>
       <View className="flex-1">
-        <GatedTabScreenHeader title="Progresso" />
+        <GatedTabScreenHeader
+          title="Meu Progresso"
+          trailing={
+            <Pressable onPress={() => logout()}>
+              <Image
+                source={require("../../assets/placeholder_user.png")}
+                style={{ width: 40, height: 40 }}
+                className="h-10 w-10 rounded-full"
+                resizeMode="contain"
+              />
+            </Pressable>
+          }
+        />
+
         <PlanGuard>
-          <TabScreenScrollView>
-            <View className="items-center px-[16px] pt-[12px]">
-              <View className="gap-[10px] self-center rounded-2xl bg-white px-[16px] py-[14px]">
-                <Text className="font-inter-semi text-[15px]">Minhas Métricas</Text>
-                <StarBadgeContainer variant="progresso" />
-                <SequenceBadgeContainer variant="progresso" />
-              </View>
+          {loading && !data ? (
+            <View className="flex-1 items-center justify-center">
+              <ActivityIndicator size="large" color="#5E4980" />
             </View>
-          </TabScreenScrollView>
+          ) : error && !data ? (
+            <View className="flex-1 items-center justify-center px-6">
+              <Text className="mb-4 text-center font-inter-medium text-[14px] text-greenPrimary">
+                Algo deu errado. Tente novamente.
+              </Text>
+
+              <TouchableOpacity onPress={retry} className="rounded-full bg-purpleCalm px-6 py-3">
+                <Text className="font-inter-semi text-[13px] text-white">Tentar novamente</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TabScreenScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={refreshStats}
+                  tintColor="#5E4980"
+                />
+              }
+            >
+              <View className="w-full self-center px-4 pb-8 pt-1" style={{ maxWidth: 402 }}>
+                <Text className="-mt-1 mb-[10px] font-inter text-[15px] leading-[20px] text-primaryGray">
+                  Sua evolução nos estudos
+                </Text>
+
+                <ProgressOverviewCard overview={data?.overview} />
+
+                <ProgressSummaryCards
+                  level={data?.level}
+                  completedTopics={data?.completedTopics}
+                  accuracyPercentage={data?.overview?.accuracyPercentage}
+                />
+
+                <GamificationMetrics stars={data?.stars} streak={data?.streak} />
+
+                <SimuladosProgressSection simulados={data?.simulados} />
+
+                <AccuracyBySubjectSection subjects={data?.accuracyBySubject} />
+              </View>
+            </TabScreenScrollView>
+          )}
         </PlanGuard>
       </View>
     </SafeAreaView>
