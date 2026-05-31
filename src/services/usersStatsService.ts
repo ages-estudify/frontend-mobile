@@ -1,26 +1,15 @@
-import { emptyUserStatsMock } from "../mocks/userStatsMock";
-import { UserStatsData } from "../types/userStats";
-import { api } from "./api";
+import { endPoints } from "@/routes/endpoints";
+import { UserStatsData, UserStatsResponse } from "@/types/userStats";
+import api, { handleApiError } from "./api";
 
 export const usersStatsService = {
   getUserStats: async (): Promise<UserStatsData> => {
-    // quando a tarefa BACK-06.5 estiver na develop
-
-    // const response = await api.get('/users/stats');
-    // return response.data.data;
-
-    // mocado temporário populado para testar
-    return Promise.resolve(emptyUserStatsMock.data);
+    try {
+      const response: UserStatsResponse = await api.get(endPoints.users.stats);
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+      throw error;
+    }
   },
 };
-
-/*populado visual*/
-
-// import { populatedUserStatsMock } from "../mocks/userStatsMock";
-// import { UserStatsData } from "../types/userStats";
-
-// export const usersStatsService = {
-//   getUserStats: async (): Promise<UserStatsData> => {
-//     return Promise.resolve(populatedUserStatsMock.data);
-//   },
-// };
