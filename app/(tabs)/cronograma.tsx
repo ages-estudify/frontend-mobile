@@ -1,9 +1,9 @@
-import { LockedFeature } from "@/components/LockedFeature";
 import { GatedTabScreenHeader } from "@/components/navigation/GatedTabScreenHeader";
 import { PlanGuard } from "@/components/navigation/PlanGuard";
 import { TabScreenScrollView } from "@/components/navigation/TabScreenScrollView";
+import { ScheduleScreen } from "@/components/schedule/ScheduleScreen";
 import React from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CronogramaRoute() {
@@ -13,9 +13,7 @@ export default function CronogramaRoute() {
         <GatedTabScreenHeader title="Cronograma" />
         <PlanGuard>
           <TabScreenScrollView>
-            <View className="px-4 pt-4">
-              <Text>Cronograma</Text>
-            </View>
+            <ScheduleScreen />
           </TabScreenScrollView>
         </PlanGuard>
       </View>

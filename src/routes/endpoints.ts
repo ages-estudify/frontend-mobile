@@ -12,6 +12,11 @@ export const endPoints = {
   onboarding: {
     submit: `/onboarding`,
   },
+  schedule: {
+    create: `/schedule`,
+    week: `/schedule`,
+    completeItem: (itemId: string) => `/schedule/items/${itemId}/complete`,
+  },
   exams: {
     attempts: (examId: string) => `/exams/${examId}/attempts`,
     latestAttempt: (examId: string) => `/exams/${examId}/attempts/latest`,
