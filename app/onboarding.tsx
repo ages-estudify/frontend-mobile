@@ -284,156 +284,159 @@ export default function OnboardingScreen() {
             </View>
           )}
 
-          {/* <ScrollView
+          <ScrollView
             className="flex-1"
             contentContainerStyle={{ paddingBottom: 24 }}
             showsVerticalScrollIndicator={false}
-          > */}
-          {step === 0 && (
-            <View>
-              <Text className="mb-6 text-center font-poppins-semi text-[32px] text-black">
-                Ola, eu sou o Estu!
-              </Text>
-              <Text className="mb-6 text-center font-inter text-[16px] leading-7 text-black">
-                Vou estar ao seu lado em toda essa jornada de estudos. Antes de comecar, quero saber
-                um pouco mais sobre voce para montar um cronograma perfeito para a sua aprovacao!
-              </Text>
-            </View>
-          )}
-
-          {step === 1 && (
-            <View>
-              <Text className="mb-8 text-center font-poppins-semi text-[24px] leading-[30px] text-black">
-                Me conte suas metas e objetivos
-              </Text>
-
-              <View className="mb-4 gap-2">
-                <Text className="font-inter-medium text-[16px] text-primaryGray">
-                  Curso desejado
-                </Text>
-                <TextInput
-                  testID="onboarding-desired-course-input"
-                  value={desiredCourse}
-                  onChangeText={setdesiredCourse}
-                  placeholder="Ex: Computação"
-                  className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
-                  autoCapitalize="words"
-                />
-              </View>
-
-              <View className="mb-4 gap-2">
-                <Text className="font-inter-medium text-[16px] text-primaryGray">
-                  Língua estrangeira preferida
-                </Text>
-                <TextInput
-                  testID="onboarding-preferred-language-input"
-                  value={preferredLanguage}
-                  onChangeText={setpreferredLanguage}
-                  placeholder="Ex: Inglês"
-                  className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
-                  autoCapitalize="words"
-                />
-              </View>
-
-              <View className="gap-2">
-                <Text className="font-inter-medium text-[16px] text-primaryGray">
-                  Universidade desejada
-                </Text>
-                <TextInput
-                  testID="onboarding-desired-university-input"
-                  value={desiredUniversity}
-                  onChangeText={setdesiredUniversity}
-                  placeholder="Ex: PUCRS"
-                  className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
-                  autoCapitalize="words"
-                />
-              </View>
-            </View>
-          )}
-
-          {step === 2 && (
-            <View className="gap-[16px]">
-              <Text className="text-center font-poppins-semi text-[24px] leading-[30px] text-black">
-                Vamos organizar seus horários de estudo
-              </Text>
-
-              <View className="gap-3">
-                <Text className="font-inter-medium text-base text-primaryGray">Dias de Estudo</Text>
-                <View className="flex-row flex-wrap justify-between gap-[9px]">
-                  {STUDY_DAY_OPTIONS.map((dayOption) => {
-                    const isSelected = dayOption.value in studyHoursByDay;
-                    const isActive = activeDays.includes(dayOption.value);
-
-                    return (
-                      <Pressable
-                        key={dayOption.value}
-                        testID={`onboarding-day-${dayOption.value}`}
-                        onPress={() => toggleDay(dayOption.value)}
-                        className={`w-[30%] shrink-0 items-center rounded-[8px] border px-2 py-2 ${
-                          isActive
-                            ? "border-purple100 bg-purple100"
-                            : isSelected
-                              ? "border-purple100 bg-[#EFE7F8]"
-                              : "border-secondaryGray bg-white"
-                        }`}
-                      >
-                        <Text
-                          className={`font-inter-semi text-sm ${
-                            isActive ? "text-white" : "text-primaryGray"
-                          }`}
-                        >
-                          {dayOption.label}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-              </View>
-
-              <View className="gap-[14px]">
-                <View className="gap-0">
-                  <Text className="font-inter-medium text-base text-primaryGray">
-                    Horários de Preferencia
-                  </Text>
-                  <Text className="font-inter text-xs text-primaryGray">
-                    Toque nos horarios para selecionar ou remover
-                  </Text>
-                </View>
-
-                <View className="flex-row flex-wrap gap-2">
-                  {STUDY_HOURS.map((hour) => {
-                    const hourLabel = formatStudyHourLabel(hour);
-                    const isSelected = activeHours.includes(hour);
-
-                    return (
-                      <Pressable
-                        key={hour}
-                        testID={`onboarding-hour-${hourLabel}`}
-                        onPress={() => toggleStudyHour(hour)}
-                        className={`h-[32px] w-[23%] shrink-0 items-center justify-center rounded-[8px] ${
-                          isSelected ? "bg-[#BC87D7]" : "border border-secondaryGray bg-white px-1"
-                        }`}
-                      >
-                        <Text
-                          className={`font-inter-medium text-[13px] ${
-                            isSelected ? "text-black" : "text-primaryGray"
-                          }`}
-                        >
-                          {hourLabel}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-              </View>
-            </View>
-          )}
-          {/* </ScrollView> */}
-
-          <View
-            className="absolute left-6 right-6 flex-row items-center justify-between"
-            style={{ bottom: 70 }}
+            keyboardShouldPersistTaps="handled"
           >
+            {step === 0 && (
+              <View>
+                <Text className="mb-6 text-center font-poppins-semi text-[32px] text-black">
+                  Ola, eu sou o Estu!
+                </Text>
+                <Text className="mb-6 text-center font-inter text-[16px] leading-7 text-black">
+                  Vou estar ao seu lado em toda essa jornada de estudos. Antes de comecar, quero
+                  saber um pouco mais sobre voce para montar um cronograma perfeito para a sua
+                  aprovacao!
+                </Text>
+              </View>
+            )}
+
+            {step === 1 && (
+              <View>
+                <Text className="mb-8 text-center font-poppins-semi text-[24px] leading-[30px] text-black">
+                  Me conte suas metas e objetivos
+                </Text>
+
+                <View className="mb-4 gap-2">
+                  <Text className="font-inter-medium text-[16px] text-primaryGray">
+                    Curso desejado
+                  </Text>
+                  <TextInput
+                    testID="onboarding-desired-course-input"
+                    value={desiredCourse}
+                    onChangeText={setdesiredCourse}
+                    placeholder="Ex: Computação"
+                    className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
+                    autoCapitalize="words"
+                  />
+                </View>
+
+                <View className="mb-4 gap-2">
+                  <Text className="font-inter-medium text-[16px] text-primaryGray">
+                    Língua estrangeira preferida
+                  </Text>
+                  <TextInput
+                    testID="onboarding-preferred-language-input"
+                    value={preferredLanguage}
+                    onChangeText={setpreferredLanguage}
+                    placeholder="Ex: Inglês"
+                    className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
+                    autoCapitalize="words"
+                  />
+                </View>
+
+                <View className="gap-2">
+                  <Text className="font-inter-medium text-[16px] text-primaryGray">
+                    Universidade desejada
+                  </Text>
+                  <TextInput
+                    testID="onboarding-desired-university-input"
+                    value={desiredUniversity}
+                    onChangeText={setdesiredUniversity}
+                    placeholder="Ex: PUCRS"
+                    className="rounded-xl bg-white px-4 py-3 font-inter text-base text-black"
+                    autoCapitalize="words"
+                  />
+                </View>
+              </View>
+            )}
+
+            {step === 2 && (
+              <View className="gap-[16px]">
+                <Text className="text-center font-poppins-semi text-[24px] leading-[30px] text-black">
+                  Vamos organizar seus horários de estudo
+                </Text>
+
+                <View className="gap-3">
+                  <Text className="font-inter-medium text-base text-primaryGray">
+                    Dias de Estudo
+                  </Text>
+                  <View className="flex-row flex-wrap justify-between gap-[9px]">
+                    {STUDY_DAY_OPTIONS.map((dayOption) => {
+                      const isSelected = dayOption.value in studyHoursByDay;
+                      const isActive = activeDays.includes(dayOption.value);
+
+                      return (
+                        <Pressable
+                          key={dayOption.value}
+                          testID={`onboarding-day-${dayOption.value}`}
+                          onPress={() => toggleDay(dayOption.value)}
+                          className={`w-[30%] shrink-0 items-center rounded-[8px] border px-2 py-2 ${
+                            isActive
+                              ? "border-purple100 bg-purple100"
+                              : isSelected
+                                ? "border-purple100 bg-[#EFE7F8]"
+                                : "border-secondaryGray bg-white"
+                          }`}
+                        >
+                          <Text
+                            className={`font-inter-semi text-sm ${
+                              isActive ? "text-white" : "text-primaryGray"
+                            }`}
+                          >
+                            {dayOption.label}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </View>
+
+                <View className="gap-[14px]">
+                  <View className="gap-0">
+                    <Text className="font-inter-medium text-base text-primaryGray">
+                      Horários de Preferencia
+                    </Text>
+                    <Text className="font-inter text-xs text-primaryGray">
+                      Toque nos horarios para selecionar ou remover
+                    </Text>
+                  </View>
+
+                  <View className="flex-row flex-wrap gap-2">
+                    {STUDY_HOURS.map((hour) => {
+                      const hourLabel = formatStudyHourLabel(hour);
+                      const isSelected = activeHours.includes(hour);
+
+                      return (
+                        <Pressable
+                          key={hour}
+                          testID={`onboarding-hour-${hourLabel}`}
+                          onPress={() => toggleStudyHour(hour)}
+                          className={`h-[32px] w-[23%] shrink-0 items-center justify-center rounded-[8px] ${
+                            isSelected
+                              ? "bg-[#BC87D7]"
+                              : "border border-secondaryGray bg-white px-1"
+                          }`}
+                        >
+                          <Text
+                            className={`font-inter-medium text-[13px] ${
+                              isSelected ? "text-black" : "text-primaryGray"
+                            }`}
+                          >
+                            {hourLabel}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </View>
+              </View>
+            )}
+          </ScrollView>
+
+          <View className="flex-row items-center justify-between pb-6 pt-3">
             <Pressable
               testID="onboarding-skip-button"
               onPress={handleSkip}
