@@ -10,6 +10,7 @@ import { Alternative } from "@/types/questions.types";
 import { useRouter } from "expo-router";
 import React from "react";
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import QuestionsGridIcon from "../assets/icons/questions-grid.svg";
 import SimpleArrow from "../assets/icons/simple-arrow.svg";
 
@@ -127,94 +128,101 @@ export default function ExamScreen() {
     );
   }
 
-  return (
-    <View className="flex-1 bg-gray-50 p-4">
-      <View className="flex flex-row items-center justify-between">
-        <BackButton onPress={handleBackPress} />
-        <View className="mt-2 flex flex-row items-center gap-2">
-          <TimerExam time={time} />
-          <Pressable
-            onPress={() => setOpenGrid(true)}
-            className="flex h-12 w-12 items-center justify-center rounded-3xl bg-white"
-          >
-            <QuestionsGridIcon width={24} height={21} />
-          </Pressable>
-        </View>
-      </View>
-      <QuestionProgress progress={progress} />
+  const hasPrevQuestion = currentQuestionIndex > 0;
+  const questionPositionProgress = currentAttempt
+    ? { current: currentQuestionIndex + 1, total: currentAttempt.questions.length }
+    : progress;
 
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-        {currentQuestion && (
+  return (
+    <SafeAreaView className="flex-1 bg-gray-50" edges={["top", "left", "right"]}>
+      <View className="flex-1 p-4">
+        <View className="flex flex-row items-center justify-between">
+          <BackButton onPress={handleBackPress} />
+          <View className="mt-2 flex flex-row items-center gap-2">
+            <TimerExam time={time} />
+            <Pressable
+              onPress={() => setOpenGrid(true)}
+              className="flex h-12 w-12 items-center justify-center rounded-3xl bg-white"
+            >
+              <QuestionsGridIcon width={24} height={21} />
+            </Pressable>
+          </View>
+        </View>
+        <QuestionProgress progress={questionPositionProgress} />
+
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+          {currentQuestion && (
+            <>
+              <QuestionCard
+                question={currentQuestion}
+                progress={currentQuestionIndex + 1}
+                isSimulated={true}
+              />
+              <QuestionAlternatives
+                alternatives={currentQuestion.alternatives}
+                selected={selectedAlternative}
+                setSelected={setSelectedAlternative}
+              />
+            </>
+          )}
+          <View className={`mt-4 flex-row ${hasPrevQuestion ? "justify-between" : "justify-end"}`}>
+            {hasPrevQuestion && (
+              <Pressable
+                onPress={handlePrevQuestion}
+                className="flex flex-row items-center gap-1 px-4 py-2"
+              >
+                <SimpleArrow width={16} height={16} color="#646464" />
+                <Text className="text-[#646464]">Anterior</Text>
+              </Pressable>
+            )}
+
+            <Pressable
+              onPress={
+                currentAttempt && currentQuestionIndex < currentAttempt.questions.length - 1
+                  ? handleNextQuestion
+                  : () => {
+                      handleNextQuestion();
+                      handleFinishExam();
+                    }
+              }
+              className="flex flex-row items-center gap-1 px-4 py-2"
+            >
+              <Text className="text-[#5E4980]">
+                {currentAttempt && currentQuestionIndex < currentAttempt.questions.length - 1
+                  ? "Próxima"
+                  : "Finalizar"}
+              </Text>
+              <SimpleArrow
+                width={16}
+                height={16}
+                color="#5E4980"
+                style={{ transform: [{ rotate: "180deg" }] }}
+              />
+            </Pressable>
+          </View>
+        </ScrollView>
+        {currentAttempt && (
           <>
-            <QuestionCard
-              question={currentQuestion}
-              progress={currentQuestion.number || 1}
-              isSimulated={true}
+            <QuestionGridModal
+              visible={openGrid}
+              onClose={() => setOpenGrid(false)}
+              questions={currentAttempt.questions}
+              currentQuestionIndex={currentAttempt.questions.findIndex(
+                (q) => q.id === currentQuestion?.id
+              )}
+              onGoToQuestion={handleGoToQuestion}
+              onFinishExam={handleFinishExam}
             />
-            <QuestionAlternatives
-              alternatives={currentQuestion.alternatives}
-              selected={selectedAlternative}
-              setSelected={setSelectedAlternative}
+            <FinishExamModal
+              visible={showFinishModal}
+              blankAnswers={currentAttempt.questions.filter((q) => !q.selectedAlternativeId).length}
+              onConfirm={handleConfirmFinish}
+              onCancel={handleCancelFinish}
+              loading={finishLoading}
             />
           </>
         )}
-        <View className="mt-4 flex-row justify-between">
-          {currentQuestionIndex + 1 > 1 && (
-            <Pressable
-              onPress={handlePrevQuestion}
-              className="flex flex-row items-center gap-1 px-4 py-2"
-            >
-              <SimpleArrow width={16} height={16} color="#646464" />
-              <Text className="text-[#646464]">Anterior</Text>
-            </Pressable>
-          )}
-
-          <Pressable
-            onPress={
-              currentAttempt && currentQuestionIndex < currentAttempt.questions.length - 1
-                ? handleNextQuestion
-                : () => {
-                    handleNextQuestion();
-                    handleFinishExam();
-                  }
-            }
-            className="flex flex-row items-center gap-1 px-4 py-2"
-          >
-            <Text className="text-[#5E4980]">
-              {currentAttempt && currentQuestionIndex < currentAttempt.questions.length - 1
-                ? "Próxima"
-                : "Finalizar"}
-            </Text>
-            <SimpleArrow
-              width={16}
-              height={16}
-              color="#5E4980"
-              style={{ transform: [{ rotate: "180deg" }] }}
-            />
-          </Pressable>
-        </View>
-      </ScrollView>
-      {currentAttempt && (
-        <>
-          <QuestionGridModal
-            visible={openGrid}
-            onClose={() => setOpenGrid(false)}
-            questions={currentAttempt.questions}
-            currentQuestionIndex={currentAttempt.questions.findIndex(
-              (q) => q.id === currentQuestion?.id
-            )}
-            onGoToQuestion={handleGoToQuestion}
-            onFinishExam={handleFinishExam}
-          />
-          <FinishExamModal
-            visible={showFinishModal}
-            blankAnswers={currentAttempt.questions.filter((q) => !q.selectedAlternativeId).length}
-            onConfirm={handleConfirmFinish}
-            onCancel={handleCancelFinish}
-            loading={finishLoading}
-          />
-        </>
-      )}
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
