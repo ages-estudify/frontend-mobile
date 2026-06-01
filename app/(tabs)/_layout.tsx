@@ -10,7 +10,6 @@ import React from "react";
 import { Image, View } from "react-native";
 
 const TAB_R = TAB_BAR_HEIGHT / 2;
-const ACTIVE_BG = "#EBEBEB";
 
 const tabScreenOptions = {
   headerShown: false as const,
@@ -18,8 +17,6 @@ const tabScreenOptions = {
   tabBarBackground: () => <GlassTabBarBackground />,
   tabBarActiveTintColor: "#9500FF",
   tabBarInactiveTintColor: "#000000",
-  tabBarActiveBackgroundColor: ACTIVE_BG,
-  tabBarInactiveBackgroundColor: "transparent",
   tabBarShowLabel: true,
   tabBarLabelPosition: "below-icon" as const,
   tabBarAllowFontScaling: false,
@@ -35,7 +32,7 @@ const tabScreenOptions = {
     flex: 1,
     borderRadius: TAB_R,
     overflow: "hidden" as const,
-    marginHorizontal: 0,
+    marginHorizontal: 3,
     marginVertical: TAB_ITEM_VERTICAL_MARGIN,
     justifyContent: "center" as const,
     alignItems: "center" as const,
