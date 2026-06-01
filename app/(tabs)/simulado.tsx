@@ -118,8 +118,7 @@ export default function ExamsScreen() {
 
   function handleHistory() {
     if (!menuExam) return;
-    console.log("Ver histórico:", menuExam.id);
-    router.push("/(tabs)/progresso");
+    router.push(`/examHistory?examId=${menuExam.id}`);
   }
 
   function handleRetry() {
