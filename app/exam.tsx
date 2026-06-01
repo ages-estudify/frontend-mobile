@@ -129,6 +129,9 @@ export default function ExamScreen() {
   }
 
   const hasPrevQuestion = currentQuestionIndex > 0;
+  const questionPositionProgress = currentAttempt
+    ? { current: currentQuestionIndex + 1, total: currentAttempt.questions.length }
+    : progress;
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50" edges={["top", "left", "right"]}>
@@ -145,14 +148,14 @@ export default function ExamScreen() {
             </Pressable>
           </View>
         </View>
-        <QuestionProgress progress={progress} />
+        <QuestionProgress progress={questionPositionProgress} />
 
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
           {currentQuestion && (
             <>
               <QuestionCard
                 question={currentQuestion}
-                progress={currentQuestion.number || 1}
+                progress={currentQuestionIndex + 1}
                 isSimulated={true}
               />
               <QuestionAlternatives
