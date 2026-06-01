@@ -110,7 +110,7 @@ export interface SubmitAnswerRequest {
 
 export interface FinishAttemptRequest {
   timeSpentSeconds: number;
-  currentQuestion: number | undefined;
+  examDayId?: string;
 }
 
 export type Language = "SPANISH" | "ENGLISH";
