@@ -2,6 +2,20 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
 import SubjectBox from "./SubjectBox";
 
+// Subject SVGs are not transformed under jest; stub each as a no-op component.
+jest.mock("../../../assets/icons/subjects/biologia.svg", () => () => null);
+jest.mock("../../../assets/icons/subjects/espanhol.svg", () => () => null);
+jest.mock("../../../assets/icons/subjects/filosofia.svg", () => () => null);
+jest.mock("../../../assets/icons/subjects/fisica.svg", () => () => null);
+jest.mock("../../../assets/icons/subjects/geografia.svg", () => () => null);
+jest.mock("../../../assets/icons/subjects/historia.svg", () => () => null);
+jest.mock("../../../assets/icons/subjects/ingles.svg", () => () => null);
+jest.mock("../../../assets/icons/subjects/literatura.svg", () => () => null);
+jest.mock("../../../assets/icons/subjects/matematica.svg", () => () => null);
+jest.mock("../../../assets/icons/subjects/portugues.svg", () => () => null);
+jest.mock("../../../assets/icons/subjects/quimica.svg", () => () => null);
+jest.mock("../../../assets/icons/subjects/sociologia.svg", () => () => null);
+
 const mockNavigate = jest.fn();
 
 jest.mock("expo-router", () => ({

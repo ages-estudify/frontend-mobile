@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { onboardingService } from "@/services/onboarding.service";
+import { onboardingService } from "@/services/onboarding/onboarding.service";
 import type { OnboardingRequest, StudyDay, StudyHoursMap } from "@/types/onboarding.types";
 
 const ONBOARDING_COMPLETED_STORAGE_KEY = "hasCompletedOnboarding";

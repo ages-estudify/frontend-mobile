@@ -120,7 +120,7 @@ describe("QuestionScreen Component", () => {
       setSelected: jest.fn(),
       confirmAnswer: jest.fn(),
       nextQuestion: mockNextQuestion,
-      feedback: { isCorrect: true },
+      feedback: { data: { isCorrect: true } },
       progress: { current: 1, total: 20 },
     });
 

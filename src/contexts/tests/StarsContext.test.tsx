@@ -2,9 +2,9 @@ import React from "react";
 import { act, render, screen } from "@testing-library/react-native";
 import { Text } from "react-native";
 import { StarsProvider, useStarsContext } from "@/contexts/StarsContext";
-import { getUserStars } from "@/services/stars.service";
+import { getUserStars } from "@/services/stars/stars.service";
 
-jest.mock("@/services/stars.service", () => ({
+jest.mock("@/services/stars/stars.service", () => ({
   getUserStars: jest.fn(),
 }));
 

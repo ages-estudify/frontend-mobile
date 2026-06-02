@@ -33,8 +33,12 @@ describe("SubjectsGrid", () => {
     render(<SubjectsGrid subjects={subjects} />);
 
     expect(screen.getByText("Categorias")).toBeTruthy();
-    expect(screen.getByText("Física|/subject?id=s1&name=Física")).toBeTruthy();
-    expect(screen.getByText("Química|/subject?id=s2&name=Química")).toBeTruthy();
+    expect(
+      screen.getByText(`Física|/subject?id=s1&name=${encodeURIComponent("Física")}`)
+    ).toBeTruthy();
+    expect(
+      screen.getByText(`Química|/subject?id=s2&name=${encodeURIComponent("Química")}`)
+    ).toBeTruthy();
   });
 
   it("renders empty grid when there are no subjects", () => {

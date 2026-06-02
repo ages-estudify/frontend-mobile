@@ -1,4 +1,4 @@
-import { getUserStreak } from "@/services/streak.service";
+import { getUserStreak } from "@/services/streak/streak.service";
 import type { GetStreakResponse } from "@/types/streak.types";
 import React, {
   createContext,

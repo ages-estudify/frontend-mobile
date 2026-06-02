@@ -3,7 +3,7 @@ import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { Alert } from "react-native";
 
-import { onboardingService } from "@/services/onboarding.service";
+import { onboardingService } from "@/services/onboarding/onboarding.service";
 import OnboardingScreen from "../app/onboarding";
 
 const mockReplace = jest.fn();
@@ -14,7 +14,7 @@ jest.mock("expo-router", () => ({
   }),
 }));
 
-jest.mock("@/services/onboarding.service", () => ({
+jest.mock("@/services/onboarding/onboarding.service", () => ({
   onboardingService: {
     submit: jest.fn(),
   },

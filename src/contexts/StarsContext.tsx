@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import { getUserStars } from "@/services/stars.service";
+import { getUserStars } from "@/services/stars/stars.service";
 
 interface StarsContextType {
   stars: number | null;

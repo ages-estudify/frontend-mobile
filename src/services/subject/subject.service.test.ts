@@ -7,10 +7,8 @@ jest.mock("../api", () => ({
   },
 }));
 
-/* eslint-disable import/first -- jest.mock is hoisted; these imports use the mocked module */
 import subjectApi from "../api";
 import { getSubjects, getTopicsBySubject } from "./subject.service";
-/* eslint-enable import/first */
 
 const mockedGet = subjectApi.get as jest.Mock;
 

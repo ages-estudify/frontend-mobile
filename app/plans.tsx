@@ -1,6 +1,6 @@
 import { CARD_W, PlanCard, type Plan } from "@/components/PlanCard";
 import { useAuth } from "@/hooks/useAuth";
-import { subscriptionService } from "@/services/subscription.service";
+import { subscriptionService } from "@/services/subscription/subscription.service";
 import type { PlanType } from "@/types/subscription.types";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";

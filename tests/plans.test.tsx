@@ -16,14 +16,14 @@ jest.mock("@/hooks/useAuth", () => {
   return { useAuth: () => ({ updateSession }) };
 });
 
-jest.mock("@/services/subscription.service", () => {
+jest.mock("@/services/subscription/subscription.service", () => {
   const subscribe = jest.fn();
   return { subscriptionService: { subscribe } };
 });
 
 import { useRouter } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
-import { subscriptionService } from "@/services/subscription.service";
+import { subscriptionService } from "@/services/subscription/subscription.service";
 import PlanosScreen from "../app/plans";
 
 const MOCK_SUCCESS_RESPONSE = {
@@ -85,7 +85,8 @@ describe("PlanosScreen", () => {
 
   it("deve mostrar bolha da mascote", () => {
     const { getByText } = render(<PlanosScreen />);
-    expect(getByText("O Estu recomenda o plano anual!")).toBeTruthy();
+    expect(getByText("O Estu recomenda o plano")).toBeTruthy();
+    expect(getByText("anual!")).toBeTruthy();
   });
 
   it("deve ter TRIMESTRAL como plano padrão (índice 0)", async () => {
@@ -155,11 +156,11 @@ describe("PlanosScreen", () => {
       fireEvent.press(getByTestId("subscribe-button"));
     });
 
-    expect(updateSessionMock).toHaveBeenCalledWith({
-      token: "new_access_token",
-      refreshToken: "new_refresh_token",
-      planExpirationDate: "2026-07-18",
-    });
+    expect(updateSessionMock).toHaveBeenCalledWith(
+      "new_access_token",
+      "new_refresh_token",
+      "2026-07-18"
+    );
   });
 
   it("deve atualizar planExpirationDate com o valor exato do backend", async () => {
@@ -170,7 +171,7 @@ describe("PlanosScreen", () => {
       fireEvent.press(getByTestId("subscribe-button"));
     });
 
-    expect(updateSessionMock.mock.calls[0][0].planExpirationDate).toBe("2026-07-18");
+    expect(updateSessionMock.mock.calls[0][2]).toBe("2026-07-18");
   });
 
   it("deve substituir access token pelo novo token da API", async () => {
@@ -181,7 +182,7 @@ describe("PlanosScreen", () => {
       fireEvent.press(getByTestId("subscribe-button"));
     });
 
-    expect(updateSessionMock.mock.calls[0][0].token).toBe("new_access_token");
+    expect(updateSessionMock.mock.calls[0][0]).toBe("new_access_token");
   });
 
   it("deve substituir refreshToken pelo novo refreshToken da API", async () => {
@@ -192,7 +193,7 @@ describe("PlanosScreen", () => {
       fireEvent.press(getByTestId("subscribe-button"));
     });
 
-    expect(updateSessionMock.mock.calls[0][0].refreshToken).toBe("new_refresh_token");
+    expect(updateSessionMock.mock.calls[0][1]).toBe("new_refresh_token");
   });
 
   it("deve redirecionar para '/' após sucesso", async () => {

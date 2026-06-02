@@ -1,10 +1,10 @@
 import { StreakProvider, useStreakContext } from "@/contexts/StreakContext";
-import { getUserStreak } from "@/services/streak.service";
+import { getUserStreak } from "@/services/streak/streak.service";
 import { act, render, screen } from "@testing-library/react-native";
 import React from "react";
 import { Text } from "react-native";
 
-jest.mock("@/services/streak.service", () => ({
+jest.mock("@/services/streak/streak.service", () => ({
   getUserStreak: jest.fn(),
 }));
 

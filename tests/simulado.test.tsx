@@ -2,7 +2,14 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
 
 jest.mock("expo-router", () => ({
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), navigate: jest.fn() }),
+  useFocusEffect: (callback: () => void) => {
+    const React = require("react");
+    React.useEffect(() => {
+      const cleanup = callback();
+      return cleanup;
+    }, []);
+  },
 }));
 
 jest.mock("react-native-safe-area-context", () => ({
@@ -16,6 +23,8 @@ jest.mock("@gorhom/bottom-sheet", () => {
     __esModule: true,
     default: ({ children }: any) => <View>{children}</View>,
     BottomSheetView: ({ children }: any) => <View>{children}</View>,
+    BottomSheetScrollView: ({ children }: any) => <View>{children}</View>,
+    BottomSheetBackdrop: () => <View />,
   };
 });
 
@@ -25,8 +34,16 @@ jest.mock("@/constants/tabBarLayout", () => ({
   TAB_BAR_HEIGHT: 64,
 }));
 
-jest.mock("../../assets/enem 2.png", () => 1);
-jest.mock("../../assets/ufrgs_cor 1 1.png", () => 2);
+jest.mock("@/components/navigation/PlanGuard", () => {
+  const React = require("react");
+  const { View } = require("react-native");
+  return {
+    PlanGuard: ({ children }: any) => <View>{children}</View>,
+  };
+});
+
+jest.mock("../assets/enem 2.png", () => 1);
+jest.mock("../assets/ufrgs_cor 1 1.png", () => 2);
 
 // ── Mock do useExams (controlável por teste) ─────────────────────────────────
 
@@ -138,6 +155,7 @@ function mockDefault() {
     loading: false,
     error: null,
     retryExam: mockRetryExam,
+    refresh: jest.fn(),
   });
 }
 
@@ -180,6 +198,7 @@ describe("ExamsScreen", () => {
         loading: true,
         error: null,
         retryExam: mockRetryExam,
+        refresh: jest.fn(),
       });
       render(<ExamsScreen />);
       expect(screen.queryByText("Simulados")).toBeNull();
@@ -193,6 +212,7 @@ describe("ExamsScreen", () => {
         loading: false,
         error: "Erro ao carregar simulados",
         retryExam: mockRetryExam,
+        refresh: jest.fn(),
       });
       render(<ExamsScreen />);
       expect(screen.getByText("Erro ao carregar simulados")).toBeTruthy();
@@ -206,6 +226,7 @@ describe("ExamsScreen", () => {
         loading: false,
         error: null,
         retryExam: mockRetryExam,
+        refresh: jest.fn(),
       });
       render(<ExamsScreen />);
       expect(screen.getByText("Nenhum simulado disponível")).toBeTruthy();
@@ -280,6 +301,7 @@ describe("ExamsScreen", () => {
         loading: false,
         error: null,
         retryExam: mockRetryExam,
+        refresh: jest.fn(),
       });
       render(<ExamsScreen />);
       expect(screen.getByText("Simulado Retry")).toBeTruthy();
