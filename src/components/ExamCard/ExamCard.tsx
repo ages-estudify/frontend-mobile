@@ -6,7 +6,7 @@ import { Image, Pressable, Text, View } from "react-native";
 type Props = {
   exam: Exam;
   onPress: () => void;
-  onMenuPress: (position: { x: number; y: number }) => void;
+  onMenuPress: (anchor: { x: number; y: number; width: number; height: number }) => void;
   width?: number;
 };
 
@@ -34,10 +34,7 @@ export function ExamCard({ exam, onPress, onMenuPress, width = 177 }: Props) {
 
   function handleMenuPress() {
     cardRef.current?.measureInWindow((pageX, pageY, cardWidth, cardHeight) => {
-      onMenuPress({
-        x: pageX,
-        y: pageY + cardHeight + 8,
-      });
+      onMenuPress({ x: pageX, y: pageY, width: cardWidth, height: cardHeight });
     });
   }
 

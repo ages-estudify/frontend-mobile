@@ -1,26 +1,62 @@
+import { TAB_BAR_HEIGHT, tabBarBottomOffset } from "@/constants/tabBarLayout";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import React from "react";
+import React, { useMemo } from "react";
 import { Modal, Pressable, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const MENU_WIDTH = 200;
 const MENU_HEIGHT = 100;
 const MARGIN = 12;
+const ANCHOR_GAP = 8;
+
+export type MenuAnchorRect = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
 
 type Props = {
   visible: boolean;
   onClose: () => void;
   onHistory: () => void;
   onRetry: () => void;
-  anchorPosition?: { x: number; y: number };
+  anchorRect?: MenuAnchorRect;
 };
 
-export function ExamCardMenu({ visible, onClose, onHistory, onRetry, anchorPosition }: Props) {
+function computeMenuPosition(
+  anchor: MenuAnchorRect | undefined,
+  screen: { width: number; height: number },
+  bottomLimit: number
+): { top: number; left: number } {
+  if (!anchor) {
+    return { top: 120, left: MARGIN };
+  }
+
+  const anchorBottom = anchor.y + anchor.height;
+  const spaceBelow = bottomLimit - anchorBottom - ANCHOR_GAP;
+  const spaceAbove = anchor.y - MARGIN - ANCHOR_GAP;
+  const openBelow = spaceBelow >= MENU_HEIGHT || spaceBelow >= spaceAbove;
+
+  let top = openBelow ? anchorBottom + ANCHOR_GAP : anchor.y - MENU_HEIGHT - ANCHOR_GAP;
+  top = Math.max(MARGIN, Math.min(top, bottomLimit - MENU_HEIGHT));
+
+  const left = Math.min(Math.max(anchor.x, MARGIN), screen.width - MENU_WIDTH - MARGIN);
+
+  return { top, left };
+}
+
+export function ExamCardMenu({ visible, onClose, onHistory, onRetry, anchorRect }: Props) {
   const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
-  const top = Math.min(Math.max(anchorPosition?.y ?? 120, MARGIN), height - MENU_HEIGHT - MARGIN);
+  const bottomLimit = height - tabBarBottomOffset(insets.bottom) - TAB_BAR_HEIGHT - MARGIN;
 
-  const left = Math.min(Math.max(anchorPosition?.x ?? MARGIN, MARGIN), width - MENU_WIDTH - MARGIN);
+  const { top, left } = useMemo(
+    () => computeMenuPosition(anchorRect, { width, height }, bottomLimit),
+    [anchorRect, width, height, bottomLimit]
+  );
 
   return (
     <Modal
@@ -90,7 +126,7 @@ const styles = StyleSheet.create({
   menuContainer: {
     position: "absolute",
     width: MENU_WIDTH,
-    minHeight: MENU_HEIGHT,
+    height: MENU_HEIGHT,
     borderRadius: 24,
     overflow: "hidden",
     borderWidth: 1,
