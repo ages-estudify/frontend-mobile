@@ -12,9 +12,20 @@ jest.mock("expo-router", () => ({
   },
 }));
 
-jest.mock("react-native-safe-area-context", () => ({
-  useSafeAreaInsets: () => ({ bottom: 0, top: 0, left: 0, right: 0 }),
-}));
+jest.mock("react-native-safe-area-context", () => {
+  const { View } = require("react-native");
+  return {
+    SafeAreaView: View,
+    useSafeAreaInsets: () => ({ bottom: 0, top: 0, left: 0, right: 0 }),
+  };
+});
+
+jest.mock("@/components/navigation/ProfileAvatarButton", () => {
+  const { View } = require("react-native");
+  return {
+    ProfileAvatarButton: () => <View testID="profile-avatar-button" />,
+  };
+});
 
 jest.mock("@gorhom/bottom-sheet", () => {
   const React = require("react");
@@ -44,6 +55,7 @@ jest.mock("@/components/navigation/PlanGuard", () => {
 
 jest.mock("../assets/enem 2.png", () => 1);
 jest.mock("../assets/ufrgs_cor 1 1.png", () => 2);
+jest.mock("../assets/placeholder_user.png", () => 1);
 
 // ── Mock do useExams (controlável por teste) ─────────────────────────────────
 
@@ -201,7 +213,7 @@ describe("ExamsScreen", () => {
         refresh: jest.fn(),
       });
       render(<ExamsScreen />);
-      expect(screen.queryByText("Simulados")).toBeNull();
+      expect(screen.getByText("Simulados")).toBeTruthy();
     });
   });
 

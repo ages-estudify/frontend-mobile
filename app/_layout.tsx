@@ -66,6 +66,10 @@ export default function RootLayout() {
                 <Stack.Screen name="question" options={{ title: "Question" }} />
                 <Stack.Screen name="examFeedback" options={{ title: "ExamFeedback" }} />
                 <Stack.Screen name="onboarding" options={{ title: "Onboarding" }} />
+                <Stack.Screen
+                  name="profile"
+                  options={{ title: "Profile", statusBarTranslucent: true }}
+                />
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="exam" options={{ title: "PracticeTest" }} />
               </Stack>

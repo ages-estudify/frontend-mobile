@@ -1,5 +1,6 @@
 import { useAuthSession } from "@/contexts/AuthContext";
 import { authService } from "@/services/auth/auth.service";
+import { clearUserProfile, saveUserProfile } from "@/services/userProfile/userProfile.storage";
 import { hasGatedContentAccess } from "@/utils/subscription-access";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -37,6 +38,7 @@ export function useAuth() {
     await AsyncStorage.setItem("refreshToken", refreshToken);
     await AsyncStorage.setItem("role", role);
     await persistPlanExpirationDate(planExpirationDate);
+    await saveUserProfile({ email });
 
     session.setSessionFromCredentials(role, planExpirationDate);
 
@@ -51,6 +53,7 @@ export function useAuth() {
       "role",
       "hasCompletedOnboarding",
     ]);
+    await clearUserProfile();
     session.clearSessionMetadata();
     router.replace("/login");
   };
@@ -79,6 +82,12 @@ export function useAuth() {
       await AsyncStorage.setItem("refreshToken", refreshToken);
       await AsyncStorage.setItem("role", role);
       await persistPlanExpirationDate(planExpirationDate);
+      await saveUserProfile({
+        fullName: body.fullName,
+        email: body.email,
+        phone: body.phone,
+        birthDate: body.birthDate,
+      });
       session.setSessionFromCredentials(role, planExpirationDate);
     }
 

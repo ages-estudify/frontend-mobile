@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -17,7 +17,9 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { onboardingService } from "@/services/onboarding/onboarding.service";
+import { getUserProfile, saveUserProfile } from "@/services/userProfile/userProfile.storage";
 import type { OnboardingRequest, StudyDay, StudyHoursMap } from "@/types/onboarding.types";
+import { formatPreferredLanguage } from "@/utils/studySchedule";
 
 const ONBOARDING_COMPLETED_STORAGE_KEY = "hasCompletedOnboarding";
 
@@ -58,6 +60,8 @@ function sortHours(hours: number[]): number[] {
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { mode } = useLocalSearchParams<{ mode?: string }>();
+  const isEditMode = mode === "edit";
   const insets = useSafeAreaInsets();
   const { height: screenHeight } = useWindowDimensions();
 
@@ -73,6 +77,29 @@ export default function OnboardingScreen() {
   const isSubmittingRef = useRef(false);
 
   React.useEffect(() => {
+    if (isEditMode) {
+      void (async () => {
+        const profile = await getUserProfile();
+        if (!profile) return;
+
+        if (profile.desiredCourse) setdesiredCourse(profile.desiredCourse);
+        if (profile.preferredLanguage) {
+          setpreferredLanguage(formatPreferredLanguage(profile.preferredLanguage));
+        }
+        if (profile.desiredUniversity) setdesiredUniversity(profile.desiredUniversity);
+        if (profile.studyHours) {
+          setStudyHoursByDay(profile.studyHours);
+          setActiveDays(
+            Object.keys(profile.studyHours).filter(
+              (day) => (profile.studyHours?.[day as StudyDay]?.length ?? 0) > 0
+            ) as StudyDay[]
+          );
+        }
+        setStep(1);
+      })();
+      return;
+    }
+
     const checkOnboardingStatus = async () => {
       const isCompleted = await AsyncStorage.getItem(ONBOARDING_COMPLETED_STORAGE_KEY);
       if (isCompleted === "true") {
@@ -81,7 +108,7 @@ export default function OnboardingScreen() {
     };
 
     checkOnboardingStatus();
-  }, [router]);
+  }, [router, isEditMode]);
 
   const primaryButtonLabel = step < 2 ? "Proximo" : isSubmitting ? "Salvando" : "Salvar";
 
@@ -188,6 +215,18 @@ export default function OnboardingScreen() {
       isSubmittingRef.current = true;
       setIsSubmitting(true);
       await onboardingService.submit(payload as OnboardingRequest);
+      await saveUserProfile({
+        desiredCourse: payload.desiredCourse,
+        desiredUniversity: payload.desiredUniversity,
+        preferredLanguage: payload.preferredLanguage,
+        studyHours: payload.studyHours,
+      });
+
+      if (isEditMode) {
+        router.back();
+        return;
+      }
+
       await AsyncStorage.setItem(ONBOARDING_COMPLETED_STORAGE_KEY, "true");
       router.replace("/(tabs)/treinar");
     } catch (error) {
