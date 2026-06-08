@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "estudify.develop",
+      "bundleIdentifier": "com.ages.estudify",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -25,7 +25,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "pan",
-      "package": "estudify.develop"
+      "package": "com.ages.estudify"
     },
     "web": {
       "output": "static",
@@ -56,8 +56,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "de77ef6a-6907-4282-8a29-4e31cfe4a779"
+        "projectId": "b73e7226-733d-41b2-8972-53788b893a85"
       }
-    }
+    },
+    "owner": "camana98"
   }
 }
