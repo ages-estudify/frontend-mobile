@@ -3,7 +3,7 @@ import type { Topic } from "@/types/subject.types";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react-native";
 import * as ExpoRouter from "expo-router";
 import React from "react";
-import SubjectScreen from "../app/subject";
+import SubjectScreen from "./subject";
 
 jest.mock("@/services/subject/subject.service", () => ({
   getTopicsBySubject: jest.fn(),

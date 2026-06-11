@@ -4,7 +4,7 @@ import React from "react";
 import { Alert } from "react-native";
 
 import { onboardingService } from "@/services/onboarding/onboarding.service";
-import OnboardingScreen from "../app/onboarding";
+import OnboardingScreen from "./onboarding";
 
 const mockReplace = jest.fn();
 

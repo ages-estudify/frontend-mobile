@@ -42,8 +42,8 @@ jest.mock("@/components/navigation/PlanGuard", () => {
   };
 });
 
-jest.mock("../assets/enem 2.png", () => 1);
-jest.mock("../assets/ufrgs_cor 1 1.png", () => 2);
+jest.mock("../../assets/enem 2.png", () => 1);
+jest.mock("../../assets/ufrgs_cor 1 1.png", () => 2);
 
 // ── Mock do useExams (controlável por teste) ─────────────────────────────────
 
@@ -159,7 +159,7 @@ function mockDefault() {
   });
 }
 
-import ExamsScreen from "../app/(tabs)/simulado";
+import ExamsScreen from "./simulado";
 
 describe("ExamsScreen", () => {
   beforeEach(() => {
