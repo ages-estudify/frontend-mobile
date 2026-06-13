@@ -19,5 +19,9 @@ export function useUserProfile() {
     }, [reload])
   );
 
-  return { profile, loading, reload };
+  function updateProfile(partial: Partial<UserProfile>) {
+    setProfile((prev) => (prev ? { ...prev, ...partial } : prev));
+  }
+
+  return { profile, loading, reload, updateProfile };
 }

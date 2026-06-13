@@ -1,6 +1,7 @@
+import { ProfilePictureEditor } from "@/components/ProfilePictureEditor/Profilepictureeditor";
+import { useAuthSession } from "@/contexts/AuthContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { useAuthSession } from "@/contexts/AuthContext";
 import {
   formatPreferredLanguage,
   formatStudyHourLabel,
@@ -11,9 +12,8 @@ import {
 import { hasGatedContentAccess } from "@/utils/subscription-access";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
-import { Image, ImageBackground, Pressable, ScrollView, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import React, { useState } from "react";
+import { ImageBackground, Pressable, ScrollView, Text, View } from "react-native";
 
 type InfoRowProps = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -87,15 +87,25 @@ function EmptyChipState({ message }: { message: string }) {
 
 export function ProfileScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { logout } = useAuth();
-  const { profile } = useUserProfile();
+  const { profile, updateProfile } = useUserProfile();
   const { role, planExpirationDate } = useAuthSession();
+
+  const [pictureUrl, setPictureUrl] = useState<string | null>(profile?.profilePictureUrl ?? null);
 
   const planStatus = hasGatedContentAccess(role, planExpirationDate) ? "Ativo" : "Inativo";
   const studyDays = getSelectedStudyDays(profile?.studyHours);
   const studyHours = getUniqueStudyHours(profile?.studyHours);
-  const headerHeight = 148 + insets.top;
+
+  function handlePictureUpdate(url: string) {
+    setPictureUrl(url);
+    updateProfile({ profilePictureUrl: url });
+  }
+
+  function handlePictureRemove() {
+    setPictureUrl(null);
+    updateProfile({ profilePictureUrl: null });
+  }
 
   return (
     <View className="flex-1 bg-whitebg">
@@ -108,12 +118,12 @@ export function ProfileScreen() {
             source={require("../../../../assets/profile_background.png")}
             resizeMode="cover"
             className="overflow-hidden rounded-b-[28px]"
-            style={{ height: headerHeight }}
+            style={{ height: 148 }}
           />
 
           <Pressable
             onPress={() => router.back()}
-            style={{ top: insets.top + 8 }}
+            style={{ top: 8 }}
             className="absolute left-[16px] h-[40px] w-[40px] items-center justify-center rounded-full bg-white"
             accessibilityRole="button"
             accessibilityLabel="Voltar"
@@ -123,7 +133,7 @@ export function ProfileScreen() {
 
           <Pressable
             onPress={() => router.push("/onboarding?mode=edit")}
-            style={{ top: insets.top + 8 }}
+            style={{ top: 8 }}
             className="absolute right-[16px] h-[40px] w-[40px] items-center justify-center rounded-full bg-white"
             accessibilityRole="button"
             accessibilityLabel="Editar perfil"
@@ -132,10 +142,10 @@ export function ProfileScreen() {
           </Pressable>
 
           <View className="-mt-[44px] items-center">
-            <Image
-              source={require("../../../../assets/placeholder_user.png")}
-              className="h-[88px] w-[88px] rounded-full border-4 border-whitebg"
-              resizeMode="cover"
+            <ProfilePictureEditor
+              currentUrl={pictureUrl}
+              onUpdate={handlePictureUpdate}
+              onRemove={handlePictureRemove}
             />
             <Text className="mt-[12px] px-[16px] text-center font-poppins-semi text-[28px] text-black">
               {profile?.fullName?.trim() || "Usuário"}
