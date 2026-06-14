@@ -1,5 +1,6 @@
 import { ExamCard } from "@/components/ExamCard/ExamCard";
 import { ExamCardMenu } from "@/components/ExamCardMenu/ExamCardMenu";
+import type { MenuAnchorRect } from "@/components/ExamCardMenu/ExamCardMenu";
 import { ExamDaysBottomSheet } from "@/components/ExamDaysBottomSheet/ExamDaysBottomSheet";
 import { LanguageBottomSheet } from "@/components/LanguageBottomSheet/LanguageBottomSheet";
 import { PlanGuard } from "@/components/navigation/PlanGuard";
@@ -37,7 +38,7 @@ export default function ExamsScreen() {
   const [showLanguageSheet, setShowLanguageSheet] = useState(false);
 
   const [menuExam, setMenuExam] = useState<Exam | null>(null);
-  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [menuAnchor, setMenuAnchor] = useState<MenuAnchorRect | undefined>(undefined);
   const [showMenu, setShowMenu] = useState(false);
 
   const [showRetryModal, setShowRetryModal] = useState(false);
@@ -110,9 +111,9 @@ export default function ExamsScreen() {
     selectedExamRef.current = null;
   }
 
-  function handleMenuPress(exam: Exam, position: { x: number; y: number }) {
+  function handleMenuPress(exam: Exam, anchor: MenuAnchorRect) {
     setMenuExam(exam);
-    setMenuPosition(position);
+    setMenuAnchor(anchor);
     setShowMenu(true);
   }
 
@@ -243,7 +244,7 @@ export default function ExamsScreen() {
           onClose={() => setShowMenu(false)}
           onHistory={handleHistory}
           onRetry={handleRetry}
-          anchorPosition={menuPosition}
+          anchorRect={menuAnchor}
         />
 
         <RetryConfirmModal
