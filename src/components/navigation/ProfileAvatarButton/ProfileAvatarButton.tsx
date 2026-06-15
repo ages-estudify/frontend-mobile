@@ -12,7 +12,7 @@ export function ProfileAvatarButton() {
       accessibilityLabel="Abrir perfil"
     >
       <Image
-        source={require("../../../../assets/placeholder_user.png")}
+        source={require("../../../../assets/User.png")}
         style={{ width: 40, height: 40 }}
         className="h-10 w-10 rounded-full"
         resizeMode="cover"

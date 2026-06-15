@@ -28,6 +28,7 @@ export const endPoints = {
   },
   users: {
     profile: (userId: string) => `/users/${userId}`,
+    preferences: "/users/preferences",
     streak: "/users/streak",
     stats: "/users/stats",
   },

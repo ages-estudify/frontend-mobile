@@ -1,6 +1,6 @@
+import { useAuthSession } from "@/contexts/AuthContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { useAuthSession } from "@/contexts/AuthContext";
 import {
   formatPreferredLanguage,
   formatStudyHourLabel,
@@ -155,11 +155,14 @@ export function ProfileScreen() {
     <View className="flex-1 bg-whitebg">
       <ScrollView
         showsVerticalScrollIndicator={false}
+        bounces={false}
+        alwaysBounceVertical={false}
+        overScrollMode="never"
         contentContainerStyle={{ paddingBottom: 32 }}
       >
         <View className="relative mb-[12px]">
           <ImageBackground
-            source={require("../../../../assets/profile_background.png")}
+            source={require("../../../assets/profile_background.png")}
             resizeMode="cover"
             className="overflow-hidden rounded-b-[28px]"
             style={{ height: headerHeight }}
@@ -176,7 +179,7 @@ export function ProfileScreen() {
           </Pressable>
 
           <Pressable
-            onPress={() => router.push("/onboarding?mode=edit")}
+            onPress={() => router.push("/editProfile")}
             style={{ top: insets.top + 8 }}
             className="absolute right-[16px] h-[40px] w-[40px] items-center justify-center rounded-full bg-white"
             accessibilityRole="button"
@@ -187,7 +190,7 @@ export function ProfileScreen() {
 
           <View className="-mt-[44px] items-center">
             <Image
-              source={require("../../../../assets/placeholder_user.png")}
+              source={require("../../../assets/User.png")}
               className="h-[88px] w-[88px] rounded-full border-4 border-whitebg"
               resizeMode="cover"
             />
