@@ -10,6 +10,7 @@ export interface RegisterRequest {
 
 /** Corpo comum de login/register retornado pela API. */
 export type LoginResponseData = {
+  userId?: string;
   token: string;
   refreshToken: string;
   role: string;

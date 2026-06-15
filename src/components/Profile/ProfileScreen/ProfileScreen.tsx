@@ -12,7 +12,15 @@ import { hasGatedContentAccess } from "@/utils/subscription-access";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Image, ImageBackground, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type InfoRowProps = {
@@ -85,17 +93,63 @@ function EmptyChipState({ message }: { message: string }) {
   );
 }
 
+function ProfileFeedbackState({
+  message,
+  onRetry,
+  loading,
+}: {
+  message?: string;
+  onRetry: () => void;
+  loading?: boolean;
+}) {
+  return (
+    <View className="items-center rounded-[16px] border border-cardBorder bg-white px-[16px] py-[24px]">
+      {loading ? (
+        <>
+          <ActivityIndicator size="large" />
+          <Text className="mt-[12px] font-inter text-[15px] text-primaryGray">
+            Carregando perfil...
+          </Text>
+        </>
+      ) : (
+        <>
+          <Text className="text-center font-inter-medium text-[15px] text-primaryGray">
+            {message}
+          </Text>
+          <Pressable
+            onPress={onRetry}
+            className="mt-[16px] rounded-[12px] bg-black px-[18px] py-[10px]"
+          >
+            <Text className="font-inter-semi text-[14px] text-white">Tentar novamente</Text>
+          </Pressable>
+        </>
+      )}
+    </View>
+  );
+}
+
+function formatPlanStatus(status?: string): string {
+  if (status === "active") return "Ativo";
+  if (status === "inactive") return "Inativo";
+  return status ?? "—";
+}
+
 export function ProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { logout } = useAuth();
-  const { profile } = useUserProfile();
+  const { profile, loading, error, reload } = useUserProfile();
   const { role, planExpirationDate } = useAuthSession();
 
-  const planStatus = hasGatedContentAccess(role, planExpirationDate) ? "Ativo" : "Inativo";
+  const planStatus = profile?.planStatus
+    ? formatPlanStatus(profile.planStatus)
+    : hasGatedContentAccess(role, planExpirationDate)
+      ? "Ativo"
+      : "Inativo";
   const studyDays = getSelectedStudyDays(profile?.studyHours);
   const studyHours = getUniqueStudyHours(profile?.studyHours);
   const headerHeight = 148 + insets.top;
+  const shouldRenderProfileContent = Boolean(profile) || (!loading && !error);
 
   return (
     <View className="flex-1 bg-whitebg">
@@ -144,101 +198,119 @@ export function ProfileScreen() {
         </View>
 
         <View className="px-[16px]">
-          <ProfileSection title="Informações">
-            <View className="rounded-[16px] border border-cardBorder bg-white px-[16px]">
-              <ProfileInfoRow
-                icon="person-outline"
-                label="Nome Completo"
-                value={profile?.fullName?.trim() || "—"}
-              />
-              <View className="h-px bg-cardBorder" />
-              <ProfileInfoRow
-                icon="globe-outline"
-                label="Email"
-                value={profile?.email?.trim() || "—"}
-              />
-              <View className="h-px bg-cardBorder" />
-              <ProfileInfoRow
-                icon="stats-chart-outline"
-                label="Situação do Plano"
-                value={planStatus}
-              />
-              <View className="h-px bg-cardBorder" />
-              <ProfileInfoRow
-                icon="heart-outline"
-                label="Curso Desejado"
-                value={profile?.desiredCourse?.trim() || "—"}
-              />
-              <View className="h-px bg-cardBorder" />
-              <ProfileInfoRow
-                icon="chatbubble-outline"
-                label="Língua Estrangeira"
-                value={formatPreferredLanguage(profile?.preferredLanguage)}
-              />
-              <View className="h-px bg-cardBorder" />
-              <ProfileInfoRow
-                icon="business-outline"
-                label="Universidade Desejada"
-                value={profile?.desiredUniversity?.trim() || "—"}
-              />
+          {loading && !profile ? (
+            <ProfileFeedbackState loading onRetry={reload} />
+          ) : error && !profile ? (
+            <ProfileFeedbackState message={error} onRetry={reload} />
+          ) : null}
+
+          {error && profile ? (
+            <View className="mb-[16px] rounded-[12px] border border-cardBorder bg-white px-[16px] py-[12px]">
+              <Text className="font-inter text-[14px] text-primaryGray">{error}</Text>
             </View>
-          </ProfileSection>
+          ) : null}
 
-          <ProfileSection title="Dias de Estudo">
-            {studyDays.length > 0 ? (
-              <View className="flex-row flex-wrap gap-[10px]">
-                {studyDays.map((day) => (
-                  <ProfileChip key={day} label={STUDY_DAY_LABELS[day]} />
-                ))}
-              </View>
-            ) : (
-              <EmptyChipState message="Nenhum dia de estudo configurado." />
-            )}
-          </ProfileSection>
+          {shouldRenderProfileContent ? (
+            <>
+              <ProfileSection title="Informações">
+                <View className="rounded-[16px] border border-cardBorder bg-white px-[16px]">
+                  <ProfileInfoRow
+                    icon="person-outline"
+                    label="Nome Completo"
+                    value={profile?.fullName?.trim() || "—"}
+                  />
+                  <View className="h-px bg-cardBorder" />
+                  <ProfileInfoRow
+                    icon="globe-outline"
+                    label="Email"
+                    value={profile?.email?.trim() || "—"}
+                  />
+                  <View className="h-px bg-cardBorder" />
+                  <ProfileInfoRow
+                    icon="stats-chart-outline"
+                    label="Situação do Plano"
+                    value={planStatus}
+                  />
+                  <View className="h-px bg-cardBorder" />
+                  <ProfileInfoRow
+                    icon="heart-outline"
+                    label="Curso Desejado"
+                    value={profile?.desiredCourse?.trim() || "—"}
+                  />
+                  <View className="h-px bg-cardBorder" />
+                  <ProfileInfoRow
+                    icon="chatbubble-outline"
+                    label="Língua Estrangeira"
+                    value={formatPreferredLanguage(profile?.preferredLanguage)}
+                  />
+                  <View className="h-px bg-cardBorder" />
+                  <ProfileInfoRow
+                    icon="business-outline"
+                    label="Universidade Desejada"
+                    value={profile?.desiredUniversity?.trim() || "—"}
+                  />
+                </View>
+              </ProfileSection>
 
-          <ProfileSection title="Horários de Estudo">
-            {studyHours.length > 0 ? (
-              <View className="flex-row flex-wrap gap-[10px]">
-                {studyHours.map((hour) => (
-                  <ProfileChip key={hour} label={formatStudyHourLabel(hour)} />
-                ))}
-              </View>
-            ) : (
-              <EmptyChipState message="Nenhum horário de estudo configurado." />
-            )}
-          </ProfileSection>
+              <ProfileSection title="Dias de Estudo">
+                {studyDays.length > 0 ? (
+                  <View className="flex-row flex-wrap gap-[10px]">
+                    {studyDays.map((day) => (
+                      <ProfileChip key={day} label={STUDY_DAY_LABELS[day]} />
+                    ))}
+                  </View>
+                ) : (
+                  <EmptyChipState message="Nenhum dia de estudo configurado." />
+                )}
+              </ProfileSection>
 
-          <ProfileSection title="Ações">
-            <View className="gap-[10px]">
-              <ProfileActionRow
-                icon="settings-outline"
-                label="Gerenciar Planos"
-                onPress={() => router.push("/plans")}
-              />
-              <ProfileActionRow
-                icon="log-out-outline"
-                label="Sair da conta"
-                onPress={() => void logout()}
-                destructive
-              />
-            </View>
-          </ProfileSection>
+              <ProfileSection title="Horários de Estudo">
+                {studyHours.length > 0 ? (
+                  <View className="flex-row flex-wrap gap-[10px]">
+                    {studyHours.map((hour) => (
+                      <ProfileChip key={hour} label={formatStudyHourLabel(hour)} />
+                    ))}
+                  </View>
+                ) : (
+                  <EmptyChipState message="Nenhum horário de estudo configurado." />
+                )}
+              </ProfileSection>
 
-          <ProfileSection title="Suporte e Contato">
-            <View className="rounded-[16px] border border-cardBorder bg-white px-[16px] py-[4px]">
-              <View className="flex-row items-center gap-[12px] py-[14px]">
-                <Ionicons name="mail-outline" size={20} color="#646464" />
-                <Text className="font-inter text-[15px] text-primaryGray">
-                  contatoestudifyapp@gmail.com
-                </Text>
-              </View>
-              <View className="h-px bg-cardBorder" />
-              <View className="flex-row items-center gap-[12px] py-[14px]">
-                <Ionicons name="call-outline" size={20} color="#646464" />
-                <Text className="font-inter text-[15px] text-primaryGray">+55 51 99908-9542</Text>
-              </View>
-            </View>
-          </ProfileSection>
+              <ProfileSection title="Ações">
+                <View className="gap-[10px]">
+                  <ProfileActionRow
+                    icon="settings-outline"
+                    label="Gerenciar Planos"
+                    onPress={() => router.push("/plans")}
+                  />
+                  <ProfileActionRow
+                    icon="log-out-outline"
+                    label="Sair da conta"
+                    onPress={() => void logout()}
+                    destructive
+                  />
+                </View>
+              </ProfileSection>
+
+              <ProfileSection title="Suporte e Contato">
+                <View className="rounded-[16px] border border-cardBorder bg-white px-[16px] py-[4px]">
+                  <View className="flex-row items-center gap-[12px] py-[14px]">
+                    <Ionicons name="mail-outline" size={20} color="#646464" />
+                    <Text className="font-inter text-[15px] text-primaryGray">
+                      contatoestudifyapp@gmail.com
+                    </Text>
+                  </View>
+                  <View className="h-px bg-cardBorder" />
+                  <View className="flex-row items-center gap-[12px] py-[14px]">
+                    <Ionicons name="call-outline" size={20} color="#646464" />
+                    <Text className="font-inter text-[15px] text-primaryGray">
+                      +55 51 99908-9542
+                    </Text>
+                  </View>
+                </View>
+              </ProfileSection>
+            </>
+          ) : null}
         </View>
       </ScrollView>
     </View>
