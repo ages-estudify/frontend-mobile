@@ -4,7 +4,7 @@ import { QuestionAnalysisBottomSheet } from "./QuestionAnalysisBottomSheet";
 
 jest.mock("@gorhom/bottom-sheet", () => {
   const React = jest.requireActual("react");
-  const { View, ScrollView } = jest.requireActual("react-native");
+  const { View, ScrollView, TouchableOpacity } = jest.requireActual("react-native");
 
   const MockBottomSheet = React.forwardRef(
     (
@@ -36,6 +36,7 @@ jest.mock("@gorhom/bottom-sheet", () => {
     __esModule: true,
     default: MockBottomSheet,
     BottomSheetScrollView: MockBottomSheetScrollView,
+    TouchableOpacity,
   };
 });
 
@@ -104,6 +105,7 @@ describe("QuestionAnalysisBottomSheet", () => {
     fireEvent.press(screen.getByText("Próxima Questão"));
 
     expect(onNext).toHaveBeenCalledTimes(1);
+    expect(onFinish).not.toHaveBeenCalled();
   });
 
   it("chama onFinish ao clicar em Finalizar Treino", () => {
@@ -123,5 +125,6 @@ describe("QuestionAnalysisBottomSheet", () => {
     fireEvent.press(screen.getByText("Finalizar Treino"));
 
     expect(onFinish).toHaveBeenCalledTimes(1);
+    expect(onNext).not.toHaveBeenCalled();
   });
 });

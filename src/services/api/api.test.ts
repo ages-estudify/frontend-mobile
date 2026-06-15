@@ -54,6 +54,51 @@ describe("api client", () => {
       }
     });
 
+    it("preserva o status HTTP quando response.data não possui status", () => {
+      const axiosError = {
+        isAxiosError: true,
+        message: "Request failed",
+        response: {
+          status: 404,
+          data: { message: "Not found" },
+        },
+      };
+
+      try {
+        handleApiError(axiosError);
+        throw new Error("não deveria chegar aqui");
+      } catch (thrown) {
+        expect(thrown).toEqual({
+          message: "Not found",
+          status: 404,
+        });
+      }
+    });
+
+    it("mantém statusCode fornecido pelo backend", () => {
+      const axiosError = {
+        isAxiosError: true,
+        message: "Request failed",
+        response: {
+          status: 400,
+          data: {
+            message: "Bad request",
+            statusCode: 400,
+          },
+        },
+      };
+
+      try {
+        handleApiError(axiosError);
+        throw new Error("não deveria chegar aqui");
+      } catch (thrown) {
+        expect(thrown).toEqual({
+          message: "Bad request",
+          statusCode: 400,
+        });
+      }
+    });
+
     it("relança a message quando é um erro axios sem response", () => {
       const axiosError = {
         isAxiosError: true,

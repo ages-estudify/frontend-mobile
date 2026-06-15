@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 
 type props = {
@@ -7,12 +7,25 @@ type props = {
   incorrect: number;
   blank: number;
   totalQuestions: number;
+  showBlank?: boolean;
 };
 
-export default function GraphCard({ correct, incorrect, blank, totalQuestions }: props) {
-  const correctPercent = Math.round((correct / totalQuestions) * 100);
-  const wrongPercent = Math.round((incorrect / totalQuestions) * 100);
-  const blankPercent = Math.round((blank / totalQuestions) * 100);
+function calculatePercent(value: number, total: number) {
+  if (total <= 0) return 0;
+
+  return Math.round((value / total) * 100);
+}
+
+export default function GraphCard({
+  correct,
+  incorrect,
+  blank,
+  totalQuestions,
+  showBlank = true,
+}: props) {
+  const correctPercent = calculatePercent(correct, totalQuestions);
+  const wrongPercent = calculatePercent(incorrect, totalQuestions);
+  const blankPercent = calculatePercent(blank, totalQuestions);
 
   const data = [
     {
@@ -23,10 +36,14 @@ export default function GraphCard({ correct, incorrect, blank, totalQuestions }:
       value: incorrect,
       color: "#D93B3B",
     },
-    {
-      value: blank,
-      color: "#666666",
-    },
+    ...(showBlank
+      ? [
+          {
+            value: blank,
+            color: "#666666",
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -61,13 +78,15 @@ export default function GraphCard({ correct, incorrect, blank, totalQuestions }:
             <Text className="text-[16px] font-semibold">{wrongPercent}%</Text>
           </View>
 
-          <View className="flex w-[170px] flex-row justify-between">
-            <View className="flex flex-row items-start gap-4">
-              <View className="h-4 w-4 rounded-xl bg-[#666666]" />
-              <Text className="text-[14px] font-medium">Não{"\n"}Respondidas</Text>
+          {showBlank ? (
+            <View className="flex w-[170px] flex-row justify-between">
+              <View className="flex flex-row items-start gap-4">
+                <View className="h-4 w-4 rounded-xl bg-[#666666]" />
+                <Text className="text-[14px] font-medium">Não{"\n"}Respondidas</Text>
+              </View>
+              <Text className="text-[16px] font-semibold">{blankPercent}%</Text>
             </View>
-            <Text className="text-[16px] font-semibold">{blankPercent}%</Text>
-          </View>
+          ) : null}
         </View>
       </View>
     </View>
