@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, FlatList, Modal, Pressable, Text, View } from "react-native";
 import XIcon from "../../../assets/icons/close-purple.svg";
 import { ActionButton } from "../ActionButton";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
@@ -53,6 +54,8 @@ export function QuestionGridModal({
     }
   }, [visible, currentQuestionIndex]);
 
+  const insets = useSafeAreaInsets();
+
   return (
     <Modal visible={visible} animationType="slide">
       <View className="flex-1 bg-[#F6F6F6]">
@@ -60,7 +63,7 @@ export function QuestionGridModal({
           onPress={onClose}
           style={{
             position: "absolute",
-            top: 20,
+            top: insets.top + 28,
             right: 20,
             zIndex: 10,
           }}
@@ -69,7 +72,7 @@ export function QuestionGridModal({
           <XIcon width={16} height={16} />
         </Pressable>
 
-        <View className="mt-16">
+        <View style={{ paddingTop: insets.top + 90 }} className="flex-1">
           <Text className="pl-6 text-2xl font-semibold">Grade de Questões</Text>
 
           <FlatList
@@ -94,9 +97,7 @@ export function QuestionGridModal({
                 <View className="flex flex-row flex-wrap justify-center">
                   {item.map((q, i) => {
                     const globalIndex = pageIndex * QUESTIONS_PER_PAGE + i;
-
                     const isCurrent = globalIndex === currentQuestionIndex;
-
                     const isAnswered = !!q.selectedAlternativeId;
 
                     let bg = "#FFF";
@@ -159,7 +160,7 @@ export function QuestionGridModal({
           ))}
         </View>
 
-        <View className="p-4">
+        <View style={{ paddingBottom: insets.bottom + 16 }} className="px-4 pt-2">
           <ActionButton text="Finalizar Simulado" action={onFinishExam} />
         </View>
       </View>
