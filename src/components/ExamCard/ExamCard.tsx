@@ -6,12 +6,13 @@ import { Image, Pressable, Text, View } from "react-native";
 type Props = {
   exam: Exam;
   onPress: () => void;
-  onMenuPress: (position: { x: number; y: number }) => void;
+  onMenuPress: (anchor: { x: number; y: number; width: number; height: number }) => void;
   width?: number;
 };
 
 export function ExamCard({ exam, onPress, onMenuPress, width = 177 }: Props) {
-  const menuButtonRef = useRef<View>(null);
+  const cardRef = useRef<View>(null);
+
   const originLabel = exam.origin === "ORIGINAL" ? "ENEM" : "UFRGS";
   const progressPercentage = exam.progress?.percentage ?? 0;
   const isCompleted = exam.status === "completed" || progressPercentage >= 100;
@@ -32,23 +33,21 @@ export function ExamCard({ exam, onPress, onMenuPress, width = 177 }: Props) {
           : "#D1D5DB";
 
   function handleMenuPress() {
-    menuButtonRef.current?.measure((x, y, width, height, pageX, pageY) => {
-      onMenuPress({
-        x: pageX,
-        y: pageY + height + 4,
-      });
+    cardRef.current?.measureInWindow((pageX, pageY, cardWidth, cardHeight) => {
+      onMenuPress({ x: pageX, y: pageY, width: cardWidth, height: cardHeight });
     });
   }
 
   return (
-    <Pressable
-      onPress={onPress}
-      style={{ width }}
-      className="h-[218px] rounded-xl border border-gray-200 bg-white p-3"
-    >
-      <View className="flex-row items-start justify-between">
-        <Image source={imageSource} className="h-8 w-8" />
-        <View ref={menuButtonRef}>
+    <View ref={cardRef} collapsable={false} style={{ width }}>
+      <Pressable
+        onPress={onPress}
+        style={{ width: "100%" }}
+        className="h-[218px] rounded-xl border border-gray-200 bg-white p-3"
+      >
+        <View className="flex-row items-start justify-between">
+          <Image source={imageSource} className="h-8 w-8" />
+
           <Pressable
             onPress={handleMenuPress}
             hitSlop={12}
@@ -57,40 +56,42 @@ export function ExamCard({ exam, onPress, onMenuPress, width = 177 }: Props) {
             <Text className="text-[22px] font-bold text-gray-600">⋯</Text>
           </Pressable>
         </View>
-      </View>
 
-      <View className="mt-2">
-        <Text className="text-xs font-medium text-gray-500">{originLabel}</Text>
-        <Text className="mt-1 text-sm font-semibold text-gray-900">{exam.name}</Text>
-        {exam.description && (
-          <Text
-            className="mt-1 text-[11px] font-medium leading-[15px] text-gray-600"
-            numberOfLines={5}
-          >
-            {exam.description}
-          </Text>
-        )}
-      </View>
+        <View className="mt-2">
+          <Text className="text-xs font-medium text-gray-500">{originLabel}</Text>
+          <Text className="mt-1 text-sm font-semibold text-gray-900">{exam.name}</Text>
 
-      <View className="mt-auto">
-        <Text className="mb-1 text-xs text-gray-500">{exam.totalQuestions} questões</Text>
-        <ProgressBar percentage={progressPercentage} color={barColor} />
+          {exam.description && (
+            <Text
+              className="mt-1 text-[11px] font-medium leading-[15px] text-gray-600"
+              numberOfLines={5}
+            >
+              {exam.description}
+            </Text>
+          )}
+        </View>
 
-        {isCompleted && (
-          <View
-            style={{
-              marginTop: 6,
-              alignSelf: "flex-start",
-              backgroundColor: "#DCFCE7",
-              borderRadius: 6,
-              paddingHorizontal: 8,
-              paddingVertical: 3,
-            }}
-          >
-            <Text style={{ fontSize: 11, fontWeight: "600", color: "#166534" }}>Finalizado</Text>
-          </View>
-        )}
-      </View>
-    </Pressable>
+        <View className="mt-auto">
+          <Text className="mb-1 text-xs text-gray-500">{exam.totalQuestions} questões</Text>
+
+          <ProgressBar percentage={progressPercentage} color={barColor} />
+
+          {isCompleted && (
+            <View
+              style={{
+                marginTop: 6,
+                alignSelf: "flex-start",
+                backgroundColor: "#DCFCE7",
+                borderRadius: 6,
+                paddingHorizontal: 8,
+                paddingVertical: 3,
+              }}
+            >
+              <Text style={{ fontSize: 11, fontWeight: "600", color: "#166534" }}>Finalizado</Text>
+            </View>
+          )}
+        </View>
+      </Pressable>
+    </View>
   );
 }
