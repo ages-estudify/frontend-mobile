@@ -5,16 +5,15 @@ import { Pressable, Text, TextInput, TextInputProps, View } from "react-native";
 interface TextInputWithTitleProps {
   title: string;
   placeholder: string;
-
   text: string;
   onValueChange: (text: string) => void;
-
   isPassword?: boolean;
   isLogin?: boolean;
   keyboardType?: TextInputProps["keyboardType"];
   autoCapitalize?: TextInputProps["autoCapitalize"];
   maxLength?: number;
   errorMessage?: string;
+  secureTextEntry?: boolean;
 }
 
 export function TextInputWithTitle({
@@ -22,6 +21,7 @@ export function TextInputWithTitle({
   placeholder,
   text,
   onValueChange,
+  secureTextEntry,
   isPassword = false,
   isLogin = true,
   keyboardType = "default",
@@ -29,7 +29,9 @@ export function TextInputWithTitle({
   maxLength,
   errorMessage,
 }: TextInputWithTitleProps) {
-  const [showPassword, setShowPassword] = useState(true);
+  const [hidePassword, setHidePassword] = useState(true);
+
+  const shouldSecureText = secureTextEntry ?? (isPassword ? hidePassword : false);
 
   return (
     <View className="mb-4 w-full gap-2">
@@ -48,7 +50,7 @@ export function TextInputWithTitle({
           value={text}
           onChangeText={(value: string) => onValueChange(value)}
           placeholder={placeholder}
-          secureTextEntry={isPassword && showPassword}
+          secureTextEntry={shouldSecureText}
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           maxLength={maxLength}
@@ -60,10 +62,14 @@ export function TextInputWithTitle({
         {isPassword && (
           <Pressable
             testID="toggle-password-visibility"
-            onPress={() => setShowPassword(!showPassword)}
+            onPress={() => setHidePassword(!hidePassword)}
             className="absolute right-4 top-1/2 -translate-y-1/2"
           >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            {hidePassword ? (
+              <Eye size={20} color="#9CA3AF" />
+            ) : (
+              <EyeOff size={20} color="#9CA3AF" />
+            )}
           </Pressable>
         )}
       </View>
