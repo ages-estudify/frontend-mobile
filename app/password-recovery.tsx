@@ -29,11 +29,8 @@ export default function PasswordRecoveryPage() {
     setIsLoading(true);
     try {
       await createOtp(email);
-      // O endpoint sempre retorna sucesso por segurança (não revela
-      // se o email existe), então seguimos para a tela de
-      // verificação do código já passando o email digitado.
       router.push({
-        pathname: "/otp-verification", // ajuste para a rota real da tela de OTP
+        pathname: "/otp-verification",
         params: { email },
       });
     } catch {
