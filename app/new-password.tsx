@@ -1,9 +1,12 @@
 import { ActionButton } from "@/components/ActionButton";
+import { updatePassword } from "@/services/otp/otp.service";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -15,11 +18,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PasswordResetPage() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ token: string }>();
+  const token = Array.isArray(params.token) ? params.token[0] : params.token;
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const hasMinLength = password.length >= 8;
   const hasUppercase = /[A-Z]/.test(password);
@@ -73,13 +80,18 @@ export default function PasswordResetPage() {
     if (!isFormValid) return;
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      router.push("/login");
+      await updatePassword(token, password);
+      setShowSuccessModal(true);
     } catch (error) {
-      console.error(error);
+      Alert.alert("Erro", "Não foi possível redefinir a senha. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoToLogin = () => {
+    setShowSuccessModal(false);
+    router.replace("/login");
   };
 
   return (
@@ -94,7 +106,6 @@ export default function PasswordResetPage() {
           showsVerticalScrollIndicator={false}
         >
           <View className="flex-1 justify-between px-6">
-            {/* Cabeçalho */}
             <View className="pt-12">
               <View className="mb-8 flex-row justify-center gap-1.5">
                 <View className="h-1 w-6 rounded bg-purple-300" />
@@ -109,7 +120,6 @@ export default function PasswordResetPage() {
                 Escolha uma senha forte para proteger sua conta.
               </Text>
 
-              {/* Campo: Nova Senha */}
               <View className="mt-8">
                 <Text className="mb-2 text-base font-semibold text-gray-700">Nova senha</Text>
                 <View className="flex-row items-center rounded-xl border border-gray-300 bg-gray-50 px-3 py-3">
@@ -137,7 +147,6 @@ export default function PasswordResetPage() {
                   </Pressable>
                 </View>
 
-                {/* Barra de Força */}
                 {password.length > 0 && (
                   <View style={{ marginTop: 12 }}>
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -174,7 +183,6 @@ export default function PasswordResetPage() {
                   </View>
                 )}
 
-                {/* Checklist */}
                 <View className="mt-4 gap-2">
                   <View className="flex-row items-center">
                     <Ionicons
@@ -227,7 +235,6 @@ export default function PasswordResetPage() {
                 </View>
               </View>
 
-              {/* Campo: Confirmar Senha */}
               <View className="mt-6">
                 <Text className="mb-2 text-base font-semibold text-gray-700">Confirmar senha</Text>
                 <View
@@ -266,7 +273,6 @@ export default function PasswordResetPage() {
               </View>
             </View>
 
-            {/* Rodapé */}
             <View className="mt-8 items-center gap-4 pb-12">
               <View style={{ opacity: isFormValid ? 1 : 0.6, width: "100%" }}>
                 <ActionButton
@@ -284,6 +290,25 @@ export default function PasswordResetPage() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <Modal visible={showSuccessModal} transparent animationType="fade" onRequestClose={() => {}}>
+        <View className="flex-1 items-center justify-center bg-black/50 px-8">
+          <View className="w-full items-center rounded-3xl bg-white p-6">
+            <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-purple100">
+              <Ionicons name="checkmark" size={32} color="white" />
+            </View>
+            <Text className="mb-2 text-center text-2xl font-semibold text-purple100">
+              Senha redefinida!
+            </Text>
+            <Text className="mb-6 text-center text-[15px] text-primaryGray">
+              Sua senha foi atualizada com sucesso. Agora você pode entrar com sua nova senha.
+            </Text>
+            <View className="w-full">
+              <ActionButton text="Ir para o login" action={handleGoToLogin} />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
