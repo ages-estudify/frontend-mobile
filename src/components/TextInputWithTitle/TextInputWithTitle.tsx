@@ -14,6 +14,7 @@ interface TextInputWithTitleProps {
   maxLength?: number;
   errorMessage?: string;
   secureTextEntry?: boolean;
+  onForgotPassword?: () => void;
 }
 
 export function TextInputWithTitle({
@@ -28,23 +29,21 @@ export function TextInputWithTitle({
   autoCapitalize = "none",
   maxLength,
   errorMessage,
+  onForgotPassword,
 }: TextInputWithTitleProps) {
   const [hidePassword, setHidePassword] = useState(true);
-
   const shouldSecureText = secureTextEntry ?? (isPassword ? hidePassword : false);
 
   return (
     <View className="mb-4 w-full gap-2">
       <View className="flex-row items-center justify-between">
         <Text className="text-base font-semibold text-greenPrimary">{title}</Text>
-
         {isPassword && isLogin && (
-          <Pressable onPress={() => {}}>
+          <Pressable onPress={onForgotPassword}>
             <Text className="text-xs text-greenPrimary">Esqueceu sua senha?</Text>
           </Pressable>
         )}
       </View>
-
       <View className="relative">
         <TextInput
           value={text}
@@ -58,7 +57,6 @@ export function TextInputWithTitle({
             errorMessage ? "border-red-500" : "border-gray-300"
           }`}
         />
-
         {isPassword && (
           <Pressable
             testID="toggle-password-visibility"
@@ -73,7 +71,6 @@ export function TextInputWithTitle({
           </Pressable>
         )}
       </View>
-
       {errorMessage ? <Text className="ml-1 text-xs text-red-500">{errorMessage}</Text> : null}
     </View>
   );

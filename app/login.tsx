@@ -19,7 +19,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
   const { login } = useAuth();
 
@@ -28,9 +27,7 @@ export default function LoginPage() {
       Alert.alert("Erro", "Preencha todos os campos");
       return;
     }
-
     setIsLoading(true);
-
     try {
       await login({ email, password });
       router.replace("/");
@@ -62,7 +59,6 @@ export default function LoginPage() {
               />
               <Text className="text-4xl font-semibold text-purple100">Bem Vindo!</Text>
             </View>
-
             <View className="w-full gap-4">
               <TextInputWithTitle
                 title={"Email"}
@@ -77,12 +73,11 @@ export default function LoginPage() {
                 isLogin={true}
                 onValueChange={setPassword}
                 text={password}
+                onForgotPassword={() => router.push("/password-recovery")}
               />
             </View>
-
             <View className="w-full items-center gap-4 pt-16">
               <ActionButton text={"Login"} action={handleLogin} disabled={isLoading} />
-
               <Pressable onPress={() => router.push("/register")} className="flex-row gap-2">
                 <View className="flex-row gap-2">
                   <Text className="font-regular text-primaryGray">Não possui conta?</Text>
