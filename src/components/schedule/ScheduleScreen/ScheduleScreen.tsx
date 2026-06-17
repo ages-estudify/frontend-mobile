@@ -137,7 +137,6 @@ export function ScheduleScreen() {
       </View>
     );
   }
-  console.log(error);
   if (error && days.length === 0 && error !== "Defina ao menos uma janela de estudo") {
     return (
       <View className="flex-1 px-4 pt-4">
