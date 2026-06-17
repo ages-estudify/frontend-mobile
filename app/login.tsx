@@ -1,6 +1,7 @@
 import { ActionButton } from "@/components/ActionButton";
 import { TextInputWithTitle } from "@/components/TextInputWithTitle/TextInputWithTitle";
 import { useAuth } from "@/hooks/useAuth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -14,6 +15,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+const ONBOARDING_COMPLETED_STORAGE_KEY = "hasCompletedOnboarding";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -33,7 +36,11 @@ export default function LoginPage() {
 
     try {
       await login({ email, password });
-      router.replace("/");
+      if (!(await AsyncStorage.getItem(ONBOARDING_COMPLETED_STORAGE_KEY))) {
+        router.replace("/onboarding");
+      } else {
+        router.replace("/");
+      }
     } catch (error) {
       Alert.alert("Erro", "Verifique os campos preenchidos");
     } finally {
