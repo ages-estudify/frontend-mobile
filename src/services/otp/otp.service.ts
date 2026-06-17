@@ -1,3 +1,5 @@
+import { LoginResponse } from "@/types/auth.types";
+
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "https://SUA_API_AQUI.com";
 
 type ApiErrorResponse = {
@@ -27,21 +29,21 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export function createOtp(email: string): Promise<void> {
-  return request<void>("/otp/create", {
+  return request<void>("/api/v1/otp/create", {
     method: "POST",
     body: JSON.stringify({ email }),
   });
 }
 
-export function verifyOtp(email: string, otp: string): Promise<{ token: string }> {
-  return request<{ token: string }>("/otp/verify", {
+export function verifyOtp(email: string, otp: string): Promise<LoginResponse> {
+  return request<LoginResponse>("/api/v1/otp/verify", {
     method: "POST",
     body: JSON.stringify({ email, otp }),
   });
 }
 
 export function updatePassword(token: string, newPassword: string): Promise<void> {
-  return request<void>("/users/update/password", {
+  return request<void>("/api/v1/users/update/password", {
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,

@@ -59,10 +59,11 @@ export default function OtpVerificationPage() {
     if (!isOtpComplete) return;
     setIsLoading(true);
     try {
-      const { token } = await verifyOtp(email, otp);
+      const token = await verifyOtp(email, otp);
+      const authToken = token.data.token;
       router.push({
         pathname: "/new-password",
-        params: { token },
+        params: { token: authToken },
       });
     } catch {
       Alert.alert("Erro", "Código inválido ou expirado. Tente novamente.");

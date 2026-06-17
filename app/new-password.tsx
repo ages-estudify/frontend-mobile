@@ -107,12 +107,6 @@ export default function PasswordResetPage() {
         >
           <View className="flex-1 justify-between px-6">
             <View className="pt-12">
-              <View className="mb-8 flex-row justify-center gap-1.5">
-                <View className="h-1 w-6 rounded bg-purple-300" />
-                <View className="h-1 w-6 rounded bg-purple-300" />
-                <View className="h-1 w-8 rounded bg-purple100" />
-              </View>
-
               <Text className="text-center text-[32px] font-semibold text-purple100">
                 Nova senha
               </Text>
@@ -282,7 +276,10 @@ export default function PasswordResetPage() {
                 />
               </View>
 
-              <Pressable onPress={() => router.back()} className="flex-row items-center py-2">
+              <Pressable
+                onPress={() => router.replace("/otp-verification")}
+                className="flex-row items-center py-2"
+              >
                 <Ionicons name="chevron-back" size={16} color="#6B21A8" />
                 <Text className="ml-1 font-semibold text-purple100">Voltar</Text>
               </Pressable>
