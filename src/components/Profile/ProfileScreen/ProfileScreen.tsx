@@ -1,5 +1,6 @@
 import { ProfilePictureEditor } from "@/components/ProfilePictureEditor/Profilepictureeditor";
 import { useAuthSession } from "@/contexts/AuthContext";
+import { useUserProfileContext } from "@/contexts/UserProfileContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import {
@@ -12,7 +13,7 @@ import {
 import { hasGatedContentAccess } from "@/utils/subscription-access";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import { ImageBackground, Pressable, ScrollView, Text, View } from "react-native";
 
 type InfoRowProps = {
@@ -90,21 +91,20 @@ export function ProfileScreen() {
   const { logout } = useAuth();
   const { profile, updateProfile } = useUserProfile();
   const { role, planExpirationDate } = useAuthSession();
-
-  const [pictureUrl, setPictureUrl] = useState<string | null>(profile?.profilePictureUrl ?? null);
+  const { profilePictureUrl, updateProfilePicture } = useUserProfileContext();
 
   const planStatus = hasGatedContentAccess(role, planExpirationDate) ? "Ativo" : "Inativo";
   const studyDays = getSelectedStudyDays(profile?.studyHours);
   const studyHours = getUniqueStudyHours(profile?.studyHours);
 
   function handlePictureUpdate(url: string) {
-    setPictureUrl(url);
     updateProfile({ profilePictureUrl: url });
+    void updateProfilePicture(url);
   }
 
   function handlePictureRemove() {
-    setPictureUrl(null);
     updateProfile({ profilePictureUrl: null });
+    void updateProfilePicture(null);
   }
 
   return (
@@ -143,7 +143,7 @@ export function ProfileScreen() {
 
           <View className="-mt-[44px] items-center">
             <ProfilePictureEditor
-              currentUrl={pictureUrl}
+              currentUrl={profilePictureUrl}
               onUpdate={handlePictureUpdate}
               onRemove={handlePictureRemove}
             />

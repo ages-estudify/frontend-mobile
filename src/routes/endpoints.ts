@@ -27,6 +27,7 @@ export const endPoints = {
     answer: (questionId: string) => `/questions/${questionId}/answer`,
   },
   users: {
+    me: "/users/me",
     streak: "/users/streak",
     stats: "/users/stats",
     profilePicture: "/users/profile-picture",

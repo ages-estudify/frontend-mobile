@@ -1,9 +1,14 @@
+import { useUserProfileContext } from "@/contexts/UserProfileContext";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Image, Pressable } from "react-native";
+import { Pressable } from "react-native";
+
+const PLACEHOLDER = require("../../../../assets/placeholder_user.png");
 
 export function ProfileAvatarButton() {
   const router = useRouter();
+  const { profilePictureUrl } = useUserProfileContext();
 
   return (
     <Pressable
@@ -12,10 +17,14 @@ export function ProfileAvatarButton() {
       accessibilityLabel="Abrir perfil"
     >
       <Image
-        source={require("../../../../assets/placeholder_user.png")}
-        style={{ width: 40, height: 40 }}
-        className="h-10 w-10 rounded-full"
-        resizeMode="cover"
+        source={profilePictureUrl ? { uri: profilePictureUrl } : PLACEHOLDER}
+        placeholder={PLACEHOLDER}
+        style={{ width: 40, height: 40, borderRadius: 20 }}
+        contentFit="cover"
+        placeholderContentFit="cover"
+        cachePolicy="memory-disk"
+        transition={0}
+        priority="high"
       />
     </Pressable>
   );

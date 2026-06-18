@@ -1,7 +1,8 @@
 import { useProfilePicture } from "@/hooks/useProfilePicture/useProfilePicture";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, Image, Platform, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, Pressable, Text, View } from "react-native";
 
 const PLACEHOLDER = require("../../../assets/placeholder_user.png");
 
@@ -63,8 +64,6 @@ export function ProfilePictureEditor({
     }
   }
 
-  const imageSource = currentUrl ? { uri: currentUrl } : PLACEHOLDER;
-
   return (
     <View className="items-center">
       <Pressable
@@ -75,9 +74,18 @@ export function ProfilePictureEditor({
         className="relative"
       >
         <Image
-          source={imageSource}
-          className="h-[88px] w-[88px] rounded-full border-4 border-whitebg"
-          resizeMode="cover"
+          key={currentUrl ?? "placeholder"}
+          source={currentUrl ? { uri: currentUrl } : PLACEHOLDER}
+          style={{
+            width: 88,
+            height: 88,
+            borderRadius: 44,
+            borderWidth: 4,
+            borderColor: "#F8F8F8",
+          }}
+          contentFit="cover"
+          cachePolicy="memory-disk"
+          transition={150}
         />
 
         {isLoading && (
