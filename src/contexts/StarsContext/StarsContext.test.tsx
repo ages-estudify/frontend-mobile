@@ -1,7 +1,7 @@
 import React from "react";
 import { act, render, screen } from "@testing-library/react-native";
 import { Text } from "react-native";
-import { StarsProvider, useStarsContext } from "@/contexts/StarsContext";
+import { StarsProvider, useStarsContext } from "./StarsContext";
 import { getUserStars } from "@/services/stars/stars.service";
 
 jest.mock("@/services/stars/stars.service", () => ({

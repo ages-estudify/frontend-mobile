@@ -39,8 +39,14 @@ jest.mock("@/contexts/AuthContext", () => {
 });
 
 import { useAuth } from "@/hooks/useAuth";
+import { authService } from "@/services/auth/auth.service";
+import { router } from "expo-router";
 
 const mockSetItem = AsyncStorage.setItem as jest.Mock;
+const mockMultiRemove = AsyncStorage.multiRemove as jest.Mock;
+const mockGetItem = AsyncStorage.getItem as jest.Mock;
+const mockLogin = authService.login as jest.Mock;
+const mockRegister = authService.register as jest.Mock;
 
 describe("useAuth.updateSession", () => {
   beforeEach(() => {
@@ -100,5 +106,73 @@ describe("useAuth.updateSession", () => {
     expect(keys).toContain("token");
     expect(keys).toContain("refreshToken");
     expect(keys).toContain("planExpirationDate");
+  });
+});
+
+describe("useAuth auth flows", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetItem.mockReset();
+    mockGetItem.mockResolvedValue(null);
+  });
+
+  it("login persiste credenciais e retorna resposta da API", async () => {
+    const response = {
+      data: {
+        token: "jwt",
+        refreshToken: "refresh",
+        role: "USER",
+        planExpirationDate: "2099-01-01",
+      },
+    };
+    mockLogin.mockResolvedValueOnce(response);
+
+    const { login } = useAuth();
+    await expect(login({ email: "a@b.com", password: "123456" })).resolves.toEqual(response);
+
+    expect(mockSetItem).toHaveBeenCalledWith("token", "jwt");
+    expect(mockSetItem).toHaveBeenCalledWith("refreshToken", "refresh");
+    expect(mockSetItem).toHaveBeenCalledWith("role", "USER");
+  });
+
+  it("register persiste credenciais quando tokens existem", async () => {
+    const response = {
+      data: {
+        token: "jwt",
+        refreshToken: "refresh",
+        role: "USER",
+        planExpirationDate: "2099-01-01",
+      },
+    };
+    mockRegister.mockResolvedValueOnce(response);
+
+    const { register } = useAuth();
+    await expect(
+      register({
+        fullName: "User",
+        email: "a@b.com",
+        birthDate: "2000-01-01",
+        phone: "11999999999",
+        password: "123456",
+      })
+    ).resolves.toEqual(response);
+
+    expect(mockSetItem).toHaveBeenCalledWith("token", "jwt");
+  });
+
+  it("logout limpa storage e redireciona para login", async () => {
+    const { logout } = useAuth();
+    await logout();
+
+    expect(mockMultiRemove).toHaveBeenCalled();
+    expect(router.replace).toHaveBeenCalledWith("/login");
+  });
+
+  it("getToken e isAuthenticated leem o token do storage", async () => {
+    mockGetItem.mockResolvedValue("stored-token");
+
+    const { getToken, isAuthenticated } = useAuth();
+    await expect(getToken()).resolves.toBe("stored-token");
+    await expect(isAuthenticated()).resolves.toBe(true);
   });
 });

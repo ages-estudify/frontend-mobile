@@ -15,6 +15,19 @@ module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
   {
+    files: ["src/test/**/*.{ts,tsx}", "tests/**/*.{test,spec}.{ts,tsx}", "**/tests/**/*.{test,spec}.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "Program",
+          message:
+            "Unit tests must be co-located with source code. Use test/ only for shared setup and mocks.",
+        },
+      ],
+    },
+  },
+  {
     files: ["**/*.{test,spec}.{ts,tsx}", "**/tests/**/*.{ts,tsx}"],
     rules: {
       "import/first": "off",

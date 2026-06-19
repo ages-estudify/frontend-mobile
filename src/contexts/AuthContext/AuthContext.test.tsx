@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { Pressable, Text } from "react-native";
-import { AuthProvider, useAuthSession } from "../AuthContext";
+import { AuthProvider, useAuthSession } from "./AuthContext";
 
 function SessionProbe() {
   const s = useAuthSession();

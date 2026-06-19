@@ -32,8 +32,10 @@
 
 ## Testes
 
+- [ ] Testes co-localizados (`*.test.tsx`) foram criados/atualizados para componentes, hooks, telas e serviços alterados.
+- [ ] O comando `npm run test:ci` passa com sucesso (inclui cobertura mínima de 80%).
 - [ ] Fluxo verificado no Expo (simulador ou dispositivo), nas plataformas relevantes.
-- [ ] Testes automatizados criados ou atualizados, quando já existirem para a área alterada.
+- [ ] Se algum arquivo ficou sem teste, há waiver aprovado em `.github/test-waivers.txt` ou `[test-waiver:path]` na descrição do PR.
 
 ## Checklist Geral
 

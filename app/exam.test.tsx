@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react-native";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Text } from "react-native";
-import ExamScreen from "../app/exam";
+import ExamScreen from "./exam";
 
 jest.mock("axios", () => ({
   __esModule: true,
