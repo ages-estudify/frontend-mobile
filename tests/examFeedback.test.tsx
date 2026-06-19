@@ -5,7 +5,7 @@ import {
   getAttemptDayResult,
   getExamResultGrid,
 } from "@/services/examFeedback/examFeedback.service";
-import ExamFeedback from "./examFeedback";
+import ExamFeedback from "../app/examFeedback";
 
 const mockRouterReplace = jest.fn();
 const mockUseLocalSearchParams = jest.fn(() => ({

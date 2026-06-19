@@ -1,7 +1,7 @@
-import { useState, useCallback } from "react";
+import { usersStatsService } from "@/services/usersStats/usersStats.service";
 import { UserStatsData } from "@/types/userStats";
-import { usersStatsService } from "@/services/usersStats/usersStatsService";
 import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 
 export function useUserStats() {
   const [data, setData] = useState<UserStatsData | null>(null);

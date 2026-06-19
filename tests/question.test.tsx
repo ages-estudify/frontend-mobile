@@ -2,7 +2,7 @@ import { useQuestionSession } from "@/hooks/useQuestionSession";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
 import { ActivityIndicator } from "react-native";
-import QuestionScreen from "./question";
+import QuestionScreen from "../app/question";
 
 jest.mock("axios", () => ({
   create: jest.fn(() => ({

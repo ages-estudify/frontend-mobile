@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from "node:fs";
 
-const SUMMARY_PATH = 'coverage/coverage-summary.json';
+const SUMMARY_PATH = "coverage/coverage-summary.json";
 const THRESHOLD = 80;
 
 function main() {
@@ -11,21 +11,19 @@ function main() {
     process.exit(1);
   }
 
-  const summary = JSON.parse(readFileSync(SUMMARY_PATH, 'utf8'));
+  const summary = JSON.parse(readFileSync(SUMMARY_PATH, "utf8"));
   const total = summary.total;
 
-  console.log('Coverage summary (frontend-mobile):');
+  console.log("Coverage summary (frontend-mobile):");
   console.log(
-    `  lines: ${total.lines.pct}% | statements: ${total.statements.pct}% | branches: ${total.branches.pct}% | functions: ${total.functions.pct}%`,
+    `  lines: ${total.lines.pct}% | statements: ${total.statements.pct}% | branches: ${total.branches.pct}% | functions: ${total.functions.pct}%`
   );
 
-  const metrics = ['lines', 'statements', 'branches', 'functions'];
+  const metrics = ["lines", "statements", "branches", "functions"];
   const belowThreshold = metrics.filter((metric) => total[metric].pct < THRESHOLD);
 
   if (belowThreshold.length > 0) {
-    console.error(
-      `❌ Coverage below ${THRESHOLD}% for: ${belowThreshold.join(', ')}`,
-    );
+    console.error(`❌ Coverage below ${THRESHOLD}% for: ${belowThreshold.join(", ")}`);
     process.exit(1);
   }
 

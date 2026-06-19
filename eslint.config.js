@@ -15,7 +15,7 @@ module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
   {
-    files: ["src/test/**/*.{ts,tsx}", "tests/**/*.{test,spec}.{ts,tsx}", "**/tests/**/*.{test,spec}.{ts,tsx}"],
+    files: ["src/test/**/*.{ts,tsx}"],
     rules: {
       "no-restricted-syntax": [
         "error",

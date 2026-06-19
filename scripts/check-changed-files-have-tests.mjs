@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import { execSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
-import path from 'node:path';
+import { execSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 
-const BASE_REF = process.env.BASE_REF ?? 'origin/main';
-const WAIVER_FILE = '.github/test-waivers.txt';
+const BASE_REF = process.env.BASE_REF ?? "origin/main";
+const WAIVER_FILE = ".github/test-waivers.txt";
 
 const SOURCE_PATTERNS = [
   /^src\/components\/.+\.tsx$/,
@@ -30,33 +30,33 @@ function loadWaivers() {
   }
 
   return new Set(
-    readFileSync(WAIVER_FILE, 'utf8')
-      .split('\n')
+    readFileSync(WAIVER_FILE, "utf8")
+      .split("\n")
       .map((line) => line.trim())
-      .filter((line) => line && !line.startsWith('#')),
+      .filter((line) => line && !line.startsWith("#"))
   );
 }
 
 function getChangedFiles() {
   try {
-    execSync(`git fetch origin main --depth=1`, { stdio: 'ignore' });
+    execSync(`git fetch origin main --depth=1`, { stdio: "ignore" });
   } catch {
     // Best effort when offline or in shallow clones.
   }
 
   let diffRange = `${BASE_REF}...HEAD`;
   try {
-    execSync(`git rev-parse --verify ${BASE_REF}`, { stdio: 'ignore' });
+    execSync(`git rev-parse --verify ${BASE_REF}`, { stdio: "ignore" });
   } catch {
-    diffRange = 'HEAD~1...HEAD';
+    diffRange = "HEAD~1...HEAD";
   }
 
   const output = execSync(`git diff --name-only --diff-filter=ACMRT ${diffRange}`, {
-    encoding: 'utf8',
+    encoding: "utf8",
   });
 
   return output
-    .split('\n')
+    .split("\n")
     .map((file) => file.trim())
     .filter(Boolean);
 }
@@ -73,12 +73,18 @@ function getExpectedTestFiles(file) {
   const ext = path.extname(file);
   const base = file.slice(0, -ext.length);
 
+  // app/ page tests live in the root tests/ directory, not co-located
+  if (file.startsWith("app/")) {
+    const filename = path.basename(base);
+    return [`tests/${filename}.test${ext}`, `tests/${filename}.spec${ext}`];
+  }
+
   return [`${base}.test${ext}`, `${base}.spec${ext}`];
 }
 
 function main() {
   const waivers = loadWaivers();
-  const prBody = process.env.PR_BODY ?? '';
+  const prBody = process.env.PR_BODY ?? "";
   const changedFiles = getChangedFiles();
   const missingTests = [];
 
@@ -100,20 +106,21 @@ function main() {
   }
 
   if (missingTests.length === 0) {
-    console.log('✅ All changed source files include co-located tests.');
+    console.log("✅ All changed source files include co-located tests.");
     return;
   }
 
-  console.error('❌ Missing co-located tests for changed source files:\n');
+  console.error("❌ Missing tests for changed source files:\n");
   for (const { file, expectedTests } of missingTests) {
     console.error(`  - ${file}`);
-    console.error(`    expected: ${expectedTests.join(' or ')}`);
+    console.error(`    expected: ${expectedTests.join(" or ")}`);
   }
 
   console.error(
-    '\nAdd a co-located test file or register an approved waiver in .github/test-waivers.txt',
+    "\nFor src/ files, add a co-located test. For app/ pages, add a test in the tests/ directory."
   );
-  console.error('You can also add [test-waiver:path/to/file.ts] to the PR description.');
+  console.error("You can also register an approved waiver in .github/test-waivers.txt");
+  console.error("or add [test-waiver:path/to/file.ts] to the PR description.");
   process.exit(1);
 }
 

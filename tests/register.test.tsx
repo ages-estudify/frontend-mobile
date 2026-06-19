@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { Alert } from "react-native";
-import RegisterScreen from "./register";
+import RegisterScreen from "../app/register";
 
 const mockReplace = jest.fn();
 const mockBack = jest.fn();
