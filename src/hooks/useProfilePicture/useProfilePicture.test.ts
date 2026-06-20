@@ -1,6 +1,6 @@
 import type { UpdateProfilePictureResponse } from "@/services/profilePicture/profilePicture.service";
 import { profilePictureService } from "@/services/profilePicture/profilePicture.service";
-import { act, renderHook } from "@testing-library/react-native";
+import { act, renderHook, waitFor } from "@testing-library/react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useProfilePicture } from "./useProfilePicture";
 
@@ -135,24 +135,32 @@ describe("useProfilePicture", () => {
     });
 
     let resolveUpload!: (v: UpdateProfilePictureResponse) => void;
-    mockService.update.mockReturnValueOnce(
-      new Promise((res) => {
-        resolveUpload = res;
-      })
+    mockService.update.mockImplementationOnce(
+      () =>
+        new Promise((res) => {
+          resolveUpload = res;
+        })
     );
 
     const { result } = renderHook(() => useProfilePicture({ onSuccess, onError }));
 
-    act(() => {
+    await act(async () => {
       void result.current.pickAndUpload();
     });
-    await act(() => result.current.pickAndUpload());
+
+    await waitFor(() => {
+      expect(result.current.isUploading).toBe(true);
+    });
+
+    await act(async () => {
+      await result.current.pickAndUpload();
+    });
+
+    expect(mockService.update).toHaveBeenCalledTimes(1);
 
     await act(async () => {
       resolveUpload({ profilePictureUrl: "https://example.com/pic.jpg" });
     });
-
-    expect(mockService.update).toHaveBeenCalledTimes(1);
   });
 
   it("should call onRemoveSuccess after a successful removal", async () => {
@@ -177,6 +185,109 @@ describe("useProfilePicture", () => {
     expect(onError).toHaveBeenCalledWith("Não autorizado");
   });
 
+  it("should call onError when selected asset has no base64", async () => {
+    mockPicker.requestMediaLibraryPermissionsAsync.mockResolvedValueOnce(grantedPermission);
+    mockPicker.launchImageLibraryAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ ...makeAsset(), base64: undefined }],
+    });
+
+    const { result } = renderHook(() => useProfilePicture({ onSuccess, onError }));
+
+    await act(() => result.current.pickAndUpload());
+
+    expect(onError).toHaveBeenCalledWith("Algo deu errado. Tente novamente.");
+    expect(mockService.update).not.toHaveBeenCalled();
+  });
+
+  it("should do nothing when picker returns no assets", async () => {
+    mockPicker.requestMediaLibraryPermissionsAsync.mockResolvedValueOnce(grantedPermission);
+    mockPicker.launchImageLibraryAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [],
+    });
+
+    const { result } = renderHook(() => useProfilePicture({ onSuccess, onError }));
+
+    await act(() => result.current.pickAndUpload());
+
+    expect(mockService.update).not.toHaveBeenCalled();
+  });
+
+  it("should block removePhoto while upload is in progress", async () => {
+    mockPicker.requestMediaLibraryPermissionsAsync.mockResolvedValueOnce(grantedPermission);
+    mockPicker.launchImageLibraryAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [makeAsset()],
+    });
+
+    let resolveUpload!: (v: UpdateProfilePictureResponse) => void;
+    mockService.update.mockImplementationOnce(
+      () =>
+        new Promise((res) => {
+          resolveUpload = res;
+        })
+    );
+
+    const { result } = renderHook(() => useProfilePicture({ onRemoveSuccess, onError }));
+
+    await act(async () => {
+      void result.current.pickAndUpload();
+    });
+
+    await waitFor(() => expect(result.current.isUploading).toBe(true));
+
+    await act(async () => {
+      await result.current.removePhoto();
+    });
+
+    expect(mockService.remove).not.toHaveBeenCalled();
+
+    await act(async () => {
+      resolveUpload({ profilePictureUrl: "https://example.com/pic.jpg" });
+    });
+  });
+
+  it("should call onError with generic message when removal error has no message", async () => {
+    mockService.remove.mockRejectedValueOnce({});
+
+    const { result } = renderHook(() => useProfilePicture({ onRemoveSuccess, onError }));
+
+    await act(() => result.current.removePhoto());
+
+    expect(onError).toHaveBeenCalledWith("Algo deu errado. Tente novamente.");
+  });
+
+  it("should expose correct loading flags during removal", async () => {
+    let resolveRemove!: () => void;
+    mockService.remove.mockImplementationOnce(
+      () =>
+        new Promise<void>((res) => {
+          resolveRemove = res;
+        })
+    );
+
+    const { result } = renderHook(() => useProfilePicture({}));
+
+    await act(async () => {
+      void result.current.removePhoto();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isRemoving).toBe(true);
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    await act(async () => {
+      resolveRemove();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isRemoving).toBe(false);
+      expect(result.current.isLoading).toBe(false);
+    });
+  });
+
   it("should expose correct loading flags during upload", async () => {
     mockPicker.requestMediaLibraryPermissionsAsync.mockResolvedValueOnce(grantedPermission);
     mockPicker.launchImageLibraryAsync.mockResolvedValueOnce({
@@ -185,26 +296,31 @@ describe("useProfilePicture", () => {
     });
 
     let resolveUpload!: (v: UpdateProfilePictureResponse) => void;
-    mockService.update.mockReturnValueOnce(
-      new Promise<UpdateProfilePictureResponse>((res) => {
-        resolveUpload = res;
-      })
+    mockService.update.mockImplementationOnce(
+      () =>
+        new Promise<UpdateProfilePictureResponse>((res) => {
+          resolveUpload = res;
+        })
     );
 
     const { result } = renderHook(() => useProfilePicture({}));
 
-    act(() => {
+    await act(async () => {
       void result.current.pickAndUpload();
     });
 
-    expect(result.current.isUploading).toBe(true);
-    expect(result.current.isLoading).toBe(true);
+    await waitFor(() => {
+      expect(result.current.isUploading).toBe(true);
+      expect(result.current.isLoading).toBe(true);
+    });
 
     await act(async () => {
       resolveUpload({ profilePictureUrl: "https://example.com/x.jpg" });
     });
 
-    expect(result.current.isUploading).toBe(false);
-    expect(result.current.isLoading).toBe(false);
+    await waitFor(() => {
+      expect(result.current.isUploading).toBe(false);
+      expect(result.current.isLoading).toBe(false);
+    });
   });
 });

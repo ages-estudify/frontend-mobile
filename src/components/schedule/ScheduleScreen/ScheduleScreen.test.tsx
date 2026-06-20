@@ -89,8 +89,10 @@ describe("ScheduleScreen", () => {
 
     render(<ScheduleScreen />);
 
-    expect(screen.getByText("Sem cronograma personalizado")).toBeTruthy();
-    expect(screen.getByText("Semana 1")).toBeTruthy();
+    expect(screen.getByText("Você ainda não tem um cronograma personalizado!")).toBeTruthy();
+    expect(
+      screen.getByText("Acesse seu perfil e nos conte suas preferências de dias e horários.")
+    ).toBeTruthy();
   });
 
   it("mostra o estado de erro quando nao ha dias", () => {

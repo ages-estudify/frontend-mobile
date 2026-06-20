@@ -2,7 +2,7 @@ import { UserStatsData } from "@/types/userStats";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { useUserStats } from "./useUserStats";
 
-jest.mock("@/services/usersStats/usersStatsService", () => ({
+jest.mock("@/services/usersStats/usersStats.service", () => ({
   usersStatsService: {
     getUserStats: jest.fn(),
   },

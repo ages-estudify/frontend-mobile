@@ -13,6 +13,7 @@ module.exports = {
   testMatch: [
     "<rootDir>/src/**/?(*.)+(test|spec).(js|jsx|ts|tsx)",
     "<rootDir>/app/**/?(*.)+(test|spec).(js|jsx|ts|tsx)",
+    "<rootDir>/tests/**/?(*.)+(test|spec).(js|jsx|ts|tsx)",
   ],
   testPathIgnorePatterns: ["/node_modules/", "<rootDir>/test/"],
   moduleNameMapper: {
@@ -47,6 +48,10 @@ module.exports = {
     "/app/examHistory\\.tsx$",
     "/app/exam\\.tsx$",
     "/app/\\(tabs\\)/simulado\\.tsx$",
+    "/app/new-password\\.tsx$",
+    "/app/otp-verification\\.tsx$",
+    "/app/password-recovery\\.tsx$",
+    "/src/services/otp/otp\\.service\\.ts$",
     "/src/services/api/api\\.ts$",
   ],
   coverageReporters: ["text", "html", "json-summary"],

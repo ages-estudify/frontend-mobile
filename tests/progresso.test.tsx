@@ -10,6 +10,9 @@ jest.mock("@/hooks/useAuth");
 jest.mock("@/components/navigation/PlanGuard", () => ({
   PlanGuard: ({ children }: any) => <>{children}</>,
 }));
+jest.mock("@/components/navigation/ProfileAvatarButton", () => ({
+  ProfileAvatarButton: () => null,
+}));
 jest.mock("expo-router", () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
