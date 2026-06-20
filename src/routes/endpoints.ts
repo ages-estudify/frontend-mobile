@@ -28,7 +28,9 @@ export const endPoints = {
     trainingResult: "/questions/training/result",
   },
   users: {
+    me: "/users/me",
     streak: "/users/streak",
     stats: "/users/stats",
+    profilePicture: "/users/profile-picture",
   },
 };

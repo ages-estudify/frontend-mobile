@@ -9,12 +9,12 @@ type GatedTabScreenHeaderProps = {
 };
 
 /**
- * Cabeçalho com altura fixa entre abas gated: linha de 40px + título.
- * Garante que o miolo (ex.: paywall) centralize na mesma posição em Treinar e nas demais.
+ * Cabeçalho com altura fixa entre abas gated: 8px abaixo da safe area,
+ * linha de 40px (avatar) e título colado abaixo, alinhado à esquerda.
  */
 export function GatedTabScreenHeader({ title, trailing }: GatedTabScreenHeaderProps) {
   return (
-    <View className="w-full shrink-0 gap-[10px] px-[16px]">
+    <View className="w-full shrink-0 px-[16px] pt-[8px]">
       <View className="h-10 flex-row items-center justify-end">{trailing}</View>
       <Text className="self-start font-poppins-semi text-[34px]">{title}</Text>
     </View>

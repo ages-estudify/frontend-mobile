@@ -7,11 +7,19 @@ import { onboardingService } from "@/services/onboarding/onboarding.service";
 import OnboardingScreen from "../app/onboarding";
 
 const mockReplace = jest.fn();
+const mockBack = jest.fn();
 
 jest.mock("expo-router", () => ({
   useRouter: () => ({
     replace: mockReplace,
+    back: mockBack,
   }),
+  useLocalSearchParams: () => ({}),
+}));
+
+jest.mock("@/services/userProfile/userProfile.storage", () => ({
+  getUserProfile: jest.fn().mockResolvedValue(null),
+  saveUserProfile: jest.fn().mockResolvedValue({}),
 }));
 
 jest.mock("@/services/onboarding/onboarding.service", () => ({
