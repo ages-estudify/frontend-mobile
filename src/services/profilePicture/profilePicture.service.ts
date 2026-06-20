@@ -2,15 +2,13 @@ import { endPoints } from "@/routes/endpoints";
 import api, { handleApiError } from "../api";
 
 export type UpdateProfilePictureResponse = {
-  data: {
-    profilePictureUrl: string;
-  };
+  profilePictureUrl: string;
 };
 
 export const profilePictureService = {
   async update(imageBase64: string): Promise<UpdateProfilePictureResponse> {
     try {
-      const response = await api.patch<UpdateProfilePictureResponse>(
+      const response = await api.patch<{ data: UpdateProfilePictureResponse }>(
         endPoints.users.profilePicture,
         { image: imageBase64 }
       );

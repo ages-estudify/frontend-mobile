@@ -30,7 +30,7 @@ export function useProfilePicture({
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
@@ -51,7 +51,7 @@ export function useProfilePicture({
     setIsUploading(true);
     try {
       const response = await profilePictureService.update(dataUri);
-      onSuccess?.(response.data.profilePictureUrl);
+      onSuccess?.(response.profilePictureUrl);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : GENERIC_ERROR;
       onError?.(message || GENERIC_ERROR);

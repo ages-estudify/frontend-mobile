@@ -19,15 +19,15 @@ describe("profilePictureService", () => {
     it("should PATCH and return profilePictureUrl on success", async () => {
       const url = "https://cdn.example.com/avatar.jpg";
       mockApi.patch.mockResolvedValueOnce({
-        data: { data: { profilePictureUrl: url } },
+        data: { profilePictureUrl: url },
       });
 
       const result = await profilePictureService.update("data:image/jpeg;base64,abc123");
 
-      expect(mockApi.patch).toHaveBeenCalledWith("/users/me/profile-picture", {
+      expect(mockApi.patch).toHaveBeenCalledWith("/users/profile-picture", {
         image: "data:image/jpeg;base64,abc123",
       });
-      expect(result.data.profilePictureUrl).toBe(url);
+      expect(result.profilePictureUrl).toBe(url);
     });
 
     it("should throw a handled error when the request fails", async () => {
@@ -45,7 +45,7 @@ describe("profilePictureService", () => {
 
       await profilePictureService.remove();
 
-      expect(mockApi.delete).toHaveBeenCalledWith("/users/me/profile-picture");
+      expect(mockApi.delete).toHaveBeenCalledWith("/users/profile-picture");
     });
 
     it("should throw a handled error when DELETE fails", async () => {

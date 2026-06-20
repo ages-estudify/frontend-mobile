@@ -85,7 +85,7 @@ describe("useProfilePicture", () => {
       assets: [makeAsset("abc123", "image/jpeg")],
     });
     mockService.update.mockResolvedValueOnce({
-      data: { profilePictureUrl: "https://cdn.example.com/new.jpg" },
+      profilePictureUrl: "https://cdn.example.com/new.jpg",
     });
 
     const { result } = renderHook(() => useProfilePicture({ onSuccess, onError }));
@@ -149,7 +149,7 @@ describe("useProfilePicture", () => {
     await act(() => result.current.pickAndUpload());
 
     await act(async () => {
-      resolveUpload({ data: { profilePictureUrl: "https://example.com/pic.jpg" } });
+      resolveUpload({ profilePictureUrl: "https://example.com/pic.jpg" });
     });
 
     expect(mockService.update).toHaveBeenCalledTimes(1);
@@ -201,7 +201,7 @@ describe("useProfilePicture", () => {
     expect(result.current.isLoading).toBe(true);
 
     await act(async () => {
-      resolveUpload({ data: { profilePictureUrl: "https://example.com/x.jpg" } });
+      resolveUpload({ profilePictureUrl: "https://example.com/x.jpg" });
     });
 
     expect(result.current.isUploading).toBe(false);
