@@ -1,4 +1,4 @@
-import { StreakProvider, useStreakContext } from "@/contexts/StreakContext";
+import { StreakProvider, useStreakContext } from "./StreakContext";
 import { getUserStreak } from "@/services/streak/streak.service";
 import { act, render, screen } from "@testing-library/react-native";
 import React from "react";

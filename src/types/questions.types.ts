@@ -9,6 +9,17 @@ export interface AnswerQuestionResponse {
     streakActive?: boolean;
   };
 }
+
+export interface TrainingResultRequest {
+  questionIds: string[];
+}
+
+export interface TrainingResultResponse {
+  totalQuestions: number;
+  correctAnswers: number;
+  wrongAnswers: number;
+}
+
 export type Alternative = {
   id?: string;
   text: string;

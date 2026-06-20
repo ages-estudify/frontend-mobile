@@ -1,13 +1,13 @@
-import React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
-import ProgressoRoute from "../../app/(tabs)/progresso";
-import { useUserStats } from "@/hooks/useUserStats";
 import { useAuth } from "@/hooks/useAuth";
-import { populatedUserStatsMock, emptyUserStatsMock } from "@/mocks/userStatsMock";
+import { useUserStats } from "@/hooks/useUserStats";
+import { emptyUserStatsMock, populatedUserStatsMock } from "@/mocks/userStatsMock";
+import { fireEvent, render } from "@testing-library/react-native";
+import React from "react";
+import ProgressoRoute from "../app/(tabs)/progresso";
 
 jest.mock("@/hooks/useUserStats");
 jest.mock("@/hooks/useAuth");
-jest.mock("../../src/components/navigation/PlanGuard", () => ({
+jest.mock("@/components/navigation/PlanGuard", () => ({
   PlanGuard: ({ children }: any) => <>{children}</>,
 }));
 jest.mock("expo-router", () => ({

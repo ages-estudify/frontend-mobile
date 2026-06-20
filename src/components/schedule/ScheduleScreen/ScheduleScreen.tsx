@@ -137,8 +137,7 @@ export function ScheduleScreen() {
       </View>
     );
   }
-
-  if (error && days.length === 0) {
+  if (error && days.length === 0 && error !== "Defina ao menos uma janela de estudo") {
     return (
       <View className="flex-1 px-4 pt-4">
         <View className="rounded-3xl border border-rose-200 bg-rose-50 px-5 py-6">
@@ -168,80 +167,85 @@ export function ScheduleScreen() {
           <Text className="text-[13px] font-semibold text-rose-900">{error}</Text>
         </View>
       )}
+      {scheduleStartDate && (
+        <View className="mb-4 rounded-[8px] bg-white py-2">
+          <View className="h-[49px] flex-row items-center justify-between gap-3">
+            <Pressable
+              onPress={goToPreviousWeek}
+              accessibilityLabel="Semana anterior"
+              className="h-11 w-11 items-center justify-center rounded-full bg-white"
+            >
+              <ChevronLeft size={22} color="#0f172a" />
+            </Pressable>
 
-      <View className="mb-4 rounded-[8px] bg-white py-2">
-        <View className="h-[49px] flex-row items-center justify-between gap-3">
-          <Pressable
-            onPress={goToPreviousWeek}
-            accessibilityLabel="Semana anterior"
-            className="h-11 w-11 items-center justify-center rounded-full bg-white"
-          >
-            <ChevronLeft size={22} color="#0f172a" />
-          </Pressable>
+            <View className="h-[35px] w-[85px] flex-1 items-center">
+              <Text className="font-sf-pro text-[16px] font-semibold text-greenPrimary">
+                Semana {getScheduleWeekNumber(weekStart, scheduleStartDate)}
+              </Text>
+              <Text className="mt-1 font-poppins text-[13px] text-primaryGray">
+                {currentWeekLabel}
+              </Text>
+            </View>
 
-          <View className="h-[35px] w-[85px] flex-1 items-center">
-            <Text className="font-sf-pro text-[16px] font-semibold text-greenPrimary">
-              Semana {getScheduleWeekNumber(weekStart, scheduleStartDate)}
-            </Text>
-            <Text className="mt-1 font-poppins text-[13px] text-primaryGray">
-              {currentWeekLabel}
-            </Text>
+            <Pressable
+              onPress={goToNextWeek}
+              accessibilityLabel="Semana seguinte"
+              className="h-11 w-11 items-center justify-center rounded-full bg-white"
+            >
+              <ChevronRight size={22} color="#0f172a" />
+            </Pressable>
           </View>
-
-          <Pressable
-            onPress={goToNextWeek}
-            accessibilityLabel="Semana seguinte"
-            className="h-11 w-11 items-center justify-center rounded-full bg-white"
-          >
-            <ChevronRight size={22} color="#0f172a" />
-          </Pressable>
         </View>
-      </View>
+      )}
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        className="mb-10 max-h-[60px]"
-        contentContainerClassName="w-full"
-      >
-        <View className="flex-1 flex-row justify-between gap-2 rounded-[8px] bg-white px-2 py-2">
-          {days.map((day) => {
-            const isSelected = day.date === selectedDayDate;
+      {scheduleStartDate && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          className="mb-10 max-h-[60px]"
+          contentContainerClassName="w-full"
+        >
+          <View className="flex-1 flex-row justify-between gap-2 rounded-[8px] bg-white px-2 py-2">
+            {days.map((day) => {
+              const isSelected = day.date === selectedDayDate;
 
-            return (
-              <Pressable
-                key={day.date}
-                onPress={() => selectDay(day.date)}
-                className={`max-h-[47px] flex-1 rounded-[8px] px-1 py-2 ${isSelected ? "bg-secondaryGray" : "border-transparent bg-white"}`}
-              >
-                <Text className={`text-slate-greenPrimary text-center text-[12px] font-semibold`}>
-                  {DAY_LABELS[day.dayOfWeek]}
-                </Text>
-                <Text className={`mt-1 text-center font-poppins-semi text-[10px]`}>
-                  {new Intl.DateTimeFormat("pt-BR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                  }).format(new Date(`${day.date}T12:00:00`))}
-                </Text>
-              </Pressable>
-            );
-          })}
+              return (
+                <Pressable
+                  key={day.date}
+                  onPress={() => selectDay(day.date)}
+                  className={`max-h-[47px] flex-1 rounded-[8px] px-1 py-2 ${isSelected ? "bg-secondaryGray" : "border-transparent bg-white"}`}
+                >
+                  <Text className={`text-slate-greenPrimary text-center text-[12px] font-semibold`}>
+                    {DAY_LABELS[day.dayOfWeek]}
+                  </Text>
+                  <Text className={`mt-1 text-center font-poppins-semi text-[10px]`}>
+                    {new Intl.DateTimeFormat("pt-BR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                    }).format(new Date(`${day.date}T12:00:00`))}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </ScrollView>
+      )}
+
+      {scheduleStartDate && (
+        <View className="mb-3">
+          <Text className="font-poppins-semi text-[20px] text-slate-950">
+            {selectedDay
+              ? `${selectedDayLabel} - ${new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" }).format(new Date(`${selectedDay.date}T12:00:00`))}`
+              : "Sem data selecionada"}
+          </Text>
         </View>
-      </ScrollView>
+      )}
 
-      <View className="mb-3">
-        <Text className="font-poppins-semi text-[20px] text-slate-950">
-          {selectedDay
-            ? `${selectedDayLabel} - ${new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" }).format(new Date(`${selectedDay.date}T12:00:00`))}`
-            : "Sem data selecionada"}
-        </Text>
-      </View>
-
-      {noPersonalizedSchedule && (
+      {!scheduleStartDate && (
         <View className="flex-1 items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-10">
           <Image source={require("../../../../assets/calendar_fox.png")} className="h-32 w-32" />
-          <Text className="font-poppins-semi text-[16px] text-slate-950">
-            Sem cronograma personalizado
+          <Text className="text-center font-poppins-semi text-[16px] text-slate-950">
+            Você ainda não tem um cronograma personalizado!
           </Text>
           <Text className="mt-2 text-center text-[13px] leading-6 text-slate-600">
             Acesse seu perfil e nos conte suas preferências de dias e horários.
@@ -249,8 +253,8 @@ export function ScheduleScreen() {
         </View>
       )}
 
-      {selectedItems.length === 0 ? (
-        <View className="flex-1 items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-10">
+      {scheduleStartDate && selectedItems.length === 0 ? (
+        <View className="flex-1 items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white">
           <Image source={require("../../../../assets/chill_fox.png")} className="h-32 w-32" />
           <Text className="font-poppins-semi text-[16px] text-slate-950">Sem planos para hoje</Text>
           <Text className="mt-2 text-center text-[13px] leading-6 text-slate-600">

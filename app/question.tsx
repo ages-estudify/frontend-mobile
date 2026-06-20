@@ -3,14 +3,16 @@ import { QuestionAnalysisBottomSheet } from "@/components/QuestionAnalysisBottom
 import QuestionCard from "@/components/QuestionCard";
 import { useQuestionSession } from "@/hooks/useQuestionSession";
 import React from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import QuestionAlternatives from "@/components/QuestionAlternatives";
 import QuestionProgress from "@/components/QuestionProgress";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { useRouter } from "expo-router";
 
 export default function QuestionScreen() {
+  const router = useRouter();
   const {
     question,
     selected,
@@ -20,9 +22,30 @@ export default function QuestionScreen() {
     feedback,
     loading,
     progress,
+    isSubmitting,
+    submissionError,
+    isLastQuestion,
+    answeredQuestionIds,
+    sessionCoins,
+    latestStreak,
   } = useQuestionSession();
 
   const bottomSheetRef = React.useRef<BottomSheet>(null);
+
+  const navigateToTrainingResult = () => {
+    if (answeredQuestionIds.length === 0) return;
+
+    bottomSheetRef.current?.close();
+    router.replace({
+      pathname: "/trainingResult",
+      params: {
+        questionIds: JSON.stringify(answeredQuestionIds),
+        sessionCoins: String(sessionCoins),
+        streakDays: latestStreak ? String(latestStreak.streakDays) : "",
+        streakActive: latestStreak ? String(latestStreak.streakActive) : "",
+      },
+    } as never);
+  };
 
   const handleConfirm = async () => {
     const result = await confirmAnswer();
@@ -33,6 +56,12 @@ export default function QuestionScreen() {
 
   const handleNextQuestion = () => {
     bottomSheetRef.current?.close();
+
+    if (isLastQuestion) {
+      navigateToTrainingResult();
+      return;
+    }
+
     nextQuestion();
   };
 
@@ -66,19 +95,40 @@ export default function QuestionScreen() {
           <BackButton />
         </View>
         <QuestionProgress progress={progress} />
-        <QuestionCard question={question} progress={progress.current + 1} />
-        <QuestionAlternatives
-          alternatives={question.alternatives}
-          selected={selected}
-          setSelected={setSelected}
-        />
-        <TouchableOpacity
-          onPress={handleConfirm}
-          disabled={!selected}
-          className={`mb-4 mt-auto rounded-xl p-4 ${selected ? "bg-purpleCalm" : "bg-gray-400"}`}
+
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ paddingBottom: 16 }}
+          showsVerticalScrollIndicator={false}
         >
-          <Text className="text-center font-bold text-white">Enviar</Text>
-        </TouchableOpacity>
+          <QuestionCard question={question} progress={progress.current + 1} />
+          <QuestionAlternatives
+            alternatives={question.alternatives}
+            selected={selected}
+            setSelected={setSelected}
+          />
+        </ScrollView>
+
+        {submissionError ? (
+          <Text className="mb-2 text-center text-sm text-red100">{submissionError}</Text>
+        ) : null}
+
+        <View className="pb-4">
+          <TouchableOpacity
+            onPress={handleConfirm}
+            disabled={!selected || isSubmitting}
+            className={`rounded-xl p-4 ${
+              selected && !isSubmitting ? "bg-purpleCalm" : "bg-gray-400"
+            }`}
+          >
+            {isSubmitting ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text className="text-center font-bold text-white">Enviar</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+
         <QuestionAnalysisBottomSheet
           ref={bottomSheetRef}
           isCorrect={feedback?.data.isCorrect ?? false}
@@ -94,7 +144,7 @@ export default function QuestionScreen() {
             text: question.alternatives.find((a) => a.label === selected)?.text ?? "",
           }}
           onNext={handleNextQuestion}
-          onFinish={handleNextQuestion}
+          onFinish={navigateToTrainingResult}
         />
       </View>
     </SafeAreaView>

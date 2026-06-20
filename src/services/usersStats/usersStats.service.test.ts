@@ -1,7 +1,7 @@
 import { endPoints } from "@/routes/endpoints";
 import type { UserStatsData } from "@/types/userStats";
 import api, { handleApiError } from "../api";
-import { usersStatsService } from "./usersStatsService";
+import { usersStatsService } from "./usersStats.service";
 
 jest.mock("../api", () => ({
   __esModule: true,

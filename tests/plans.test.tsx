@@ -21,9 +21,9 @@ jest.mock("@/services/subscription/subscription.service", () => {
   return { subscriptionService: { subscribe } };
 });
 
-import { useRouter } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
 import { subscriptionService } from "@/services/subscription/subscription.service";
+import { useRouter } from "expo-router";
 import PlanosScreen from "../app/plans";
 
 const MOCK_SUCCESS_RESPONSE = {

@@ -1,8 +1,11 @@
 import api, { handleApiError } from "@/services/api";
+import { endPoints } from "@/routes/endpoints";
 import {
   AnswerQuestionResponse,
   GetQuestionParams,
   GetQuestionsResponse,
+  TrainingResultRequest,
+  TrainingResultResponse,
 } from "@/types/questions.types";
 
 export async function getQuestions({
@@ -35,6 +38,19 @@ export async function postAnswer(
     const response = await api.post<never, AnswerQuestionResponse>(
       `/questions/${questionId}/answer`,
       { selectedAnswer: answer }
+    );
+    return response;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+}
+
+export async function getTrainingResult(questionIds: string[]): Promise<TrainingResultResponse> {
+  try {
+    const body: TrainingResultRequest = { questionIds };
+    const response = await api.post<never, TrainingResultResponse>(
+      endPoints.questions.trainingResult,
+      body
     );
     return response;
   } catch (error) {

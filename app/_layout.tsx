@@ -66,6 +66,7 @@ export default function RootLayout() {
                   <Stack.Screen name="paywall" options={{ title: "PaywallPage" }} />
                   <Stack.Screen name="subject" options={{ title: "Subject" }} />
                   <Stack.Screen name="question" options={{ title: "Question" }} />
+                  <Stack.Screen name="trainingResult" options={{ title: "TrainingResult" }} />
                   <Stack.Screen name="examFeedback" options={{ title: "ExamFeedback" }} />
                   <Stack.Screen name="onboarding" options={{ title: "Onboarding" }} />
                   <Stack.Screen
