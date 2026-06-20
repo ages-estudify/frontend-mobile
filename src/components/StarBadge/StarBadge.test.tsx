@@ -1,5 +1,4 @@
 import React from "react";
-import { View } from "react-native";
 import { render, screen } from "@testing-library/react-native";
 import { StarBadge } from "./StarBadge";
 
@@ -55,5 +54,23 @@ describe("StarBadge", () => {
     expect(screen.getByTestId("star-badge-title-skeleton")).toBeTruthy();
     expect(screen.getByTestId("star-badge-description-skeleton")).toBeTruthy();
     expect(screen.queryByText("Estrelas: 47")).toBeNull();
+  });
+
+  it("permite personalizar o título mantendo o mesmo visual", () => {
+    render(
+      <StarBadge
+        stars={18}
+        isLoading={false}
+        hasError={false}
+        title="Moedas ganhas: +18"
+        description="Somadas nesta sessão."
+        containerClassName="h-[76px]"
+        textNumberOfLines={1}
+      />
+    );
+
+    expect(screen.getByText("Moedas ganhas: +18").props.numberOfLines).toBe(1);
+    expect(screen.getByText("Somadas nesta sessão.").props.numberOfLines).toBe(1);
+    expect(screen.queryByText("Estrelas: 18")).toBeNull();
   });
 });

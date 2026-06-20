@@ -1,5 +1,5 @@
 import api from "../api";
-import { getQuestions, postAnswer } from "./question.service";
+import { getQuestions, getTrainingResult, postAnswer } from "./question.service";
 
 jest.mock("../api", () => ({
   __esModule: true,
@@ -17,7 +17,7 @@ describe("questionService", () => {
     jest.clearAllMocks();
   });
 
-  it("deve buscar questões da API corretamente", async () => {
+  it("deve buscar questoes da API corretamente", async () => {
     const mockData = {
       data: {
         questions: [{ id: "1", text: "Q1", type: "ORIGINAL", imageUrl: null }],
@@ -45,7 +45,7 @@ describe("questionService", () => {
       data: {
         isCorrect: true,
         correctAnswer: "A",
-        explanation: "Explicação técnica da resposta",
+        explanation: "Explicacao tecnica da resposta",
         coinsEarned: 10,
         totalCoins: 100,
       },
@@ -62,10 +62,27 @@ describe("questionService", () => {
     expect(response).toEqual(mockFeedback);
   });
 
-  it("deve lançar erro se a postagem da resposta falhar", async () => {
+  it("deve lancar erro se a postagem da resposta falhar", async () => {
     const error = new Error("Erro ao enviar resposta");
     (api.post as jest.Mock).mockRejectedValueOnce(error);
 
     await expect(postAnswer("1", "A")).rejects.toThrow("Erro ao enviar resposta");
+  });
+
+  it("deve buscar o resultado do treino enviando questionIds em ordem", async () => {
+    const mockResult = {
+      totalQuestions: 3,
+      correctAnswers: 2,
+      wrongAnswers: 1,
+    };
+
+    (api.post as jest.Mock).mockResolvedValueOnce(mockResult);
+
+    const response = await getTrainingResult(["uuid-1", "uuid-2", "uuid-3"]);
+
+    expect(api.post).toHaveBeenCalledWith("/questions/training/result", {
+      questionIds: ["uuid-1", "uuid-2", "uuid-3"],
+    });
+    expect(response).toEqual(mockResult);
   });
 });

@@ -7,25 +7,33 @@ interface StarBadgeProps {
   stars: number | null;
   isLoading: boolean;
   hasError: boolean;
+  title?: string;
   description?: string;
   errorDescription?: string;
+  containerClassName?: string;
+  textNumberOfLines?: number;
 }
 
 export function StarBadge({
   stars,
   isLoading,
   hasError,
+  title,
   description,
   errorDescription,
+  containerClassName = "",
+  textNumberOfLines,
 }: StarBadgeProps) {
-  const title = `Estrelas: ${hasError || stars === null ? "--" : stars}`;
+  const resolvedTitle = title ?? `Estrelas: ${hasError || stars === null ? "--" : stars}`;
 
   const resolvedDescription = hasError
     ? (errorDescription ?? "Não foi possível carregar suas estrelas.")
     : (description ?? "Representa o número total de questões que você já respondeu.");
 
   return (
-    <View className="w-full flex-row items-center rounded-[20px] border border-yellowStarCardBorder bg-yellowStarCard/50 px-5 py-4">
+    <View
+      className={`w-full flex-row items-center rounded-[20px] border border-yellowStarCardBorder bg-yellowStarCard/50 px-5 py-4 ${containerClassName}`}
+    >
       <View className="mr-4 items-center justify-center">
         <Image source={starCoin} style={{ width: 34, height: 34 }} resizeMode="contain" />
       </View>
@@ -44,9 +52,19 @@ export function StarBadge({
           </>
         ) : (
           <>
-            <Text className="font-inter-semi text-[16px] text-black">{title}</Text>
+            <Text
+              className="font-inter-semi text-[16px] text-black"
+              numberOfLines={textNumberOfLines}
+            >
+              {resolvedTitle}
+            </Text>
 
-            <Text className="font-inter text-[13px] text-primaryGray">{resolvedDescription}</Text>
+            <Text
+              className="font-inter text-[13px] text-primaryGray"
+              numberOfLines={textNumberOfLines}
+            >
+              {resolvedDescription}
+            </Text>
           </>
         )}
       </View>

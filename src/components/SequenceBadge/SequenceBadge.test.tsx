@@ -35,4 +35,23 @@ describe("SequenceBadge", () => {
     expect(screen.getByTestId("star-badge-title-skeleton")).toBeTruthy();
     expect(screen.getByTestId("star-badge-description-skeleton")).toBeTruthy();
   });
+
+  it("permite personalizar o título mantendo o mesmo visual", () => {
+    render(
+      <SequenceBadge
+        sequence={4}
+        streakActive={true}
+        isLoading={false}
+        hasError={false}
+        title="Streak atual: 4"
+        description="Streak ativa"
+        containerClassName="h-[76px]"
+        textNumberOfLines={1}
+      />
+    );
+
+    expect(screen.getByText("Streak atual: 4").props.numberOfLines).toBe(1);
+    expect(screen.getByText("Streak ativa").props.numberOfLines).toBe(1);
+    expect(screen.queryByText("Sequencia de Dias: 4")).toBeNull();
+  });
 });

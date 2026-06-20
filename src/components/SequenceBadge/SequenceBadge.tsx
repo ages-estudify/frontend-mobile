@@ -7,8 +7,11 @@ interface StarBadgeProps {
   streakActive: boolean | null;
   isLoading: boolean;
   hasError: boolean;
+  title?: string;
   description?: string;
   errorDescription?: string;
+  containerClassName?: string;
+  textNumberOfLines?: number;
 }
 
 export function SequenceBadge({
@@ -16,10 +19,14 @@ export function SequenceBadge({
   streakActive,
   isLoading,
   hasError,
+  title,
   description,
   errorDescription,
+  containerClassName = "",
+  textNumberOfLines,
 }: StarBadgeProps) {
-  const title = `Sequencia de Dias: ${hasError || sequence === null ? "--" : sequence}`;
+  const resolvedTitle =
+    title ?? `Sequencia de Dias: ${hasError || sequence === null ? "--" : sequence}`;
 
   const fallbackDescription =
     sequence === 0
@@ -33,7 +40,9 @@ export function SequenceBadge({
     : (description ?? fallbackDescription);
 
   return (
-    <View className="w-full flex-row items-center rounded-[20px] border border-orangeSequenceCardBorder bg-orangeSequenceCard/50 px-5 py-4">
+    <View
+      className={`w-full flex-row items-center rounded-[20px] border border-orangeSequenceCardBorder bg-orangeSequenceCard/50 px-5 py-4 ${containerClassName}`}
+    >
       <View className="mr-4 items-center justify-center">
         <Fire width={28} height={33} />
       </View>
@@ -52,9 +61,19 @@ export function SequenceBadge({
           </>
         ) : (
           <>
-            <Text className="font-inter-semi text-[16px] text-black">{title}</Text>
+            <Text
+              className="font-inter-semi text-[16px] text-black"
+              numberOfLines={textNumberOfLines}
+            >
+              {resolvedTitle}
+            </Text>
 
-            <Text className="font-inter text-[13px] text-primaryGray">{resolvedDescription}</Text>
+            <Text
+              className="font-inter text-[13px] text-primaryGray"
+              numberOfLines={textNumberOfLines}
+            >
+              {resolvedDescription}
+            </Text>
           </>
         )}
       </View>

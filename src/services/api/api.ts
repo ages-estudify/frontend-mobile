@@ -51,10 +51,46 @@ api.interceptors.request.use(async (config) => {
 
 export const handleApiError = (error: unknown): never => {
   if (isAxiosError(error)) {
-    throw error.response?.data ?? error.message;
+    const responseData = error.response?.data;
+    const responseStatus = error.response?.status;
+
+    if (responseData !== undefined) {
+      if (
+        responseStatus !== undefined &&
+        typeof responseData === "object" &&
+        responseData !== null &&
+        !("status" in responseData) &&
+        !("statusCode" in responseData)
+      ) {
+        throw {
+          ...responseData,
+          status: responseStatus,
+        };
+      }
+
+      if (
+        responseStatus !== undefined &&
+        (responseData === null || typeof responseData !== "object")
+      ) {
+        throw {
+          message: String(responseData),
+          status: responseStatus,
+        };
+      }
+
+      throw responseData;
+    }
+
+    if (responseStatus !== undefined) {
+      throw {
+        message: error.message,
+        status: responseStatus,
+      };
+    }
+
+    throw error.message;
   }
 
-  console.log(error);
   throw error;
 };
 

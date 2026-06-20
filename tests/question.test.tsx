@@ -4,6 +4,8 @@ import React from "react";
 import { ActivityIndicator } from "react-native";
 import QuestionScreen from "../app/question";
 
+const mockRouterReplace = jest.fn();
+
 jest.mock("axios", () => ({
   create: jest.fn(() => ({
     get: jest.fn(),
@@ -20,6 +22,7 @@ jest.mock("expo-router", () => ({
   useRouter: () => ({
     back: jest.fn(),
     push: jest.fn(),
+    replace: mockRouterReplace,
   }),
 }));
 
@@ -100,6 +103,12 @@ describe("QuestionScreen Component", () => {
       nextQuestion: jest.fn(),
       feedback: null,
       progress: { current: 1, total: 20 },
+      answeredQuestionIds: [],
+      sessionCoins: 0,
+      latestStreak: null,
+      isLastQuestion: false,
+      isSubmitting: false,
+      submissionError: null,
     });
 
     render(<QuestionScreen />);
@@ -108,6 +117,29 @@ describe("QuestionScreen Component", () => {
     fireEvent.press(botaoEnviar);
 
     expect(mockConfirmAnswer).toHaveBeenCalled();
+  });
+
+  it("deve exibir o erro quando o envio da resposta falhar", () => {
+    (useQuestionSession as jest.Mock).mockReturnValue({
+      loading: false,
+      question: mockQuestion,
+      selected: "A",
+      setSelected: jest.fn(),
+      confirmAnswer: jest.fn(),
+      nextQuestion: jest.fn(),
+      feedback: null,
+      progress: { current: 1, total: 20 },
+      answeredQuestionIds: [],
+      sessionCoins: 0,
+      latestStreak: null,
+      isLastQuestion: false,
+      isSubmitting: false,
+      submissionError: "Não foi possível enviar sua resposta. Tente novamente.",
+    });
+
+    render(<QuestionScreen />);
+
+    expect(screen.getByText("Não foi possível enviar sua resposta. Tente novamente.")).toBeTruthy();
   });
 
   it("deve chamar nextQuestion ao clicar em avançar dentro da modal", () => {
@@ -122,6 +154,10 @@ describe("QuestionScreen Component", () => {
       nextQuestion: mockNextQuestion,
       feedback: { data: { isCorrect: true } },
       progress: { current: 1, total: 20 },
+      answeredQuestionIds: ["uuid-123"],
+      sessionCoins: 10,
+      latestStreak: { streakDays: 2, streakActive: true },
+      isLastQuestion: false,
     });
 
     render(<QuestionScreen />);
@@ -130,5 +166,76 @@ describe("QuestionScreen Component", () => {
     modal.props.onNext();
 
     expect(mockNextQuestion).toHaveBeenCalledTimes(1);
+    expect(mockRouterReplace).not.toHaveBeenCalled();
+  });
+
+  it("deve finalizar o treino mesmo quando isLastQuestion for false", () => {
+    const mockNextQuestion = jest.fn();
+
+    (useQuestionSession as jest.Mock).mockReturnValue({
+      loading: false,
+      question: mockQuestion,
+      selected: "A",
+      setSelected: jest.fn(),
+      confirmAnswer: jest.fn(),
+      nextQuestion: mockNextQuestion,
+      feedback: { data: { isCorrect: true } },
+      progress: { current: 1, total: 20 },
+      answeredQuestionIds: ["uuid-123", "uuid-456"],
+      sessionCoins: 25,
+      latestStreak: { streakDays: 4, streakActive: true },
+      isLastQuestion: false,
+    });
+
+    render(<QuestionScreen />);
+
+    const modal = screen.UNSAFE_getByType("MockQuestionAnalysisBottomSheet" as any);
+    modal.props.onFinish();
+
+    expect(mockNextQuestion).not.toHaveBeenCalled();
+    expect(mockRouterReplace).toHaveBeenCalledWith({
+      pathname: "/trainingResult",
+      params: {
+        questionIds: JSON.stringify(["uuid-123", "uuid-456"]),
+        sessionCoins: "25",
+        streakDays: "4",
+        streakActive: "true",
+      },
+    });
+  });
+
+  it("deve navegar para resultado ao clicar em PrÃ³xima QuestÃ£o na Ãºltima questÃ£o", () => {
+    const mockNextQuestion = jest.fn();
+
+    (useQuestionSession as jest.Mock).mockReturnValue({
+      loading: false,
+      question: mockQuestion,
+      selected: "A",
+      setSelected: jest.fn(),
+      confirmAnswer: jest.fn(),
+      nextQuestion: mockNextQuestion,
+      feedback: { data: { isCorrect: true } },
+      progress: { current: 19, total: 20 },
+      answeredQuestionIds: ["uuid-123"],
+      sessionCoins: 10,
+      latestStreak: { streakDays: 3, streakActive: false },
+      isLastQuestion: true,
+    });
+
+    render(<QuestionScreen />);
+
+    const modal = screen.UNSAFE_getByType("MockQuestionAnalysisBottomSheet" as any);
+    modal.props.onNext();
+
+    expect(mockNextQuestion).not.toHaveBeenCalled();
+    expect(mockRouterReplace).toHaveBeenCalledWith({
+      pathname: "/trainingResult",
+      params: {
+        questionIds: JSON.stringify(["uuid-123"]),
+        sessionCoins: "10",
+        streakDays: "3",
+        streakActive: "false",
+      },
+    });
   });
 });
