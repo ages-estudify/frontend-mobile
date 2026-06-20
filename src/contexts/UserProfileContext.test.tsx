@@ -12,7 +12,7 @@ jest.mock("@/contexts/AuthContext", () => ({
 import { useAuthSession } from "@/contexts/AuthContext";
 import { userMeService } from "@/services/userMe/userMe.service";
 import { getUserProfile, saveUserProfile } from "@/services/userProfile/userProfile.storage";
-import { UserProfileProvider, useUserProfileContext } from "../UserProfileContext";
+import { UserProfileProvider, useUserProfileContext } from "./UserProfileContext";
 
 const mockGetUserProfile = getUserProfile as jest.Mock;
 const mockSaveUserProfile = saveUserProfile as jest.Mock;
