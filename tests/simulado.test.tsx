@@ -33,6 +33,7 @@ jest.mock("@gorhom/bottom-sheet", () => {
   return {
     __esModule: true,
     default: ({ children }: any) => <View>{children}</View>,
+    BottomSheetModal: ({ children }: any) => <View>{children}</View>,
     BottomSheetView: ({ children }: any) => <View>{children}</View>,
     BottomSheetScrollView: ({ children }: any) => <View>{children}</View>,
     BottomSheetBackdrop: () => <View />,
@@ -286,17 +287,17 @@ describe("ExamsScreen", () => {
       render(<ExamsScreen />);
       fireEvent.press(screen.getByText("Simulado Disponível"));
       fireEvent.press(screen.getByText("Dia 1"));
-      expect(screen.queryByText("Escolha o dia da prova")).toBeNull();
+      expect(screen.getByText("Escolha o idioma")).toBeTruthy();
+      expect(screen.getByText("Inglês")).toBeTruthy();
     });
 
-    it("fecha o bottom sheet de idioma ao cancelar", () => {
+    it("seleciona idioma antes de confirmar o simulado", () => {
       render(<ExamsScreen />);
       fireEvent.press(screen.getByText("Simulado Disponível"));
       fireEvent.press(screen.getByText("Dia 1"));
-      // LanguageBottomSheet está visível — pressionar cancelar fecha
-      const cancelBtn = screen.queryByText("Cancelar");
-      if (cancelBtn) fireEvent.press(cancelBtn);
-      expect(screen.queryByText("Escolha o dia da prova")).toBeNull();
+      fireEvent.press(screen.getByText("Inglês"));
+      expect(screen.getByText("Escolha o idioma")).toBeTruthy();
+      expect(screen.getByText("Começar Simulado")).toBeTruthy();
     });
   });
 
