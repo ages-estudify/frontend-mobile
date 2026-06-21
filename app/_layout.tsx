@@ -3,7 +3,7 @@ import { StreakInitializer } from "@/components/StreakInitializer";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { StarsProvider } from "@/contexts/StarsContext";
 import { StreakProvider } from "@/contexts/StreakContext";
-import { UserProfileProvider } from "@/contexts/UserProfileContext";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useAssets } from "expo-asset";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -47,8 +47,8 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <AuthProvider>
-          <UserProfileProvider>
+        <BottomSheetModalProvider>
+          <AuthProvider>
             <StreakProvider>
               <StarsProvider>
                 <StarsInitializer />
@@ -73,14 +73,15 @@ export default function RootLayout() {
                     name="profile"
                     options={{ title: "Profile", statusBarTranslucent: true }}
                   />
+                  <Stack.Screen name="editProfile" options={{ title: "EditProfile" }} />
                   <Stack.Screen name="(tabs)" />
                   <Stack.Screen name="exam" options={{ title: "PracticeTest" }} />
                 </Stack>
                 <StatusBar style="auto" />
               </StarsProvider>
             </StreakProvider>
-          </UserProfileProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </BottomSheetModalProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

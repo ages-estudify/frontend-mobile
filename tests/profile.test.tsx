@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react-native";
 import React from "react";
 import ProfileRoute from "../app/profile";
 
-jest.mock("@/components/Profile/ProfileScreen/ProfileScreen", () => ({
+jest.mock("@/components/Profile/ProfileScreen", () => ({
   ProfileScreen: () => {
     const { Text } = require("react-native");
     return <Text testID="profile-screen">Perfil</Text>;

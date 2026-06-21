@@ -9,7 +9,10 @@ jest.mock("@gorhom/bottom-sheet", () => {
   return {
     __esModule: true,
     default: ({ children }: any) => <View>{children}</View>,
+    BottomSheetModal: ({ children }: any) => <View>{children}</View>,
+    BottomSheetScrollView: ({ children }: any) => <View>{children}</View>,
     BottomSheetView: ({ children }: any) => <View>{children}</View>,
+    BottomSheetBackdrop: () => null,
   };
 });
 
@@ -21,10 +24,13 @@ jest.mock("expo-router", () => ({
   router: { push: jest.fn() },
 }));
 
-jest.mock("@/constants/tabBarLayout", () => ({
-  tabBarBottomOffset: () => 0,
-  TAB_BAR_HEIGHT: 64,
-}));
+const defaultProps = {
+  visible: true,
+  onContinueDay: jest.fn(),
+  onStartDay: jest.fn(),
+  onOpenLanguage: jest.fn(),
+  onClose: jest.fn(),
+};
 
 const makeExam = (overrides: Partial<Exam> = {}): Exam => ({
   id: "exam-1",
@@ -62,29 +68,13 @@ const makeExam = (overrides: Partial<Exam> = {}): Exam => ({
 
 describe("ExamDaysBottomSheet", () => {
   it("renderiza o título e a descrição", () => {
-    render(
-      <ExamDaysBottomSheet
-        exam={makeExam()}
-        onContinueDay={jest.fn()}
-        onStartDay={jest.fn()}
-        onOpenLanguage={jest.fn()}
-        onClose={jest.fn()}
-      />
-    );
+    render(<ExamDaysBottomSheet exam={makeExam()} {...defaultProps} />);
     expect(screen.getByText("Escolha o dia da prova")).toBeTruthy();
     expect(screen.getByText("Descrição do simulado")).toBeTruthy();
   });
 
   it("renderiza os dias corretamente", () => {
-    render(
-      <ExamDaysBottomSheet
-        exam={makeExam()}
-        onContinueDay={jest.fn()}
-        onStartDay={jest.fn()}
-        onOpenLanguage={jest.fn()}
-        onClose={jest.fn()}
-      />
-    );
+    render(<ExamDaysBottomSheet exam={makeExam()} {...defaultProps} />);
     expect(screen.getByText("Dia 1")).toBeTruthy();
     expect(screen.getByText("Dia 2")).toBeTruthy();
     expect(screen.getAllByText("90 Questões")).toHaveLength(2);
@@ -104,15 +94,7 @@ describe("ExamDaysBottomSheet", () => {
         },
       ],
     });
-    render(
-      <ExamDaysBottomSheet
-        exam={exam}
-        onContinueDay={jest.fn()}
-        onStartDay={jest.fn()}
-        onOpenLanguage={jest.fn()}
-        onClose={jest.fn()}
-      />
-    );
+    render(<ExamDaysBottomSheet exam={exam} {...defaultProps} />);
     expect(screen.getByText("Finalizado")).toBeTruthy();
   });
 
@@ -130,29 +112,13 @@ describe("ExamDaysBottomSheet", () => {
         },
       ],
     });
-    render(
-      <ExamDaysBottomSheet
-        exam={exam}
-        onContinueDay={jest.fn()}
-        onStartDay={jest.fn()}
-        onOpenLanguage={jest.fn()}
-        onClose={jest.fn()}
-      />
-    );
+    render(<ExamDaysBottomSheet exam={exam} {...defaultProps} />);
     expect(screen.getByText("Em andamento")).toBeTruthy();
   });
 
   it("chama onStartDay ao clicar em dia available sem hasLanguageChoice", () => {
     const onStartDay = jest.fn();
-    render(
-      <ExamDaysBottomSheet
-        exam={makeExam()}
-        onContinueDay={jest.fn()}
-        onStartDay={onStartDay}
-        onOpenLanguage={jest.fn()}
-        onClose={jest.fn()}
-      />
-    );
+    render(<ExamDaysBottomSheet exam={makeExam()} {...defaultProps} onStartDay={onStartDay} />);
     fireEvent.press(screen.getByText("Dia 1"));
     expect(onStartDay).toHaveBeenCalledWith("day-1");
   });
@@ -172,15 +138,7 @@ describe("ExamDaysBottomSheet", () => {
         },
       ],
     });
-    render(
-      <ExamDaysBottomSheet
-        exam={exam}
-        onContinueDay={onContinueDay}
-        onStartDay={jest.fn()}
-        onOpenLanguage={jest.fn()}
-        onClose={jest.fn()}
-      />
-    );
+    render(<ExamDaysBottomSheet exam={exam} {...defaultProps} onContinueDay={onContinueDay} />);
     fireEvent.press(screen.getByText("Dia 1"));
     expect(onContinueDay).toHaveBeenCalledWith("day-1");
   });
@@ -200,15 +158,7 @@ describe("ExamDaysBottomSheet", () => {
         },
       ],
     });
-    render(
-      <ExamDaysBottomSheet
-        exam={exam}
-        onContinueDay={jest.fn()}
-        onStartDay={jest.fn()}
-        onOpenLanguage={onOpenLanguage}
-        onClose={jest.fn()}
-      />
-    );
+    render(<ExamDaysBottomSheet exam={exam} {...defaultProps} onOpenLanguage={onOpenLanguage} />);
     fireEvent.press(screen.getByText("Dia 1"));
     expect(onOpenLanguage).toHaveBeenCalledWith("day-1");
   });
@@ -228,30 +178,14 @@ describe("ExamDaysBottomSheet", () => {
         },
       ],
     });
-    render(
-      <ExamDaysBottomSheet
-        exam={exam}
-        onContinueDay={jest.fn()}
-        onStartDay={jest.fn()}
-        onOpenLanguage={jest.fn()}
-        onClose={jest.fn()}
-      />
-    );
+    render(<ExamDaysBottomSheet exam={exam} {...defaultProps} />);
     fireEvent.press(screen.getByText("Dia 1"));
     expect(router.push).toHaveBeenCalled();
   });
 
   it("usa fallback de descrição quando description é undefined", () => {
     const exam = makeExam({ description: undefined });
-    render(
-      <ExamDaysBottomSheet
-        exam={exam}
-        onContinueDay={jest.fn()}
-        onStartDay={jest.fn()}
-        onOpenLanguage={jest.fn()}
-        onClose={jest.fn()}
-      />
-    );
+    render(<ExamDaysBottomSheet exam={exam} {...defaultProps} />);
     expect(
       screen.getByText("Simulado inéditas com questões elaboradas pela equipe Estudify")
     ).toBeTruthy();

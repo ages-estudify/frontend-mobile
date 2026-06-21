@@ -209,7 +209,6 @@ export default function OnboardingScreen() {
       Alert.alert("Erro", "preferredLanguage deve ser ENGLISH ou SPANISH");
       return;
     }
-    console.log("Payload a ser submetido:", payload);
 
     try {
       isSubmittingRef.current = true;

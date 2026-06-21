@@ -32,11 +32,14 @@ export function useAuth() {
   const login = async ({ email, password }: LoginParams) => {
     const response = await authService.login({ email, password });
 
-    const { token, refreshToken, role, planExpirationDate } = response.data;
+    const { token, refreshToken, role, planExpirationDate, userId } = response.data;
 
     await AsyncStorage.setItem("token", token);
     await AsyncStorage.setItem("refreshToken", refreshToken);
     await AsyncStorage.setItem("role", role);
+    if (userId) {
+      await AsyncStorage.setItem("userId", userId);
+    }
     await persistPlanExpirationDate(planExpirationDate);
     await saveUserProfile({ email });
 
@@ -51,6 +54,7 @@ export function useAuth() {
       "refreshToken",
       "planExpirationDate",
       "role",
+      "userId",
       "hasCompletedOnboarding",
     ]);
     await clearUserProfile();
@@ -74,15 +78,17 @@ export function useAuth() {
   const register = async (body: RegisterParams) => {
     const response = await authService.register(body);
 
-    const { token, refreshToken, planExpirationDate, role } = response.data;
+    const { token, refreshToken, planExpirationDate, role, userId } = response.data;
 
     if (token && refreshToken) {
       await AsyncStorage.removeItem("hasCompletedOnboarding");
       await AsyncStorage.setItem("token", token);
       await AsyncStorage.setItem("refreshToken", refreshToken);
       await AsyncStorage.setItem("role", role);
+      await AsyncStorage.setItem("userId", userId);
       await persistPlanExpirationDate(planExpirationDate);
       await saveUserProfile({
+        id: userId,
         fullName: body.fullName,
         email: body.email,
         phone: body.phone,

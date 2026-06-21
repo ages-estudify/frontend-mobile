@@ -1,8 +1,10 @@
 import {
+  buildStudyHoursFromSelection,
   formatPreferredLanguage,
   formatStudyHourLabel,
   getSelectedStudyDays,
   getUniqueStudyHours,
+  normalizePreferredLanguage,
   STUDY_DAY_LABELS,
 } from "./studySchedule";
 
@@ -60,6 +62,34 @@ describe("studySchedule", () => {
           TUESDAY: [8, 10],
         })
       ).toEqual([8, 10, 14]);
+    });
+  });
+
+  describe("normalizePreferredLanguage", () => {
+    it("normaliza variações de inglês e espanhol", () => {
+      expect(normalizePreferredLanguage("Inglês")).toBe("ENGLISH");
+      expect(normalizePreferredLanguage("espanhol")).toBe("SPANISH");
+      expect(normalizePreferredLanguage("english")).toBe("ENGLISH");
+      expect(normalizePreferredLanguage("spanish")).toBe("SPANISH");
+    });
+
+    it("retorna null para valores inválidos ou vazios", () => {
+      expect(normalizePreferredLanguage("")).toBeNull();
+      expect(normalizePreferredLanguage("Francês")).toBeNull();
+    });
+  });
+
+  describe("buildStudyHoursFromSelection", () => {
+    it("retorna mapa vazio quando não há dias ou horários", () => {
+      expect(buildStudyHoursFromSelection([], [8])).toEqual({});
+      expect(buildStudyHoursFromSelection(["MONDAY"], [])).toEqual({});
+    });
+
+    it("aplica os mesmos horários ordenados para cada dia selecionado", () => {
+      expect(buildStudyHoursFromSelection(["MONDAY", "FRIDAY"], [14, 8])).toEqual({
+        MONDAY: [8, 14],
+        FRIDAY: [8, 14],
+      });
     });
   });
 });

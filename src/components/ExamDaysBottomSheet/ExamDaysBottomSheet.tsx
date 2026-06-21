@@ -1,12 +1,12 @@
-import { TAB_BAR_HEIGHT, tabBarBottomOffset } from "@/constants/tabBarLayout";
 import { Exam, ExamDay } from "@/types/exam.types";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { router } from "expo-router";
-import React, { useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
+  visible: boolean;
   exam: Exam;
   onContinueDay: (examDayId: string) => void;
   onStartDay: (examDayId: string) => void;
@@ -15,15 +15,31 @@ type Props = {
 };
 
 export function ExamDaysBottomSheet({
+  visible,
   exam,
   onContinueDay,
   onStartDay,
   onOpenLanguage,
   onClose,
 }: Props) {
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
   const insets = useSafeAreaInsets();
-  const bottomInset = tabBarBottomOffset(insets.bottom) + TAB_BAR_HEIGHT + 8;
+
+  useEffect(() => {
+    if (visible) {
+      bottomSheetRef.current?.present();
+      return;
+    }
+
+    bottomSheetRef.current?.dismiss();
+  }, [visible]);
+
+  const renderBackdrop = useCallback(
+    (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
+      <BottomSheetBackdrop {...props} opacity={0.45} appearsOnIndex={0} disappearsOnIndex={-1} />
+    ),
+    []
+  );
 
   function handleDayPress(day: ExamDay) {
     if (day.status === "completed") {
@@ -51,21 +67,23 @@ export function ExamDaysBottomSheet({
   }
 
   return (
-    <BottomSheet
+    <BottomSheetModal
       ref={bottomSheetRef}
-      snapPoints={["45%"]}
+      enableDynamicSizing
       enablePanDownToClose
-      onClose={onClose}
-      bottomInset={bottomInset}
-      detached={true}
-      style={{ marginHorizontal: 0 }}
+      onDismiss={onClose}
       handleIndicatorStyle={{ backgroundColor: "#D0D0D0", width: 36 }}
       backgroundStyle={{ borderRadius: 20 }}
-      backdropComponent={(props) => (
-        <BottomSheetBackdrop {...props} opacity={0.2} appearsOnIndex={0} disappearsOnIndex={-1} />
-      )}
+      backdropComponent={renderBackdrop}
     >
-      <BottomSheetView style={{ flex: 1, paddingHorizontal: 20, paddingTop: 4, gap: 10 }}>
+      <BottomSheetScrollView
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingTop: 4,
+          paddingBottom: Math.max(insets.bottom, 16) + 16,
+          gap: 10,
+        }}
+      >
         <Text style={{ fontSize: 20, fontWeight: "700", color: "#1a1a1a", marginBottom: 2 }}>
           Escolha o dia da prova
         </Text>
@@ -128,7 +146,7 @@ export function ExamDaysBottomSheet({
             )}
           </Pressable>
         ))}
-      </BottomSheetView>
-    </BottomSheet>
+      </BottomSheetScrollView>
+    </BottomSheetModal>
   );
 }

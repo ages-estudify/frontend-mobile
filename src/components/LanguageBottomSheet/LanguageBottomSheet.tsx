@@ -1,20 +1,36 @@
-import { TAB_BAR_HEIGHT, tabBarBottomOffset } from "@/constants/tabBarLayout";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import React, { useState } from "react";
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, Text, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Language = "ENGLISH" | "SPANISH";
 
 type Props = {
+  visible: boolean;
   onConfirm: (language: Language) => void;
   onCancel: () => void;
 };
 
-export function LanguageBottomSheet({ onConfirm, onCancel }: Props) {
+export function LanguageBottomSheet({ visible, onConfirm, onCancel }: Props) {
   const [selected, setSelected] = useState<Language | null>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
   const insets = useSafeAreaInsets();
-  const bottomInset = tabBarBottomOffset(insets.bottom) + TAB_BAR_HEIGHT + 8;
+
+  useEffect(() => {
+    if (visible) {
+      bottomSheetRef.current?.present();
+      return;
+    }
+
+    bottomSheetRef.current?.dismiss();
+  }, [visible]);
+
+  const renderBackdrop = useCallback(
+    (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
+      <BottomSheetBackdrop {...props} opacity={0.45} appearsOnIndex={0} disappearsOnIndex={-1} />
+    ),
+    []
+  );
 
   const options: { label: string; value: Language }[] = [
     { label: "Inglês", value: "ENGLISH" },
@@ -22,21 +38,23 @@ export function LanguageBottomSheet({ onConfirm, onCancel }: Props) {
   ];
 
   return (
-    <BottomSheet
-      snapPoints={["45%"]}
+    <BottomSheetModal
+      ref={bottomSheetRef}
+      enableDynamicSizing
       enableContentPanningGesture={false}
       enableHandlePanningGesture
       enablePanDownToClose
-      onClose={onCancel}
-      bottomInset={bottomInset}
+      onDismiss={onCancel}
       handleIndicatorStyle={{ backgroundColor: "#D0D0D0", width: 36 }}
       backgroundStyle={{ borderRadius: 20 }}
-      backdropComponent={(props) => (
-        <BottomSheetBackdrop {...props} opacity={0.2} appearsOnIndex={0} disappearsOnIndex={-1} />
-      )}
+      backdropComponent={renderBackdrop}
     >
       <BottomSheetScrollView
-        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 32 }}
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingTop: 4,
+          paddingBottom: Math.max(insets.bottom, 16) + 16,
+        }}
       >
         <Text style={{ fontSize: 20, fontWeight: "700", color: "#1a1a1a", marginBottom: 4 }}>
           Escolha o idioma
@@ -87,6 +105,6 @@ export function LanguageBottomSheet({ onConfirm, onCancel }: Props) {
           </Text>
         </TouchableOpacity>
       </BottomSheetScrollView>
-    </BottomSheet>
+    </BottomSheetModal>
   );
 }
