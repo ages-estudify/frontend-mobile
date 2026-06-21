@@ -173,4 +173,49 @@ describe("ProfileScreen", () => {
 
     expect(screen.getByText("Inativo")).toBeTruthy();
   });
+
+  it("volta para a tela anterior ao pressionar o botão voltar", () => {
+    render(<ProfileScreen />);
+
+    fireEvent.press(screen.getByLabelText("Voltar"));
+    expect(mockBack).toHaveBeenCalled();
+  });
+
+  it("usa plano ativo pelo acesso quando planStatus não vem da API", () => {
+    (useUserProfile as jest.Mock).mockReturnValue({
+      profile: {
+        fullName: "Ana Silva",
+        email: "ana@test.com",
+      },
+      loading: false,
+      error: null,
+      reload: mockReload,
+    });
+    (useAuthSession as jest.Mock).mockReturnValue({
+      role: "USER",
+      planExpirationDate: "2099-12-31",
+    });
+
+    render(<ProfileScreen />);
+
+    expect(screen.getByText("Ativo")).toBeTruthy();
+  });
+
+  it("mostra placeholders quando campos do perfil estão vazios", () => {
+    (useUserProfile as jest.Mock).mockReturnValue({
+      profile: {
+        fullName: "",
+        email: "",
+        planStatus: "active",
+      },
+      loading: false,
+      error: null,
+      reload: mockReload,
+    });
+
+    render(<ProfileScreen />);
+
+    expect(screen.getAllByText("—").length).toBeGreaterThan(0);
+    expect(screen.getByText("Usuário")).toBeTruthy();
+  });
 });

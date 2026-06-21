@@ -1,1 +1,1 @@
-export * from "./ProfileScreen";
+export { ProfileScreen } from "../ProfileScreen";
