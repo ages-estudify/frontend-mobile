@@ -2,6 +2,10 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
 import { QuestionAnalysisSheet } from "./QuestionAnalysisSheet";
 
+jest.mock("@gorhom/bottom-sheet", () => ({
+  TouchableOpacity: jest.requireActual("react-native").TouchableOpacity,
+}));
+
 const baseProps = {
   correctAlternative: { letter: "A", text: "Alternativa correta" },
   markedAlternative: { letter: "B", text: "Alternativa marcada" },
@@ -34,15 +38,19 @@ describe("QuestionAnalysisSheet", () => {
 
   it("chama onNext ao pressionar Próxima Questão", () => {
     const onNext = jest.fn();
-    render(<QuestionAnalysisSheet {...baseProps} isCorrect onNext={onNext} />);
+    const onFinish = jest.fn();
+    render(<QuestionAnalysisSheet {...baseProps} isCorrect onNext={onNext} onFinish={onFinish} />);
     fireEvent.press(screen.getByText("Próxima Questão"));
     expect(onNext).toHaveBeenCalledTimes(1);
+    expect(onFinish).not.toHaveBeenCalled();
   });
 
   it("chama onFinish ao pressionar Finalizar Treino", () => {
+    const onNext = jest.fn();
     const onFinish = jest.fn();
-    render(<QuestionAnalysisSheet {...baseProps} isCorrect onFinish={onFinish} />);
+    render(<QuestionAnalysisSheet {...baseProps} isCorrect onNext={onNext} onFinish={onFinish} />);
     fireEvent.press(screen.getByText("Finalizar Treino"));
     expect(onFinish).toHaveBeenCalledTimes(1);
+    expect(onNext).not.toHaveBeenCalled();
   });
 });

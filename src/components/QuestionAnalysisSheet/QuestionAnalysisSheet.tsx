@@ -1,8 +1,8 @@
+import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import React from "react";
-import { View, Text, Pressable } from "react-native";
-import { AnswerStatusBadge } from "../AnswerStatusBadge";
+import { Text, View } from "react-native";
 import { AnswerCard } from "../AnswerCard";
-import { ActionButton } from "../ActionButton";
+import { AnswerStatusBadge } from "../AnswerStatusBadge";
 
 interface AnalysisProps {
   isCorrect: boolean;
@@ -70,10 +70,16 @@ export function QuestionAnalysisSheet({
         </View>
 
         <View className="items-center gap-[11px]">
-          <ActionButton text="Próxima Questão" action={onNext} />
-          <Pressable onPress={onFinish} className="">
+          <TouchableOpacity
+            onPress={onNext}
+            className="w-full items-center rounded-2xl bg-purpleCalm py-[10px]"
+          >
+            <Text className="text-[16px] font-medium text-white">Próxima Questão</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={onFinish}>
             <Text className="text-[16px] font-medium text-primaryGray">Finalizar Treino</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

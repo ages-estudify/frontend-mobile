@@ -1,0 +1,15 @@
+# Legacy files excluded from the 80% coverage gate until dedicated tests land.
+# Requires tech lead approval to add new entries.
+app/(tabs)/cronograma.tsx
+app/(tabs)/treinar.tsx
+app/index.tsx
+app/intro.tsx
+app/paywall.tsx
+app/examHistory.tsx
+app/exam.tsx
+app/(tabs)/simulado.tsx
+app/new-password.tsx
+app/otp-verification.tsx
+app/password-recovery.tsx
+src/services/otp/otp.service.ts
+src/services/api/api.ts

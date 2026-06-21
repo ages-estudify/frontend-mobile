@@ -25,11 +25,14 @@ export const endPoints = {
   },
   questions: {
     answer: (questionId: string) => `/questions/${questionId}/answer`,
+    trainingResult: "/questions/training/result",
   },
   users: {
     profile: (userId: string) => `/users/${userId}`,
     preferences: "/users/preferences",
+    me: "/users/me",
     streak: "/users/streak",
     stats: "/users/stats",
+    profilePicture: "/users/profile-picture",
   },
 };

@@ -3,6 +3,11 @@ import React from "react";
 import { QuestionGridModal } from "./QuestionGridModal";
 import { Question } from "@/types/questions.types";
 
+jest.mock("react-native-safe-area-context", () => ({
+  SafeAreaView: ({ children }: { children: React.ReactNode }) => children,
+  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+}));
+
 jest.mock("../../../assets/icons/close-purple.svg", () => {
   const React = jest.requireActual("react");
   const { View } = jest.requireActual("react-native");

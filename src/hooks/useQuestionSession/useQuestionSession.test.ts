@@ -124,6 +124,8 @@ describe("useQuestionSession Hook", () => {
     expect(result.current.question?.id).toBe("1");
     expect(result.current.feedback).toEqual(mockFeedback);
     expect(result.current.progress.current).toBe(0);
+    expect(result.current.answeredQuestionIds).toEqual(["1"]);
+    expect(result.current.sessionCoins).toBe(1);
 
     act(() => {
       result.current.nextQuestion();
@@ -173,6 +175,72 @@ describe("useQuestionSession Hook", () => {
       streakDays: 5,
       streakActive: true,
     });
+    expect(result.current.latestStreak).toEqual({
+      streakDays: 5,
+      streakActive: true,
+    });
+  });
+
+  it("deve acumular ids respondidos em ordem, moedas da sessÃ£o e Ãºltimo streak", async () => {
+    (getQuestions as jest.Mock)
+      .mockResolvedValueOnce({
+        data: {
+          questions: mockQuestions,
+          sessionProgress: { current: 0, total: 20 },
+        },
+      })
+      .mockResolvedValue({ data: null });
+
+    (postAnswer as jest.Mock)
+      .mockResolvedValueOnce({
+        data: {
+          isCorrect: true,
+          correctAnswer: "A",
+          explanation: "ok",
+          coinsEarned: 2,
+          totalCoins: 7,
+          streakDays: 1,
+          streakActive: true,
+        },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          isCorrect: false,
+          correctAnswer: "C",
+          explanation: "ok",
+          coinsEarned: 3,
+          totalCoins: 10,
+          streakDays: 2,
+          streakActive: false,
+        },
+      });
+
+    const { result } = renderHook(() => useQuestionSession());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => {
+      result.current.setSelected("A");
+    });
+
+    await act(async () => {
+      await result.current.confirmAnswer();
+    });
+
+    act(() => {
+      result.current.nextQuestion();
+      result.current.setSelected("B");
+    });
+
+    await act(async () => {
+      await result.current.confirmAnswer();
+    });
+
+    expect(result.current.answeredQuestionIds).toEqual(["1", "2"]);
+    expect(result.current.sessionCoins).toBe(5);
+    expect(result.current.latestStreak).toEqual({
+      streakDays: 2,
+      streakActive: false,
+    });
   });
 
   it("deve salvar no AsyncStorage (Retry Offline) se postAnswer falhar", async () => {
@@ -204,6 +272,11 @@ describe("useQuestionSession Hook", () => {
         expect.stringContaining('"questionId":"1"')
       );
     });
+
+    expect(result.current.submissionError).toBe(
+      "Não foi possível enviar sua resposta. Tente novamente."
+    );
+    expect(result.current.answeredQuestionIds).toEqual([]);
   });
 
   it("deve sinalizar isFinished quando não houver mais questões no backend", async () => {
@@ -216,5 +289,26 @@ describe("useQuestionSession Hook", () => {
     });
 
     expect(result.current.isFinished).toBe(true);
+  });
+
+  it("deve sinalizar isLastQuestion quando a questÃ£o atual Ã© a Ãºltima disponÃ­vel", async () => {
+    (getQuestions as jest.Mock)
+      .mockResolvedValueOnce({
+        data: {
+          questions: [mockQuestions[0]],
+          sessionProgress: { current: 0, total: 1 },
+        },
+      })
+      .mockResolvedValue({ data: null });
+
+    const { result } = renderHook(() => useQuestionSession());
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLastQuestion).toBe(true);
+    });
   });
 });
