@@ -19,6 +19,14 @@ jest.mock("@/hooks/useAuth", () => ({
   }),
 }));
 
+jest.mock("react-native-safe-area-context", () => {
+  const { View } = require("react-native");
+  return {
+    SafeAreaView: View,
+    useSafeAreaInsets: () => ({ bottom: 0, top: 0, left: 0, right: 0 }),
+  };
+});
+
 jest.mock("@/components/TextInputWithTitle/TextInputWithTitle", () => {
   const { TextInput, View, Text } = require("react-native");
   const React = require("react");
