@@ -248,8 +248,9 @@ export default function ExamsScreen() {
             }}
           />
 
-          {showDaysSheet && selectedExam && (
+          {selectedExam && (
             <ExamDaysBottomSheet
+              visible={showDaysSheet}
               exam={selectedExam}
               onContinueDay={handleContinueDay}
               onStartDay={handleStartDay}
@@ -258,12 +259,11 @@ export default function ExamsScreen() {
             />
           )}
 
-          {showLanguageSheet && (
-            <LanguageBottomSheet
-              onConfirm={handleConfirmLanguage}
-              onCancel={handleCancelLanguage}
-            />
-          )}
+          <LanguageBottomSheet
+            visible={showLanguageSheet}
+            onConfirm={handleConfirmLanguage}
+            onCancel={handleCancelLanguage}
+          />
         </PlanGuard>
       </View>
     </SafeAreaView>
