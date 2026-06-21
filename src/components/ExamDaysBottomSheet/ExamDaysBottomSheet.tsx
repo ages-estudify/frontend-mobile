@@ -75,6 +75,7 @@ export function ExamDaysBottomSheet({
       handleIndicatorStyle={{ backgroundColor: "#D0D0D0", width: 36 }}
       backgroundStyle={{ borderRadius: 20 }}
       backdropComponent={renderBackdrop}
+      containerStyle={{ elevation: 24, zIndex: 999 }}
     >
       <BottomSheetScrollView
         contentContainerStyle={{

@@ -21,7 +21,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 type InfoRowProps = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -168,26 +168,6 @@ export function ProfileScreen() {
             style={{ height: headerHeight }}
           />
 
-          <Pressable
-            onPress={() => router.back()}
-            style={{ top: insets.top + 8 }}
-            className="absolute left-[16px] h-[40px] w-[40px] items-center justify-center rounded-full bg-white"
-            accessibilityRole="button"
-            accessibilityLabel="Voltar"
-          >
-            <Ionicons name="chevron-back" size={20} color="#000000" />
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/editProfile")}
-            style={{ top: insets.top + 8 }}
-            className="absolute right-[16px] h-[40px] w-[40px] items-center justify-center rounded-full bg-white"
-            accessibilityRole="button"
-            accessibilityLabel="Editar perfil"
-          >
-            <Ionicons name="create-outline" size={18} color="#000000" />
-          </Pressable>
-
           <View className="-mt-[44px] items-center">
             <Image
               source={require("../../../assets/User.png")}
@@ -316,6 +296,33 @@ export function ProfileScreen() {
           ) : null}
         </View>
       </ScrollView>
+
+      <View style={{ position: "absolute", top: 0, left: 0, right: 0 }} pointerEvents="box-none">
+        <SafeAreaView edges={["top"]} pointerEvents="box-none">
+          <View
+            className="flex-row items-center justify-between px-[16px] py-[8px]"
+            pointerEvents="box-none"
+          >
+            <Pressable
+              onPress={() => router.back()}
+              className="h-[40px] w-[40px] items-center justify-center rounded-full bg-white"
+              accessibilityRole="button"
+              accessibilityLabel="Voltar"
+            >
+              <Ionicons name="chevron-back" size={20} color="#000000" />
+            </Pressable>
+
+            <Pressable
+              onPress={() => router.push("/editProfile")}
+              className="h-[40px] w-[40px] items-center justify-center rounded-full bg-white"
+              accessibilityRole="button"
+              accessibilityLabel="Editar perfil"
+            >
+              <Ionicons name="create-outline" size={18} color="#000000" />
+            </Pressable>
+          </View>
+        </SafeAreaView>
+      </View>
     </View>
   );
 }

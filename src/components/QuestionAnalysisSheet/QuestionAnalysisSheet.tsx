@@ -1,6 +1,5 @@
-import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { AnswerCard } from "../AnswerCard";
 import { AnswerStatusBadge } from "../AnswerStatusBadge";
 

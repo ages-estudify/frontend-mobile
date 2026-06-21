@@ -11,13 +11,18 @@ export interface AnswerQuestionResponse {
 }
 
 export interface TrainingResultRequest {
-  questionIds: string[];
+  questionsIds: string[];
 }
 
 export interface TrainingResultResponse {
   totalQuestions: number;
   correctAnswers: number;
   wrongAnswers: number;
+}
+
+export interface TrainingResultApiResponse {
+  success: boolean;
+  data: TrainingResultResponse;
 }
 
 export type Alternative = {

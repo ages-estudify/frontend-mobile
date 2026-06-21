@@ -1,9 +1,10 @@
-import api, { handleApiError } from "@/services/api";
 import { endPoints } from "@/routes/endpoints";
+import api, { handleApiError } from "@/services/api";
 import {
   AnswerQuestionResponse,
   GetQuestionParams,
   GetQuestionsResponse,
+  TrainingResultApiResponse,
   TrainingResultRequest,
   TrainingResultResponse,
 } from "@/types/questions.types";
@@ -47,12 +48,12 @@ export async function postAnswer(
 
 export async function getTrainingResult(questionIds: string[]): Promise<TrainingResultResponse> {
   try {
-    const body: TrainingResultRequest = { questionIds };
-    const response = await api.post<never, TrainingResultResponse>(
+    const body: TrainingResultRequest = { questionsIds: questionIds };
+    const response = await api.post<never, TrainingResultApiResponse>(
       endPoints.questions.trainingResult,
       body
     );
-    return response;
+    return response.data;
   } catch (error) {
     throw handleApiError(error);
   }
