@@ -1,6 +1,7 @@
 import { ActionButton } from "@/components/ActionButton";
 import { TextInputWithTitle } from "@/components/TextInputWithTitle/TextInputWithTitle";
 import { useAuth } from "@/hooks/useAuth";
+import { userMeService } from "@/services/userMe/userMe.service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -33,11 +34,21 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await login({ email, password });
-      if (!(await AsyncStorage.getItem(ONBOARDING_COMPLETED_STORAGE_KEY))) {
-        router.replace("/onboarding");
-      } else {
-        router.replace("/");
+
+      let onboardingCompleted: boolean;
+      try {
+        const me = await userMeService.getMe();
+        onboardingCompleted = me.onboarding_completed;
+        await AsyncStorage.setItem(
+          ONBOARDING_COMPLETED_STORAGE_KEY,
+          me.onboarding_completed ? "true" : "false"
+        );
+      } catch {
+        onboardingCompleted =
+          (await AsyncStorage.getItem(ONBOARDING_COMPLETED_STORAGE_KEY)) === "true";
       }
+
+      router.replace(onboardingCompleted ? "/" : "/onboarding");
     } catch (error) {
       Alert.alert("Erro", "Verifique os campos preenchidos");
     } finally {
