@@ -5,14 +5,7 @@ import { getTopicNodeStyle, TopicNode } from "./TopicNode";
 
 describe("TopicNode scaling", () => {
   it("renders the default circle size without a scale", () => {
-    render(
-      <TopicNode
-        iconKey="book"
-        progressPercentage={0}
-        onPress={jest.fn()}
-        accessibilityLabel="Álgebra"
-      />
-    );
+    render(<TopicNode progressPercentage={0} onPress={jest.fn()} accessibilityLabel="Álgebra" />);
 
     const circle = screen.getByTestId("topic-node-circle");
     expect(StyleSheet.flatten(circle.props.style).width).toBe(60);
@@ -21,7 +14,6 @@ describe("TopicNode scaling", () => {
   it("scales the circle size up on tablets", () => {
     render(
       <TopicNode
-        iconKey="book"
         progressPercentage={0}
         onPress={jest.fn()}
         accessibilityLabel="Álgebra"
@@ -40,7 +32,6 @@ describe("TopicNode icon rendering", () => {
   it("renders the remote icon and falls back to the default icon on load error", () => {
     render(
       <TopicNode
-        iconKey="book"
         iconUrl="https://x/icon.png"
         progressPercentage={40}
         onPress={jest.fn()}
@@ -56,15 +47,8 @@ describe("TopicNode icon rendering", () => {
     expect(screen.UNSAFE_queryByType(Image)).toBeNull();
   });
 
-  it("falls back to the default icon for an unknown icon key", () => {
-    render(
-      <TopicNode
-        iconKey="nonexistent-icon"
-        progressPercentage={0}
-        onPress={jest.fn()}
-        accessibilityLabel="Álgebra"
-      />
-    );
+  it("falls back to the default icon when no remote icon is provided", () => {
+    render(<TopicNode progressPercentage={0} onPress={jest.fn()} accessibilityLabel="Álgebra" />);
 
     expect(screen.UNSAFE_queryByType(Image)).toBeNull();
     expect(screen.getByTestId("topic-node-circle")).toBeTruthy();
@@ -81,14 +65,7 @@ describe("TopicNode style helpers", () => {
 
   it("stays mounted through the press lifecycle", () => {
     const onPress = jest.fn();
-    render(
-      <TopicNode
-        iconKey="book"
-        progressPercentage={0}
-        onPress={onPress}
-        accessibilityLabel="Álgebra"
-      />
-    );
+    render(<TopicNode progressPercentage={0} onPress={onPress} accessibilityLabel="Álgebra" />);
 
     const pressable = screen.getByLabelText("Álgebra");
     fireEvent(pressable, "pressIn");

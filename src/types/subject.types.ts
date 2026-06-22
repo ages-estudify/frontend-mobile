@@ -9,7 +9,7 @@ export interface Subject {
 export interface Topic {
   id: string;
   name: string;
-  icon_url: string;
+  icon_key: string;
   text: string;
   availableByType: {
     ORIGINAL: number;

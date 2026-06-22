@@ -1,5 +1,5 @@
 import { TopicLabel } from "@/components/TopicLabel";
-import { TopicNode, type TopicIconKey } from "@/components/TopicNode";
+import { TopicNode } from "@/components/TopicNode";
 import React, { Fragment, useMemo } from "react";
 import { ScrollView, useWindowDimensions, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
@@ -9,7 +9,6 @@ export interface TopicTrailItem {
   stageNumber: number;
   name: string;
   progressPercentage: number;
-  iconKey: TopicIconKey;
   iconUrl?: string;
 }
 
@@ -223,7 +222,6 @@ export function TopicTrail({ topics, onTopicPress }: TopicTrailProps) {
                 }}
               >
                 <TopicNode
-                  iconKey={topic.iconKey}
                   iconUrl={topic.iconUrl}
                   progressPercentage={topic.progressPercentage}
                   onPress={() => onTopicPress(topic.id)}

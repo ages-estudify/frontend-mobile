@@ -43,7 +43,7 @@ describe("subject.service", () => {
         {
           id: "t1",
           name: "Funções",
-          icon_url: "https://example.com/t.png",
+          icon_key: "https://example.com/t.png",
           text: "Descrição",
           availableByType: { ORIGINAL: 5, SIMPLIFIED: 3 },
           answeredByType: { ORIGINAL: 1, SIMPLIFIED: 0 },

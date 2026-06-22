@@ -1,13 +1,5 @@
 import { getProgressColor } from "@/utils/progress-color";
-import {
-  Atom,
-  BookOpen,
-  Calculator,
-  FlaskConical,
-  Globe,
-  Languages,
-  type LucideIcon,
-} from "lucide-react-native";
+import { BookOpen } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Image,
@@ -18,18 +10,6 @@ import {
   type ViewStyle,
 } from "react-native";
 
-export const topicIconMap: Record<string, LucideIcon> = {
-  book: BookOpen,
-  calculator: Calculator,
-  flask: FlaskConical,
-  globe: Globe,
-  language: Languages,
-  atom: Atom,
-};
-
-export type TopicIconKey = keyof typeof topicIconMap | (string & {});
-
-const DEFAULT_ICON: LucideIcon = BookOpen;
 const SIZE = 60;
 const ICON_SIZE = 28;
 const REMOTE_ICON_WIDTH = 40;
@@ -38,7 +18,6 @@ const PRESSED_SCALE = 0.96;
 const PRESSED_OPACITY = 0.85;
 
 export interface TopicNodeProps {
-  iconKey: TopicIconKey;
   iconUrl?: string;
   progressPercentage: number;
   onPress: () => void;
@@ -65,7 +44,6 @@ export function getTopicNodeStyle(backgroundColor: string, size: number = SIZE):
 }
 
 export function TopicNode({
-  iconKey,
   iconUrl,
   progressPercentage,
   onPress,
@@ -73,7 +51,7 @@ export function TopicNode({
   scale = 1,
 }: TopicNodeProps) {
   const [remoteFailed, setRemoteFailed] = useState(false);
-  const Icon = topicIconMap[iconKey] ?? DEFAULT_ICON;
+
   const backgroundColor = getProgressColor(progressPercentage);
   const showRemote = Boolean(iconUrl) && !remoteFailed;
 
@@ -103,7 +81,7 @@ export function TopicNode({
             onError={() => setRemoteFailed(true)}
           />
         ) : (
-          <Icon size={iconSize} color="#FFFFFF" strokeWidth={2.5} />
+          <BookOpen size={iconSize} color="#FFFFFF" strokeWidth={2.5} />
         )}
       </View>
     </Pressable>

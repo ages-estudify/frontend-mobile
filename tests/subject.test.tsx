@@ -71,7 +71,7 @@ function makeTopic(overrides: Partial<Topic> = {}): Topic {
   return {
     id: "t1",
     name: "Álgebra",
-    icon_url: "https://example.com/icon.png",
+    icon_key: "https://example.com/icon.png",
     text: "Introdução às funções",
     availableByType: { ORIGINAL: 10, SIMPLIFIED: 10 },
     answeredByType: { ORIGINAL: 5, SIMPLIFIED: 5 },

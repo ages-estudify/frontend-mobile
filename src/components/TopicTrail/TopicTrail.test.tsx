@@ -4,9 +4,9 @@ import * as ReactNative from "react-native";
 import { MAX_TRAIL_WIDTH, resolveTrailLayout, TopicTrail, type TopicTrailItem } from "./TopicTrail";
 
 const items: TopicTrailItem[] = [
-  { id: "a", stageNumber: 1, name: "Álgebra", progressPercentage: 0, iconKey: "book" },
-  { id: "b", stageNumber: 2, name: "Geometria", progressPercentage: 50, iconKey: "book" },
-  { id: "c", stageNumber: 3, name: "Trigonometria", progressPercentage: 100, iconKey: "book" },
+  { id: "a", stageNumber: 1, name: "Álgebra", progressPercentage: 0 },
+  { id: "b", stageNumber: 2, name: "Geometria", progressPercentage: 50 },
+  { id: "c", stageNumber: 3, name: "Trigonometria", progressPercentage: 100 },
 ];
 
 function mockWindowWidth(width: number) {

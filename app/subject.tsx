@@ -29,8 +29,7 @@ function topicToTrailItem(topic: Topic, index: number): TopicTrailItem {
     stageNumber: index + 1,
     name: topic.name,
     progressPercentage,
-    iconKey: "book",
-    iconUrl: topic.icon_url,
+    iconUrl: topic.icon_key,
   };
 }
 
