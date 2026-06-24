@@ -73,8 +73,8 @@ function makeTopic(overrides: Partial<Topic> = {}): Topic {
     name: "Álgebra",
     icon_key: "https://example.com/icon.png",
     text: "Introdução às funções",
-    availableByType: { ORIGINAL: 10, SIMPLIFIED: 10 },
-    answeredByType: { ORIGINAL: 5, SIMPLIFIED: 5 },
+    availableByType: { ORIGINAL: 10, EXTERNAL: 10 },
+    answeredByType: { ORIGINAL: 5, EXTERNAL: 5 },
     ...overrides,
   };
 }
@@ -162,8 +162,8 @@ describe("SubjectScreen (app/subject)", () => {
   it("shows the topic stage and progress percentage when partially complete", async () => {
     mockGetTopics.mockResolvedValue([
       makeTopic({
-        availableByType: { ORIGINAL: 4, SIMPLIFIED: 0 },
-        answeredByType: { ORIGINAL: 2, SIMPLIFIED: 0 },
+        availableByType: { ORIGINAL: 2, EXTERNAL: 2 },
+        answeredByType: { ORIGINAL: 2, EXTERNAL: 0 },
       }),
     ]);
 

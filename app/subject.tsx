@@ -19,9 +19,8 @@ type Status = "loading" | "error" | "success";
 type PracticeType = "ORIGINAL" | "SIMPLIFIED";
 
 function topicToTrailItem(topic: Topic, index: number): TopicTrailItem {
-  const available =
-    (topic.availableByType?.ORIGINAL ?? 0) + (topic.availableByType?.SIMPLIFIED ?? 0);
-  const answered = (topic.answeredByType?.ORIGINAL ?? 0) + (topic.answeredByType?.SIMPLIFIED ?? 0);
+  const available = (topic.availableByType?.ORIGINAL ?? 0) + (topic.availableByType?.EXTERNAL ?? 0);
+  const answered = (topic.answeredByType?.ORIGINAL ?? 0) + (topic.answeredByType?.EXTERNAL ?? 0);
   const progressPercentage = available === 0 ? 0 : Math.round((answered / available) * 100);
 
   return {

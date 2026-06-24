@@ -45,8 +45,8 @@ describe("subject.service", () => {
           name: "Funções",
           icon_key: "https://example.com/t.png",
           text: "Descrição",
-          availableByType: { ORIGINAL: 5, SIMPLIFIED: 3 },
-          answeredByType: { ORIGINAL: 1, SIMPLIFIED: 0 },
+          availableByType: { ORIGINAL: 5, EXTERNAL: 3 },
+          answeredByType: { ORIGINAL: 1, EXTERNAL: 0 },
         },
       ];
       mockedGet.mockResolvedValue({ data: topics });
