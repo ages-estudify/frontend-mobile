@@ -1,4 +1,5 @@
 import { useAuthSession } from "@/contexts/AuthContext";
+import { useUserProfileContext } from "@/contexts/UserProfileContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import {
@@ -140,6 +141,7 @@ export function ProfileScreen() {
   const { logout } = useAuth();
   const { profile, loading, error, reload } = useUserProfile();
   const { role, planExpirationDate } = useAuthSession();
+  const { profilePictureUrl } = useUserProfileContext();
 
   const planStatus = profile?.planStatus
     ? formatPlanStatus(profile.planStatus)
@@ -170,7 +172,9 @@ export function ProfileScreen() {
 
           <View className="-mt-[44px] items-center">
             <Image
-              source={require("../../../assets/User.png")}
+              source={
+                profilePictureUrl ? { uri: profilePictureUrl } : require("../../../assets/User.png")
+              }
               className="h-[88px] w-[88px] rounded-full border-4 border-whitebg"
               resizeMode="cover"
             />

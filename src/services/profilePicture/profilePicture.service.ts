@@ -8,7 +8,7 @@ export type UpdateProfilePictureResponse = {
 export const profilePictureService = {
   async update(imageBase64: string): Promise<UpdateProfilePictureResponse> {
     try {
-      const response = await api.patch<{ data: UpdateProfilePictureResponse }>(
+      const response: { data: UpdateProfilePictureResponse } = await api.patch(
         endPoints.users.profilePicture,
         { image: imageBase64 }
       );

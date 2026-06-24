@@ -3,6 +3,7 @@ import { StreakInitializer } from "@/components/StreakInitializer";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { StarsProvider } from "@/contexts/StarsContext";
 import { StreakProvider } from "@/contexts/StreakContext";
+import { UserProfileProvider } from "@/contexts/UserProfileContext";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useAssets } from "expo-asset";
 import { Stack } from "expo-router";
@@ -49,37 +50,36 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <BottomSheetModalProvider>
           <AuthProvider>
-            <StreakProvider>
-              <StarsProvider>
-                <StarsInitializer />
-                <StreakInitializer />
-                <Stack
-                  screenOptions={{
-                    headerShown: false,
-                  }}
-                >
-                  <Stack.Screen name="index" options={{ title: "HomePage" }} />
-                  <Stack.Screen name="login" options={{ title: "LoginPage" }} />
-                  <Stack.Screen name="intro" options={{ title: "IntroPage" }} />
-                  <Stack.Screen name="register" options={{ title: "RegisterPage" }} />
-                  <Stack.Screen name="plans" options={{ title: "PlansPage" }} />
-                  <Stack.Screen name="paywall" options={{ title: "PaywallPage" }} />
-                  <Stack.Screen name="subject" options={{ title: "Subject" }} />
-                  <Stack.Screen name="question" options={{ title: "Question" }} />
-                  <Stack.Screen name="trainingResult" options={{ title: "TrainingResult" }} />
-                  <Stack.Screen name="examFeedback" options={{ title: "ExamFeedback" }} />
-                  <Stack.Screen name="onboarding" options={{ title: "Onboarding" }} />
-                  <Stack.Screen
-                    name="profile"
-                    options={{ title: "Profile", statusBarTranslucent: true }}
-                  />
-                  <Stack.Screen name="editProfile" options={{ title: "EditProfile" }} />
-                  <Stack.Screen name="(tabs)" />
-                  <Stack.Screen name="exam" options={{ title: "PracticeTest" }} />
-                </Stack>
-                <StatusBar style="auto" />
-              </StarsProvider>
-            </StreakProvider>
+            <UserProfileProvider>
+              <StreakProvider>
+                <StarsProvider>
+                  <StarsInitializer />
+                  <StreakInitializer />
+                  <Stack
+                    screenOptions={{
+                      headerShown: false,
+                    }}
+                  >
+                    <Stack.Screen name="index" options={{ title: "HomePage" }} />
+                    <Stack.Screen name="login" options={{ title: "LoginPage" }} />
+                    <Stack.Screen name="intro" options={{ title: "IntroPage" }} />
+                    <Stack.Screen name="register" options={{ title: "RegisterPage" }} />
+                    <Stack.Screen name="plans" options={{ title: "PlansPage" }} />
+                    <Stack.Screen name="paywall" options={{ title: "PaywallPage" }} />
+                    <Stack.Screen name="subject" options={{ title: "Subject" }} />
+                    <Stack.Screen name="question" options={{ title: "Question" }} />
+                    <Stack.Screen name="trainingResult" options={{ title: "TrainingResult" }} />
+                    <Stack.Screen name="examFeedback" options={{ title: "ExamFeedback" }} />
+                    <Stack.Screen name="onboarding" options={{ title: "Onboarding" }} />
+                    <Stack.Screen name="profile" options={{ title: "Profile" }} />
+                    <Stack.Screen name="editProfile" options={{ title: "EditProfile" }} />
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen name="exam" options={{ title: "PracticeTest" }} />
+                  </Stack>
+                  <StatusBar style="auto" />
+                </StarsProvider>
+              </StreakProvider>
+            </UserProfileProvider>
           </AuthProvider>
         </BottomSheetModalProvider>
       </SafeAreaProvider>

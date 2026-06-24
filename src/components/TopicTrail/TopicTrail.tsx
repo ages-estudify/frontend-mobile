@@ -94,7 +94,7 @@ export function getNodePosition(
   } = geometry;
   const centerX = containerWidth / 2;
   const side = getNodeSide(index);
-  const visualIndexFromTop = Math.max(0, totalCount - 1 - index);
+  const visualIndexFromTop = clamp(index, 0, Math.max(0, totalCount - 1));
   const y = TRAIL_TOP_PADDING + visualIndexFromTop * verticalSpacing + nodeSize / 2;
   const x = side === "right" ? centerX + amplitude : centerX - amplitude;
   return { x, y, side };

@@ -13,6 +13,7 @@ export type UserProfile = {
   desiredCourse?: string;
   desiredUniversity?: string;
   studyHours?: StudyHoursMap;
+  profilePictureUrl?: string | null;
 };
 
 export type UserProfileUpdate = Partial<UserProfile>;

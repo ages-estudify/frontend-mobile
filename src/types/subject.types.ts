@@ -13,10 +13,10 @@ export interface Topic {
   text: string;
   availableByType: {
     ORIGINAL: number;
-    SIMPLIFIED: number;
+    EXTERNAL: number;
   };
   answeredByType: {
     ORIGINAL: number;
-    SIMPLIFIED: number;
+    EXTERNAL: number;
   };
 }
