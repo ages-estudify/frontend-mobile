@@ -1,5 +1,7 @@
 import { ProfileFormField } from "@/components/Profile/ProfileFormField";
+import { ProfilePictureEditor } from "@/components/ProfilePictureEditor/Profilepictureeditor";
 import { useAuthSession } from "@/contexts/AuthContext";
+import { useUserProfileContext } from "@/contexts/UserProfileContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { userPreferencesService } from "@/services/userPreferences/userPreferences.service";
 import { saveUserProfile } from "@/services/userProfile/userProfile.storage";
@@ -21,7 +23,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -103,6 +104,7 @@ export default function EditProfileScreen() {
   const router = useRouter();
   const { profile, loading, error, reload } = useUserProfile();
   const { role, planExpirationDate } = useAuthSession();
+  const { profilePictureUrl, updateProfilePicture } = useUserProfileContext();
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -250,21 +252,11 @@ export default function EditProfileScreen() {
           ) : null}
 
           <View className="mb-[28px] items-center">
-            <View className="relative">
-              <Image
-                source={require("../assets/User.png")}
-                className="h-[96px] w-[96px] rounded-full"
-                resizeMode="cover"
-              />
-
-              {/* <Pressable
-                                className="absolute -bottom-[2px] -right-[2px] h-[32px] w-[32px] items-center justify-center rounded-full border-2 border-whitebg bg-white"
-                                accessibilityRole="button"
-                                accessibilityLabel="Alterar foto de perfil"
-                            >
-                                <Ionicons name="camera" size={16} color="#000000" />
-                            </Pressable> */}
-            </View>
+            <ProfilePictureEditor
+              currentUrl={profilePictureUrl}
+              onUpdate={(url) => void updateProfilePicture(url)}
+              onRemove={() => void updateProfilePicture(null)}
+            />
           </View>
 
           <View className="gap-[32px]">

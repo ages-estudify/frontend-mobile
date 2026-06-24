@@ -1,4 +1,5 @@
 import { useAuthSession } from "@/contexts/AuthContext";
+import { useUserProfileContext } from "@/contexts/UserProfileContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { fireEvent, render, screen } from "@testing-library/react-native";
@@ -8,6 +9,7 @@ import { ProfileScreen } from "./ProfileScreen";
 jest.mock("@/hooks/useAuth");
 jest.mock("@/hooks/useUserProfile");
 jest.mock("@/contexts/AuthContext");
+jest.mock("@/contexts/UserProfileContext");
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();
@@ -56,6 +58,10 @@ describe("ProfileScreen", () => {
     (useAuthSession as jest.Mock).mockReturnValue({
       role: "USER",
       planExpirationDate: "2099-12-31",
+    });
+    (useUserProfileContext as jest.Mock).mockReturnValue({
+      profilePictureUrl: null,
+      updateProfilePicture: jest.fn(),
     });
   });
 
