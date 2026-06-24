@@ -5,6 +5,11 @@ export const endPoints = {
     refresh: "/auth/refresh",
   },
 
+  otp: {
+    create: "/otp/create",
+    verify: "/otp/verify",
+  },
+
   subscriptions: {
     create: "/subscriptions",
   },
@@ -34,5 +39,6 @@ export const endPoints = {
     streak: "/users/streak",
     stats: "/users/stats",
     profilePicture: "/users/profile-picture",
+    updatePassword: "/users/update/password",
   },
 };

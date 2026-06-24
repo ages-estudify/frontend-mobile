@@ -1,53 +1,36 @@
+import { endPoints } from "@/routes/endpoints";
 import { LoginResponse } from "@/types/auth.types";
+import { api, handleApiError } from "../api";
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "https://SUA_API_AQUI.com";
-
-type ApiErrorResponse = {
-  message?: string;
+export const createOtp = async (email: string): Promise<void> => {
+  try {
+    await api.post(endPoints.otp.create, { email });
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-
-  if (!response.ok) {
-    let message = "Não foi possível completar a solicitação";
-    try {
-      const data = (await response.json()) as ApiErrorResponse;
-      if (data?.message) message = data.message;
-    } catch {}
-    throw new Error(message);
+export const verifyOtp = async (email: string, otp: string): Promise<LoginResponse> => {
+  try {
+    const response: LoginResponse = await api.post(endPoints.otp.verify, { email, otp });
+    return response;
+  } catch (error) {
+    return handleApiError(error);
   }
+};
 
-  const text = await response.text();
-  return (text ? JSON.parse(text) : undefined) as T;
-}
-
-export function createOtp(email: string): Promise<void> {
-  return request<void>("/api/v1/otp/create", {
-    method: "POST",
-    body: JSON.stringify({ email }),
-  });
-}
-
-export function verifyOtp(email: string, otp: string): Promise<LoginResponse> {
-  return request<LoginResponse>("/api/v1/otp/verify", {
-    method: "POST",
-    body: JSON.stringify({ email, otp }),
-  });
-}
-
-export function updatePassword(token: string, newPassword: string): Promise<void> {
-  return request<void>("/api/v1/users/update/password", {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ newPassword }),
-  });
-}
+export const updatePassword = async (token: string, newPassword: string): Promise<void> => {
+  try {
+    await api.patch(
+      endPoints.users.updatePassword,
+      { newPassword },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
