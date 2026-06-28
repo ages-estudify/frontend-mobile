@@ -36,6 +36,18 @@ jest.mock("@/components/SubjectsGrid", () => ({
 jest.mock("react-native-safe-area-context", () => ({
   SafeAreaView: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
+jest.mock("expo-router", () => ({
+  useFocusEffect: (callback: () => void) => {
+    const ReactModule = require("react");
+    ReactModule.useEffect(() => callback(), [callback]);
+  },
+}));
+jest.mock("@/hooks/useStars", () => ({
+  useStars: () => ({ loadStars: jest.fn() }),
+}));
+jest.mock("@/hooks/useStreak", () => ({
+  useStreak: () => ({ loadStreak: jest.fn() }),
+}));
 
 const mockGetSubjects = getSubjects as jest.Mock;
 

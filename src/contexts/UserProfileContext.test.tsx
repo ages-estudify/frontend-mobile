@@ -210,7 +210,6 @@ describe("UserProfileProvider", () => {
       expect(screen.getByTestId("url").props.children).toBe("https://cdn.example.com/user1.jpg");
     });
 
-    // Outro usuário entra: token e sessionVersion mudam -> deve rebuscar a foto
     await AsyncStorage.setItem("token", "token-user-2");
     mockGetMe.mockResolvedValueOnce({
       plan_end_date: null,
@@ -258,7 +257,6 @@ describe("UserProfileProvider", () => {
       expect(screen.getByTestId("url").props.children).toBe("https://cdn.example.com/user1.jpg");
     });
 
-    // Logout: token removido, storage do perfil limpo, sessionVersion incrementa
     await AsyncStorage.removeItem("token");
     mockGetUserProfile.mockResolvedValue(null);
     mockUseAuthSession.mockReturnValue({

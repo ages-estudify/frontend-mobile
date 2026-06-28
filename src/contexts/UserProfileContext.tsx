@@ -20,8 +20,6 @@ export function UserProfileProvider({ children }: { children: React.ReactNode })
     const cached = await getUserProfile();
     setProfilePictureUrl(cached?.profilePictureUrl ?? null);
 
-    // Not authenticated: keep the cached value (the fast path above already
-    // reflects cleared storage on logout, which resets the picture to null).
     const token = await AsyncStorage.getItem("token");
     if (!token) return;
 
@@ -39,8 +37,6 @@ export function UserProfileProvider({ children }: { children: React.ReactNode })
     }
   }, [updatePlanExpirationDate]);
 
-  // Re-run on mount and whenever the authenticated user changes (login/logout),
-  // so the picture always follows the current session instead of leaking across users.
   useEffect(() => {
     void refreshProfilePicture();
   }, [refreshProfilePicture, sessionVersion]);

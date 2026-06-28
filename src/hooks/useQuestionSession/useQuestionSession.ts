@@ -1,3 +1,4 @@
+import { useStars } from "@/hooks/useStars";
 import { useStreak } from "@/hooks/useStreak";
 import { getQuestions, postAnswer } from "@/services/question/question.service";
 import { AnswerQuestionResponse, Question, QuestionType } from "@/types/questions.types";
@@ -19,6 +20,7 @@ async function saveFailedAnswer(questionId: string, answer: string) {
 export function useQuestionSession() {
   const { topicId, type } = useLocalSearchParams<{ topicId: string; type: QuestionType }>();
   const { updateStreak } = useStreak();
+  const { updateStars } = useStars();
   const [queue, setQueue] = useState<Question[]>([]);
   const [cursor, setCursor] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
@@ -127,6 +129,10 @@ export function useQuestionSession() {
 
         setLatestStreak(streak);
         updateStreak(streak);
+      }
+
+      if (typeof feedbackData.data?.totalCoins === "number") {
+        updateStars(feedbackData.data.totalCoins);
       }
 
       return feedbackData;

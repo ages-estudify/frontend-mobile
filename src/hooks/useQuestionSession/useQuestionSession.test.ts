@@ -1,3 +1,4 @@
+import { useStars } from "@/hooks/useStars";
 import { useStreak } from "@/hooks/useStreak";
 import { getQuestions, postAnswer } from "@/services/question/question.service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -6,6 +7,10 @@ import { useQuestionSession } from "./useQuestionSession";
 
 jest.mock("@/hooks/useStreak", () => ({
   useStreak: jest.fn(),
+}));
+
+jest.mock("@/hooks/useStars", () => ({
+  useStars: jest.fn(),
 }));
 
 jest.mock("expo-router", () => ({
@@ -21,6 +26,7 @@ jest.mock("@/services/question/question.service", () => ({
 }));
 
 const mockedUseStreak = useStreak as jest.Mock;
+const mockedUseStars = useStars as jest.Mock;
 
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock")
@@ -60,6 +66,7 @@ describe("useQuestionSession Hook", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseStreak.mockReturnValue({ updateStreak: jest.fn() });
+    mockedUseStars.mockReturnValue({ updateStars: jest.fn() });
   });
 
   it("deve carregar as questões iniciais e atualizar progresso", async () => {
@@ -179,6 +186,40 @@ describe("useQuestionSession Hook", () => {
       streakDays: 5,
       streakActive: true,
     });
+  });
+
+  it("deve atualizar o saldo global de moedas com totalCoins ao responder", async () => {
+    (getQuestions as jest.Mock)
+      .mockResolvedValueOnce({
+        data: {
+          questions: mockQuestions,
+          sessionProgress: { current: 0, total: 20 },
+        },
+      })
+      .mockResolvedValue({ data: null });
+
+    (postAnswer as jest.Mock).mockResolvedValue({
+      data: {
+        isCorrect: true,
+        correctAnswer: "A",
+        explanation: "ok",
+        coinsEarned: 3,
+        totalCoins: 42,
+      },
+    });
+
+    const { result } = renderHook(() => useQuestionSession());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    act(() => {
+      result.current.setSelected("A");
+    });
+
+    await act(async () => {
+      await result.current.confirmAnswer();
+    });
+
+    expect(mockedUseStars().updateStars).toHaveBeenCalledWith(42);
   });
 
   it("deve acumular ids respondidos em ordem, moedas da sessÃ£o e Ãºltimo streak", async () => {

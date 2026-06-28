@@ -14,7 +14,6 @@ export type AuthSessionSnapshot = {
 };
 
 type AuthSessionContextValue = AuthSessionSnapshot & {
-  // Bumped on every login/logout so other contexts can react to identity changes.
   sessionVersion: number;
   setSessionFromCredentials: (
     role: string,
