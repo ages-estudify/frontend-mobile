@@ -35,4 +35,16 @@ describe("BackButton", () => {
 
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
+
+  it("calls onPress when provided", () => {
+    const mockOnPress = jest.fn();
+    render(<BackButton onPress={mockOnPress} />);
+
+    const arrow = screen.getByTestId("back-arrow");
+    const pressable = arrow.parent;
+    fireEvent.press(pressable!);
+
+    expect(mockBack).toHaveBeenCalledTimes(1);
+    expect(mockOnPress).toHaveBeenCalledTimes(1);
+  });
 });
