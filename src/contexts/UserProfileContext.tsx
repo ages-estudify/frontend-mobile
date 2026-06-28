@@ -13,34 +13,37 @@ const UserProfileContext = createContext<UserProfileContextValue | null>(null);
 
 export function UserProfileProvider({ children }: { children: React.ReactNode }) {
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
-  const { updatePlanExpirationDate } = useAuthSession();
+  const { updatePlanExpirationDate, sessionVersion } = useAuthSession();
 
-  useEffect(() => {
-    const init = async () => {
-      // Fast path: show cached value immediately
-      const cached = await getUserProfile();
-      setProfilePictureUrl(cached?.profilePictureUrl ?? null);
+  const refreshProfilePicture = useCallback(async () => {
+    // Fast path: show cached value immediately
+    const cached = await getUserProfile();
+    setProfilePictureUrl(cached?.profilePictureUrl ?? null);
 
-      // Skip API call if not authenticated
-      const token = await AsyncStorage.getItem("token");
-      if (!token) return;
+    // Not authenticated: keep the cached value (the fast path above already
+    // reflects cleared storage on logout, which resets the picture to null).
+    const token = await AsyncStorage.getItem("token");
+    if (!token) return;
 
-      try {
-        const me = await userMeService.getMe();
+    try {
+      const me = await userMeService.getMe();
 
-        // Persist and display fresh picture URL
-        await saveUserProfile({ profilePictureUrl: me.profile_picture_url });
-        setProfilePictureUrl(me.profile_picture_url);
+      // Persist and display fresh picture URL
+      await saveUserProfile({ profilePictureUrl: me.profile_picture_url });
+      setProfilePictureUrl(me.profile_picture_url);
 
-        // Sync plan expiration date into AuthContext + AsyncStorage
-        await updatePlanExpirationDate(me.plan_end_date);
-      } catch {
-        // Keep cached values on network failure
-      }
-    };
-
-    void init();
+      // Sync plan expiration date into AuthContext + AsyncStorage
+      await updatePlanExpirationDate(me.plan_end_date);
+    } catch {
+      // Keep cached values on network failure
+    }
   }, [updatePlanExpirationDate]);
+
+  // Re-run on mount and whenever the authenticated user changes (login/logout),
+  // so the picture always follows the current session instead of leaking across users.
+  useEffect(() => {
+    void refreshProfilePicture();
+  }, [refreshProfilePicture, sessionVersion]);
 
   const updateProfilePicture = useCallback(async (url: string | null) => {
     setProfilePictureUrl(url);

@@ -14,6 +14,8 @@ export type AuthSessionSnapshot = {
 };
 
 type AuthSessionContextValue = AuthSessionSnapshot & {
+  // Bumped on every login/logout so other contexts can react to identity changes.
+  sessionVersion: number;
   setSessionFromCredentials: (
     role: string,
     planExpirationDate: string | null,
@@ -38,6 +40,7 @@ const emptySession: AuthSessionSnapshot = {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthSessionSnapshot>(emptySession);
+  const [sessionVersion, setSessionVersion] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -80,6 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         planExpirationDate,
         planActive,
       });
+      setSessionVersion((version) => version + 1);
     },
     []
   );
@@ -128,11 +132,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       planExpirationDate: null,
       planActive: false,
     });
+    setSessionVersion((version) => version + 1);
   }, []);
 
   const value = useMemo<AuthSessionContextValue>(
     () => ({
       ...state,
+      sessionVersion,
       setSessionFromCredentials,
       updatePlanSession,
       updatePlanExpirationDate,
@@ -140,6 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       state,
+      sessionVersion,
       setSessionFromCredentials,
       updatePlanSession,
       updatePlanExpirationDate,
