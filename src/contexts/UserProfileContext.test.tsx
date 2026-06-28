@@ -187,4 +187,91 @@ describe("UserProfileProvider", () => {
     expect(screen.getByTestId("url").props.children).toBe("null");
     expect(mockSaveUserProfile).toHaveBeenCalledWith({ profilePictureUrl: null });
   });
+
+  it("recarrega a foto via /users/me quando a sessão muda (novo login)", async () => {
+    await AsyncStorage.setItem("token", "token-user-1");
+    mockUseAuthSession.mockReturnValue({
+      updatePlanExpirationDate: mockUpdatePlanExpirationDate,
+      sessionVersion: 1,
+    });
+    mockGetMe.mockResolvedValueOnce({
+      plan_end_date: null,
+      onboarding_completed: true,
+      profile_picture_url: "https://cdn.example.com/user1.jpg",
+    });
+
+    const { rerender } = render(
+      <UserProfileProvider>
+        <Probe />
+      </UserProfileProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("url").props.children).toBe("https://cdn.example.com/user1.jpg");
+    });
+
+    await AsyncStorage.setItem("token", "token-user-2");
+    mockGetMe.mockResolvedValueOnce({
+      plan_end_date: null,
+      onboarding_completed: true,
+      profile_picture_url: "https://cdn.example.com/user2.jpg",
+    });
+    mockUseAuthSession.mockReturnValue({
+      updatePlanExpirationDate: mockUpdatePlanExpirationDate,
+      sessionVersion: 2,
+    });
+
+    rerender(
+      <UserProfileProvider>
+        <Probe />
+      </UserProfileProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("url").props.children).toBe("https://cdn.example.com/user2.jpg");
+    });
+  });
+
+  it("limpa a foto ao deslogar (storage limpo + sessão muda)", async () => {
+    await AsyncStorage.setItem("token", "token-user-1");
+    mockGetUserProfile.mockResolvedValue({
+      profilePictureUrl: "https://cdn.example.com/user1.jpg",
+    });
+    mockGetMe.mockResolvedValue({
+      plan_end_date: null,
+      onboarding_completed: true,
+      profile_picture_url: "https://cdn.example.com/user1.jpg",
+    });
+    mockUseAuthSession.mockReturnValue({
+      updatePlanExpirationDate: mockUpdatePlanExpirationDate,
+      sessionVersion: 1,
+    });
+
+    const { rerender } = render(
+      <UserProfileProvider>
+        <Probe />
+      </UserProfileProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("url").props.children).toBe("https://cdn.example.com/user1.jpg");
+    });
+
+    await AsyncStorage.removeItem("token");
+    mockGetUserProfile.mockResolvedValue(null);
+    mockUseAuthSession.mockReturnValue({
+      updatePlanExpirationDate: mockUpdatePlanExpirationDate,
+      sessionVersion: 2,
+    });
+
+    rerender(
+      <UserProfileProvider>
+        <Probe />
+      </UserProfileProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("url").props.children).toBe("null");
+    });
+  });
 });

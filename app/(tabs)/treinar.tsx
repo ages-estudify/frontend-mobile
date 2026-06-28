@@ -5,15 +5,27 @@ import { TabScreenScrollView } from "@/components/navigation/TabScreenScrollView
 import { SequenceBadgeContainer } from "@/components/SequenceBadgeContainer";
 import { StarBadgeContainer } from "@/components/StarBadgeContainer";
 import { SubjectsGrid } from "@/components/SubjectsGrid";
+import { useStars } from "@/hooks/useStars";
+import { useStreak } from "@/hooks/useStreak";
 import { getSubjects } from "@/services/subject/subject.service";
 import { Subject } from "@/types/subject.types";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 function TreinarMainContent() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
+  const { loadStars } = useStars();
+  const { loadStreak } = useStreak();
+
+  useFocusEffect(
+    useCallback(() => {
+      loadStars();
+      loadStreak();
+    }, [loadStars, loadStreak])
+  );
 
   useEffect(() => {
     let mounted = true;

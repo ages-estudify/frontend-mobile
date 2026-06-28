@@ -13,34 +13,33 @@ const UserProfileContext = createContext<UserProfileContextValue | null>(null);
 
 export function UserProfileProvider({ children }: { children: React.ReactNode }) {
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
-  const { updatePlanExpirationDate } = useAuthSession();
+  const { updatePlanExpirationDate, sessionVersion } = useAuthSession();
+
+  const refreshProfilePicture = useCallback(async () => {
+    // Fast path: show cached value immediately
+    const cached = await getUserProfile();
+    setProfilePictureUrl(cached?.profilePictureUrl ?? null);
+
+    const token = await AsyncStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const me = await userMeService.getMe();
+
+      // Persist and display fresh picture URL
+      await saveUserProfile({ profilePictureUrl: me.profile_picture_url });
+      setProfilePictureUrl(me.profile_picture_url);
+
+      // Sync plan expiration date into AuthContext + AsyncStorage
+      await updatePlanExpirationDate(me.plan_end_date);
+    } catch {
+      // Keep cached values on network failure
+    }
+  }, [updatePlanExpirationDate]);
 
   useEffect(() => {
-    const init = async () => {
-      // Fast path: show cached value immediately
-      const cached = await getUserProfile();
-      setProfilePictureUrl(cached?.profilePictureUrl ?? null);
-
-      // Skip API call if not authenticated
-      const token = await AsyncStorage.getItem("token");
-      if (!token) return;
-
-      try {
-        const me = await userMeService.getMe();
-
-        // Persist and display fresh picture URL
-        await saveUserProfile({ profilePictureUrl: me.profile_picture_url });
-        setProfilePictureUrl(me.profile_picture_url);
-
-        // Sync plan expiration date into AuthContext + AsyncStorage
-        await updatePlanExpirationDate(me.plan_end_date);
-      } catch {
-        // Keep cached values on network failure
-      }
-    };
-
-    void init();
-  }, [updatePlanExpirationDate]);
+    void refreshProfilePicture();
+  }, [refreshProfilePicture, sessionVersion]);
 
   const updateProfilePicture = useCallback(async (url: string | null) => {
     setProfilePictureUrl(url);

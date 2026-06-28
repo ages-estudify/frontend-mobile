@@ -5,16 +5,14 @@ import { useUserProfileContext } from "@/contexts/UserProfileContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { userPreferencesService } from "@/services/userPreferences/userPreferences.service";
 import { saveUserProfile } from "@/services/userProfile/userProfile.storage";
-import type { StudyDay } from "@/types/onboarding.types";
+import type { StudyDay, StudyHoursMap } from "@/types/onboarding.types";
 import type { UpdateUserPreferencesRequest } from "@/types/userPreferences.types";
 import {
   STUDY_DAY_LABELS,
-  buildStudyHoursFromSelection,
   formatPreferredLanguage,
   formatStudyHourLabel,
-  getSelectedStudyDays,
-  getUniqueStudyHours,
   normalizePreferredLanguage,
+  sortStudyHours,
 } from "@/utils/studySchedule";
 import { hasGatedContentAccess } from "@/utils/subscription-access";
 import { Ionicons } from "@expo/vector-icons";
@@ -65,8 +63,7 @@ function buildPayload(
   desiredCourse: string,
   desiredUniversity: string,
   preferredLanguage: string,
-  selectedDays: StudyDay[],
-  selectedHours: number[]
+  studyHoursByDay: StudyHoursMap
 ): UpdateUserPreferencesRequest {
   const payload: UpdateUserPreferencesRequest = {};
 
@@ -80,7 +77,12 @@ function buildPayload(
   if (university) payload.desiredUniversity = university;
   if (prefLang) payload.preferredLanguage = prefLang;
 
-  const studyHours = buildStudyHoursFromSelection(selectedDays, selectedHours);
+  const studyHours: StudyHoursMap = {};
+  (Object.entries(studyHoursByDay) as [StudyDay, number[]][]).forEach(([day, hours]) => {
+    if (hours && hours.length > 0) {
+      studyHours[day] = sortStudyHours(hours);
+    }
+  });
   if (Object.keys(studyHours).length > 0) {
     payload.studyHours = studyHours;
   }
@@ -111,9 +113,11 @@ export default function EditProfileScreen() {
   const [desiredCourse, setDesiredCourse] = useState("");
   const [preferredLanguage, setPreferredLanguage] = useState("");
   const [desiredUniversity, setDesiredUniversity] = useState("");
-  const [selectedDays, setSelectedDays] = useState<StudyDay[]>([]);
-  const [selectedHours, setSelectedHours] = useState<number[]>([]);
+  const [studyHoursByDay, setStudyHoursByDay] = useState<StudyHoursMap>({});
+  const [activeDays, setActiveDays] = useState<StudyDay[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+
+  const activeHours = activeDays.length > 0 ? (studyHoursByDay[activeDays[0]] ?? []) : [];
 
   const hasInitializedForm = useRef(false);
   const isSavingRef = useRef(false);
@@ -134,24 +138,66 @@ export default function EditProfileScreen() {
       profile.preferredLanguage ? formatPreferredLanguage(profile.preferredLanguage) : ""
     );
     setDesiredUniversity(profile.desiredUniversity?.trim() ?? "");
-    setSelectedDays(getSelectedStudyDays(profile.studyHours));
-    setSelectedHours(getUniqueStudyHours(profile.studyHours));
+    if (profile.studyHours) {
+      setStudyHoursByDay(profile.studyHours);
+      setActiveDays(
+        (Object.keys(profile.studyHours) as StudyDay[]).filter(
+          (day) => (profile.studyHours?.[day]?.length ?? 0) > 0
+        )
+      );
+    }
 
     hasInitializedForm.current = true;
   }, [profile]);
 
   function toggleDay(day: StudyDay) {
-    setSelectedDays((prev) =>
-      prev.includes(day) ? prev.filter((currentDay) => currentDay !== day) : [...prev, day]
-    );
+    const isActive = activeDays.includes(day);
+    const isSelected = day in studyHoursByDay;
+
+    if (isActive) {
+      setActiveDays((prev) => prev.filter((currentDay) => currentDay !== day));
+      setStudyHoursByDay((prev) => {
+        const next = { ...prev };
+        delete next[day];
+        return next;
+      });
+      return;
+    }
+
+    if (isSelected) {
+      setStudyHoursByDay((prev) => {
+        const next = { ...prev };
+        delete next[day];
+        return next;
+      });
+      return;
+    }
+
+    if (activeHours.length > 0) {
+      setActiveDays([day]);
+      setStudyHoursByDay((prev) => ({ ...prev, [day]: [] }));
+    } else {
+      setActiveDays((prev) => [...prev, day]);
+      setStudyHoursByDay((prev) => ({ ...prev, [day]: [] }));
+    }
   }
 
   function toggleHour(hour: number) {
-    setSelectedHours((prev) =>
-      prev.includes(hour)
-        ? prev.filter((currentHour) => currentHour !== hour)
-        : [...prev, hour].sort((a, b) => a - b)
-    );
+    if (activeDays.length === 0) return;
+
+    setStudyHoursByDay((prev) => {
+      const currentHours = prev[activeDays[0]] ?? [];
+      const alreadySelected = currentHours.includes(hour);
+      const updatedHours = alreadySelected
+        ? currentHours.filter((currentHour) => currentHour !== hour)
+        : sortStudyHours([...currentHours, hour]);
+
+      const next = { ...prev };
+      activeDays.forEach((currentDay) => {
+        next[currentDay] = updatedHours;
+      });
+      return next;
+    });
   }
 
   async function handleSave() {
@@ -174,8 +220,7 @@ export default function EditProfileScreen() {
         desiredCourse,
         desiredUniversity,
         preferredLanguage,
-        selectedDays,
-        selectedHours
+        studyHoursByDay
       );
 
       await userPreferencesService.update(payload);
@@ -286,21 +331,24 @@ export default function EditProfileScreen() {
 
               <View className="flex-row flex-wrap justify-between gap-[8px]">
                 {STUDY_DAYS.map((day) => {
-                  const isSelected = selectedDays.includes(day);
+                  const isActive = activeDays.includes(day);
+                  const isSelected = day in studyHoursByDay;
 
                   return (
                     <Pressable
                       key={day}
                       onPress={() => toggleDay(day)}
                       className={`w-[30%] shrink-0 items-center rounded-[10px] border px-2 py-[10px] ${
-                        isSelected
+                        isActive
                           ? "border-greenSecondary bg-greenSecondary"
-                          : "border-secondaryGray bg-white"
+                          : isSelected
+                            ? "border-greenSecondary bg-[#E6F4EA]"
+                            : "border-secondaryGray bg-white"
                       }`}
                     >
                       <Text
                         className={`font-inter-semi text-[13px] ${
-                          isSelected ? "text-black" : "text-primaryGray"
+                          isActive ? "text-black" : "text-primaryGray"
                         }`}
                       >
                         {STUDY_DAY_LABELS[day]}
@@ -323,7 +371,7 @@ export default function EditProfileScreen() {
 
               <View className="flex-row flex-wrap gap-[8px]">
                 {STUDY_HOURS.map((hour) => {
-                  const isSelected = selectedHours.includes(hour);
+                  const isSelected = activeHours.includes(hour);
 
                   return (
                     <Pressable
