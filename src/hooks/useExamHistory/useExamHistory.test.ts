@@ -219,4 +219,22 @@ describe("useExamHistory", () => {
       expect(result.current.error).not.toBeNull();
     });
   });
+
+  it("should use default error message when err.message is undefined", async () => {
+    (examHistoryService.history as jest.Mock).mockRejectedValue({});
+
+    const { result } = renderHook(() => useExamHistory());
+
+    await act(async () => {
+      try {
+        await result.current.getExamHistory("exam-123");
+      } catch {
+        // Erro esperado
+      }
+    });
+
+    await waitFor(() => {
+      expect(result.current.error).toBe("Erro ao carregar histórico");
+    });
+  });
 });

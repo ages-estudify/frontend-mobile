@@ -85,4 +85,12 @@ describe("StarsContext", () => {
     expect(screen.getByText("loading:false")).toBeTruthy();
     expect(screen.getByText("error:true")).toBeTruthy();
   });
+
+  it("lanca erro se usado fora de StarsProvider", () => {
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    expect(() => render(<TestComponent />)).toThrow(
+      "useStarsContext must be used within StarsProvider"
+    );
+    consoleError.mockRestore();
+  });
 });

@@ -23,9 +23,13 @@ jest.mock("expo-router", () => ({
   }),
 }));
 
-jest.mock("react-native-safe-area-context", () => ({
-  useSafeAreaInsets: () => ({ bottom: 0, top: 44, left: 0, right: 0 }),
-}));
+jest.mock("react-native-safe-area-context", () => {
+  const { View } = require("react-native");
+  return {
+    SafeAreaView: View,
+    useSafeAreaInsets: () => ({ bottom: 0, top: 44, left: 0, right: 0 }),
+  };
+});
 
 jest.mock("../../../assets/profile_background.png", () => "profile_background.png", {
   virtual: true,

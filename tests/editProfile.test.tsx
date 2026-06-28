@@ -1,4 +1,5 @@
 import { useAuthSession } from "@/contexts/AuthContext";
+import { useUserProfileContext } from "@/contexts/UserProfileContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { userPreferencesService } from "@/services/userPreferences/userPreferences.service";
 import { saveUserProfile } from "@/services/userProfile/userProfile.storage";
@@ -20,6 +21,7 @@ jest.mock("expo-router", () => ({
 
 jest.mock("@/hooks/useUserProfile");
 jest.mock("@/contexts/AuthContext");
+jest.mock("@/contexts/UserProfileContext");
 jest.mock("@/services/userPreferences/userPreferences.service", () => ({
   userPreferencesService: {
     update: jest.fn(),
@@ -69,6 +71,10 @@ describe("EditProfileScreen", () => {
     (useAuthSession as jest.Mock).mockReturnValue({
       role: "USER",
       planExpirationDate: "2099-12-31",
+    });
+    (useUserProfileContext as jest.Mock).mockReturnValue({
+      profilePictureUrl: null,
+      updateProfilePicture: jest.fn(),
     });
     mockUpdate.mockResolvedValue(undefined);
     mockSaveUserProfile.mockResolvedValue(undefined);

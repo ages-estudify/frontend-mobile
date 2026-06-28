@@ -88,4 +88,12 @@ describe("StreakContext", () => {
     expect(screen.getByText("loading:false")).toBeTruthy();
     expect(screen.getByText("error:true")).toBeTruthy();
   });
+
+  it("lanca erro se usado fora de StreakProvider", () => {
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    expect(() => render(<TestComponent />)).toThrow(
+      "useStreakContext must be used within StreakProvider"
+    );
+    consoleError.mockRestore();
+  });
 });

@@ -76,12 +76,12 @@ describe("questionService", () => {
       wrongAnswers: 1,
     };
 
-    (api.post as jest.Mock).mockResolvedValueOnce(mockResult);
+    (api.post as jest.Mock).mockResolvedValueOnce({ data: mockResult });
 
     const response = await getTrainingResult(["uuid-1", "uuid-2", "uuid-3"]);
 
     expect(api.post).toHaveBeenCalledWith("/questions/training/result", {
-      questionIds: ["uuid-1", "uuid-2", "uuid-3"],
+      questionsIds: ["uuid-1", "uuid-2", "uuid-3"],
     });
     expect(response).toEqual(mockResult);
   });
